@@ -69,7 +69,10 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add docs/data/latest.json docs/data/*.json data/download_summary.json data/odds_api/*.json data/baseball_savant/*.csv
+          git add docs/data/latest.json
+          git add "docs/data/${{ steps.slate.outputs.slate_date }}.json"
+          git add docs/data/archive_index.json
+          git add docs/data/pick_history.json || true
           git diff --cached --quiet && exit 0
           git commit -m "Refresh site snapshot for ${{ steps.slate.outputs.slate_date }}"
           git push
