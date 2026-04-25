@@ -514,63 +514,6 @@ body { display: flex; min-height: 100vh; }
   line-height: 1.5;
 }
 
-.pick-writeup {
-  margin-top: 10px;
-  padding-top: 10px;
-  border-top: 1px solid var(--border);
-}
-
-.pick-writeup-head {
-  font-size: 0.64rem;
-  font-weight: 800;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--text-3);
-  margin-bottom: 8px;
-}
-
-.pick-writeup-list {
-  margin: 0;
-  padding-left: 18px;
-  color: var(--text-2);
-  font-size: 0.74rem;
-  line-height: 1.55;
-}
-
-.pick-writeup-list li + li {
-  margin-top: 4px;
-}
-
-.pick-feature-strip {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  margin-top: 10px;
-}
-
-.pick-feature-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 9px;
-  border-radius: 999px;
-  background: var(--surface-2);
-  border: 1px solid var(--border);
-  font-size: 0.68rem;
-}
-
-.pfc-label {
-  color: var(--text-3);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  font-weight: 700;
-}
-
-.pfc-value {
-  color: var(--white);
-  font-weight: 700;
-}
-
 /* ── Game Tabs ── */
 
 .game-tabs-wrap {

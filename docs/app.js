@@ -174,8 +174,7 @@ function renderPicks(picks) {
           <div class="val">${pick.lineup_status??"—"}</div>
         </div>
       </div>
-      ${pick.reasoning ? `<div class="pick-reasoning">${pick.reasoning}</div>` : ""}
-      ${renderPickWriteup(pick)}
+      <div class="pick-reasoning">${pickBlurb(pick)}</div>
     </article>
     `;
   }).join("");
@@ -186,30 +185,12 @@ function fmtMarketType(t) {
   return m[t] || t;
 }
 
-function renderPickWriteup(pick) {
-  const points = pick.writeup_points || [];
-  const features = (pick.top_features || []).slice(0, 3);
-  if (!points.length && !features.length) return "";
-  return `
-    <div class="pick-writeup">
-      ${points.length ? `
-        <div class="pick-writeup-head">Why it made the card</div>
-        <ul class="pick-writeup-list">
-          ${points.map(point => `<li>${point}</li>`).join("")}
-        </ul>
-      ` : ""}
-      ${features.length ? `
-        <div class="pick-feature-strip">
-          ${features.map(feature => `
-            <span class="pick-feature-chip">
-              <span class="pfc-label">${feature.feature}</span>
-              <span class="pfc-value">${feature.value}</span>
-            </span>
-          `).join("")}
-        </div>
-      ` : ""}
-    </div>
-  `;
+function pickBlurb(pick) {
+  const market = fmtMarketType(pick.market_type);
+  const lineup = pick.lineup_status === "confirmed" ? "confirmed lineups" : "projected lineups";
+  const top = (pick.top_features || [])[0];
+  const featureText = top ? `${top.feature} is a key driver` : "the simulation is pricing this side above market";
+  return `${market} ${pick.pick}${pick.line != null ? ` ${pick.line}` : ""} cleared the board with a ${fmt.pctS(pick.edge)} edge. ${featureText}, and this card is still using ${lineup}.`;
 }
 
 /* ── Render Game Tabs ── */
@@ -778,7 +759,6 @@ async function loadArchiveDay(dateStr, $picks) {
             <div class="pick-stat"><div class="label">Lineup</div><div class="val">${pick.lineup_status??"—"}</div></div>
           </div>
           ${pick.reasoning ? `<div class="pick-reasoning">${pick.reasoning}</div>` : ""}
-          ${renderPickWriteup(pick)}
         </article>`;
       }).join("")}</div>`;
   } catch (err) {
