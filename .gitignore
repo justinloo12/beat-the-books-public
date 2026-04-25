@@ -1,0 +1,17 @@
+.DS_Store
+.env
+.venv/
+__pycache__/
+*.pyc
+mlb_model.db
+*.patch
+data/baseball_savant/
+data/odds_api/
+data/roster_cache/
+data/schedule_cache/
+data/download_summary.json
+src/mlb_odds_model.egg-info/
+src/mlb_model/__pycache__/
+src/mlb_model/providers/__pycache__/
+src/mlb_model/services/__pycache__/
+tests/__pycache__/

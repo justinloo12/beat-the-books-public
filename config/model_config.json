@@ -1,0 +1,104 @@
+{
+  "module_toggles": {
+    "pitcher": true,
+    "bullpen": true,
+    "offense": true,
+    "lineup": true,
+    "weather": true,
+    "umpire": true,
+    "history": true,
+    "market": true
+  },
+  "weights": {
+    "pitcher": 0.35,
+    "batter": 0.30,
+    "context": 0.25,
+    "recency": 0.10
+  },
+  "feature_weights": {
+    "pitcher": {
+      "xba_split": 0.09,
+      "run_value_per_pitch": 0.085,
+      "hard_hit_allowed": 0.045,
+      "k_minus_bb": 0.04,
+      "barrel_allowed": 0.035,
+      "ev50_allowed": 0.03,
+      "movement_profile": 0.025
+    },
+    "batter": {
+      "xwoba_split": 0.09,
+      "pitch_type_run_value": 0.07,
+      "contact_quality": 0.05,
+      "swing_path": 0.04,
+      "discipline": 0.03,
+      "quality_of_contact_profile": 0.02
+    },
+    "context": {
+      "bullpen_availability": 0.045,
+      "bullpen_recent_form": 0.035,
+      "bullpen_usage_pattern": 0.02,
+      "weather_wind": 0.04,
+      "weather_temperature": 0.025,
+      "weather_air_density": 0.015,
+      "park_factor": 0.04,
+      "umpire_and_day_night": 0.015,
+      "batting_order_construction": 0.015
+    },
+    "recency": {
+      "recent_form_decay": 0.10
+    }
+  },
+  "market_type_weights": {
+    "game_total": {
+      "pitcher": 0.35,
+      "batter": 0.30,
+      "context": 0.25,
+      "recency": 0.10
+    },
+    "first_five_total": {
+      "pitcher": 0.42,
+      "batter": 0.30,
+      "context": 0.18,
+      "recency": 0.10
+    },
+    "moneyline": {
+      "pitcher": 0.33,
+      "batter": 0.27,
+      "context": 0.25,
+      "recency": 0.15
+    },
+    "runline": {
+      "pitcher": 0.30,
+      "batter": 0.25,
+      "context": 0.30,
+      "recency": 0.15
+    }
+  },
+  "edge_thresholds": {
+    "pass_below": 0.04,
+    "watch_min": 0.04,
+    "watch_max": 0.06,
+    "strong_min": 0.06,
+    "strong_max": 0.09,
+    "max_bet_min": 0.09,
+    "moneyline_min": 0.07
+  },
+  "kelly_caps": {
+    "strong": 0.03,
+    "moderate": 0.02
+  },
+  "unit_sizes": {
+    "watch": 0.01,
+    "strong": 0.02,
+    "max": 0.03
+  },
+  "juice_block_threshold": -145,
+  "simulation": {
+    "default_trials": 10000,
+    "high_confidence_trials": 25000
+  },
+  "recalibration": {
+    "bets_per_cycle": 50,
+    "lookback_bets": 200
+  }
+}

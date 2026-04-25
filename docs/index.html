@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Beat The Books</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <div class="brand-icon">⚾</div>
+        <div class="brand-text">
+          <div class="brand-name">Beat The Books</div>
+          <div class="brand-sub">MLB Analytics</div>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a class="nav-item active" data-section="dashboard" href="#">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+          <span>Dashboard</span>
+        </a>
+        <a class="nav-item" data-section="gameboard" href="#">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          <span>Game Board</span>
+        </a>
+        <a class="nav-item" data-section="archive" href="#">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="4" rx="1"/><path d="M4 7v13a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V7"/><line x1="9" y1="12" x2="15" y2="12"/></svg>
+          <span>Daily Archive</span>
+        </a>
+        <a class="nav-item" data-section="history" href="#">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v5h5"/><path d="M3.05 13A9 9 0 1 0 6 5.3L3 8"/><polyline points="12 7 12 12 15 15"/></svg>
+          <span>History</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer" id="hero-meta"></div>
+    </aside>
+
+    <div class="main-wrap">
+      <header class="topbar">
+        <div class="topbar-left">
+          <div class="page-eyebrow">MLB Betting Analytics</div>
+          <h1 class="page-title" id="page-title">Dashboard</h1>
+        </div>
+        <div id="hero-pills" class="hero-pills"></div>
+      </header>
+
+      <main class="main-content">
+
+        <div id="summary-grid" class="summary-grid"></div>
+
+        <section class="content-section" id="section-dashboard">
+          <div class="section-head">
+            <h2>Daily Picks</h2>
+            <p id="daily-meta"></p>
+          </div>
+          <div id="daily-picks" class="picks-grid"></div>
+        </section>
+
+        <section class="content-section" id="section-gameboard">
+          <div class="section-head">
+            <h2>Game Board</h2>
+            <p>Select a matchup to inspect starters, lineups, pitch data, and run projections.</p>
+          </div>
+          <div class="game-tabs-wrap">
+            <div id="game-tabs" class="game-tabs"></div>
+          </div>
+          <div id="game-detail"></div>
+        </section>
+
+        <section class="content-section hidden" id="section-archive">
+          <div class="section-head">
+            <h2>Daily Archive</h2>
+            <p>Top 10 model picks from each day.</p>
+          </div>
+          <div class="archive-layout">
+            <div class="archive-dates" id="archive-dates"></div>
+            <div class="archive-picks" id="archive-picks">
+              <div class="empty-state">Select a date to view that day's picks.</div>
+            </div>
+          </div>
+        </section>
+
+        <section class="content-section hidden" id="section-history">
+          <div class="section-head">
+            <h2>Pick History</h2>
+            <p>Graded picks — $100 per bet.</p>
+          </div>
+          <div id="history-summary" class="history-summary"></div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Date</th><th>Matchup</th><th>Market</th><th>Pick</th>
+                  <th>Odds</th><th>Edge</th><th>Result</th><th>P&amp;L</th>
+                </tr>
+              </thead>
+              <tbody id="history-table"></tbody>
+            </table>
+          </div>
+          <ul id="skipped-list" style="display:none"></ul>
+        </section>
+
+      </main>
+    </div>
+
+    <script src="app.js" defer></script>
+  </body>
+</html>
