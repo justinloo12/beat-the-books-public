@@ -64,8 +64,37 @@ jobs:
         run: |
           python -m mlb_model.export_site --date "${{ steps.slate.outputs.slate_date }}"
 
-      - name: Commit refreshed snapshot
+      - name: Validate exported snapshot
         if: steps.slate.outputs.run_refresh == 'true'
+        id: validate
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          slate_date = "${{ steps.slate.outputs.slate_date }}"
+          latest_path = Path("docs/data/latest.json")
+          dated_path = Path(f"docs/data/{slate_date}.json")
+          payload = json.loads(latest_path.read_text(encoding="utf-8"))
+          daily = payload.get("daily", {})
+          lineup_cards = daily.get("lineup_cards", [])
+          skipped = daily.get("skipped", [])
+          broken = (
+              not lineup_cards
+              and skipped
+              and all("processing error" in str(item.get("reason", "")).lower() for item in skipped)
+          )
+          with open(Path("${GITHUB_OUTPUT}"), "a", encoding="utf-8") as fh:
+              fh.write(f"snapshot_valid={'false' if broken else 'true'}\n")
+          if broken:
+              print("Snapshot validation failed: refusing to publish an all-error board.")
+              print("Keeping the existing published snapshot instead.")
+              latest_path.unlink(missing_ok=True)
+              dated_path.unlink(missing_ok=True)
+          PY
+
+      - name: Commit refreshed snapshot
+        if: steps.slate.outputs.run_refresh == 'true' && steps.validate.outputs.snapshot_valid == 'true'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
