@@ -136,7 +136,6 @@ function renderPicks(picks) {
 
   $dailyPicks.innerHTML = picks.map((pick, i) => {
     const tier = (pick.tier||"").toLowerCase();
-    const features = (pick.top_features||[]).slice(0,3);
     return `
     <article class="pick-card tier-${tier}">
       <div class="pick-header">
@@ -176,6 +175,7 @@ function renderPicks(picks) {
         </div>
       </div>
       ${pick.reasoning ? `<div class="pick-reasoning">${pick.reasoning}</div>` : ""}
+      ${renderPickWriteup(pick)}
     </article>
     `;
   }).join("");
@@ -184,6 +184,32 @@ function renderPicks(picks) {
 function fmtMarketType(t) {
   const m = { game_total:"Total", first_five_total:"F5 Total", moneyline:"ML", runline:"RL", team_total:"Team Total" };
   return m[t] || t;
+}
+
+function renderPickWriteup(pick) {
+  const points = pick.writeup_points || [];
+  const features = (pick.top_features || []).slice(0, 3);
+  if (!points.length && !features.length) return "";
+  return `
+    <div class="pick-writeup">
+      ${points.length ? `
+        <div class="pick-writeup-head">Why it made the card</div>
+        <ul class="pick-writeup-list">
+          ${points.map(point => `<li>${point}</li>`).join("")}
+        </ul>
+      ` : ""}
+      ${features.length ? `
+        <div class="pick-feature-strip">
+          ${features.map(feature => `
+            <span class="pick-feature-chip">
+              <span class="pfc-label">${feature.feature}</span>
+              <span class="pfc-value">${feature.value}</span>
+            </span>
+          `).join("")}
+        </div>
+      ` : ""}
+    </div>
+  `;
 }
 
 /* ── Render Game Tabs ── */
@@ -752,6 +778,7 @@ async function loadArchiveDay(dateStr, $picks) {
             <div class="pick-stat"><div class="label">Lineup</div><div class="val">${pick.lineup_status??"—"}</div></div>
           </div>
           ${pick.reasoning ? `<div class="pick-reasoning">${pick.reasoning}</div>` : ""}
+          ${renderPickWriteup(pick)}
         </article>`;
       }).join("")}</div>`;
   } catch (err) {

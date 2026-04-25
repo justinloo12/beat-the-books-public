@@ -567,6 +567,16 @@ class SimulationModelService:
             or context.get("away_pitcher_score", {}).get("pitcher_quality_score")
             or 50.0
         )
+        writeup_points = self._build_writeup_points(
+            context=context,
+            market_type=market_type,
+            side=side,
+            line=line,
+            model_prob=model_prob,
+            no_vig_prob=no_vig_prob,
+            home_vulnerability=home_vulnerability,
+            away_vulnerability=away_vulnerability,
+        )
         return {
             "matchup": context["matchup"],
             "market_type": market_type,
@@ -587,7 +597,100 @@ class SimulationModelService:
             "start_time": context["start_time"],
             "lineup_status": "confirmed" if context.get("home_lineup_confirmed") and context.get("away_lineup_confirmed") else "projected",
             "simulation_trials": self.trials,
+            "reasoning": self._build_reasoning_summary(market_type, side, line, writeup_points),
+            "writeup_points": writeup_points,
         }
+
+    def _build_reasoning_summary(
+        self,
+        market_type: str,
+        side: str,
+        line: float,
+        points: list[str],
+    ) -> str:
+        market_label = {
+            "game_total": f"{side} {line:g}",
+            "moneyline": side,
+            "runline": f"{side} {line:+g}",
+            "first_five_total": f"{side} {line:g}",
+            "team_total": f"{side} {line:g}",
+        }.get(market_type, side)
+        lead = f"Model likes {market_label} because "
+        if not points:
+            return lead + "the simulated distribution is pricing this side above market."
+        if len(points) == 1:
+            return lead + points[0].rstrip(".") + "."
+        return lead + points[0].rstrip(".") + ", and " + points[1].rstrip(".") + "."
+
+    def _build_writeup_points(
+        self,
+        context: dict[str, Any],
+        market_type: str,
+        side: str,
+        line: float,
+        model_prob: float,
+        no_vig_prob: float,
+        home_vulnerability: float,
+        away_vulnerability: float,
+    ) -> list[str]:
+        weather = context.get("weather", {})
+        total_mean = float(context.get("simulation", {}).get("total_mean", 0.0))
+        home_mean = float(context.get("simulation", {}).get("home_runs_mean", 0.0))
+        away_mean = float(context.get("simulation", {}).get("away_runs_mean", 0.0))
+        home_team = context.get("home_team", "Home")
+        away_team = context.get("away_team", "Away")
+        home_pitcher = context.get("home_pitcher_name", home_team)
+        away_pitcher = context.get("away_pitcher_name", away_team)
+        wind_speed = float(weather.get("wind_speed_mph", 0.0) or 0.0)
+        weather_stack = float(weather.get("weather_stack_score", 0.0) or 0.0)
+        edge_pts = (model_prob - no_vig_prob) * 100
+        points: list[str] = []
+
+        if market_type == "game_total":
+            diff = total_mean - line
+            if side == "Over":
+                points.append(f"the sim lands at {total_mean:.1f} runs versus a {line:g} market total")
+                if max(home_vulnerability, away_vulnerability) >= 58:
+                    vuln_name = away_pitcher if away_vulnerability >= home_vulnerability else home_pitcher
+                    points.append(f"{vuln_name} grades as the weaker run-prevention arm in this matchup")
+                elif weather_stack >= 2 or wind_speed >= 10:
+                    points.append(f"weather is adding carry with {wind_speed:.0f} mph wind and a {weather_stack:.1f} stack score")
+                else:
+                    points.append(f"both offenses project for {away_mean:.1f} and {home_mean:.1f} runs respectively")
+            else:
+                points.append(f"the sim lands at {total_mean:.1f} runs against a {line:g} total")
+                if max(home_vulnerability, away_vulnerability) <= 50:
+                    stronger = away_pitcher if away_vulnerability <= home_vulnerability else home_pitcher
+                    points.append(f"{stronger} brings the cleaner contact profile on the mound")
+                elif weather_stack <= 1 and wind_speed <= 8:
+                    points.append("weather is not adding much extra carry to the run environment")
+                else:
+                    points.append(f"the run environment still settles below market even after the weather adjustment")
+        elif market_type == "moneyline":
+            if side == home_team:
+                team_mean = home_mean
+                opp_mean = away_mean
+                team_pitcher = home_pitcher
+                opp_pitcher = away_pitcher
+            else:
+                team_mean = away_mean
+                opp_mean = home_mean
+                team_pitcher = away_pitcher
+                opp_pitcher = home_pitcher
+            points.append(f"{side} projects for {team_mean:.1f} runs versus {opp_mean:.1f} for the opponent")
+            points.append(f"{team_pitcher} sets up better in this run environment than {opp_pitcher}")
+        elif market_type == "runline":
+            margin = abs(home_mean - away_mean)
+            points.append(f"the sim creates roughly a {margin:.1f}-run scoring gap on average")
+            points.append(f"the model still prices this side {edge_pts:.1f} points above no-vig market")
+        else:
+            points.append(f"the simulation prices this side {edge_pts:.1f} points above no-vig market")
+
+        if context.get("home_lineup_confirmed") and context.get("away_lineup_confirmed"):
+            points.append("both lineups are confirmed, so the projection is using the actual starting nine")
+        else:
+            points.append("this is still running on projected lineups, so confidence is capped slightly")
+        return points[:4]
 
     def _fallback_total_probability(self, mean_total: float, line: float) -> float:
         z = (mean_total - line) / 2.0

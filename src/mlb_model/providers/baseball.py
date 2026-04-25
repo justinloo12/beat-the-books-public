@@ -473,8 +473,14 @@ class BaseballSavantProvider:
     def build_batter_summary_profile(self, batter_id: int, season: int) -> dict[str, Any]:
         expected = self._load_batter_expected_stats(season)
         percentiles = self._load_batter_percentiles(season)
-        expected_row = expected[pd.to_numeric(expected.get("player_id"), errors="coerce") == batter_id]
-        percentile_row = percentiles[pd.to_numeric(percentiles.get("player_id"), errors="coerce") == batter_id]
+        if not expected.empty and "player_id" in expected.columns:
+            expected_row = expected[pd.to_numeric(expected["player_id"], errors="coerce") == batter_id]
+        else:
+            expected_row = pd.DataFrame()
+        if not percentiles.empty and "player_id" in percentiles.columns:
+            percentile_row = percentiles[pd.to_numeric(percentiles["player_id"], errors="coerce") == batter_id]
+        else:
+            percentile_row = pd.DataFrame()
         if expected_row.empty and percentile_row.empty:
             return {
                 "batter_id": batter_id,
