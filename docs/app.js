@@ -20,6 +20,7 @@ const fmt = {
   pctS: (v, d=1) => `${+(v||0)>=0?"+":""}${(+(v||0)*100).toFixed(d)}%`,
   num:  (v, d=2) => v == null ? "—" : `${(+v).toFixed(d)}`,
   sign: (v, d=2) => `${+(v||0)>=0?"+":""}${(+(v||0)).toFixed(d)}`,
+  money: (v, d=2) => v == null ? "—" : `${+(v||0)>=0?"+":""}$${Math.abs(+(v||0)).toFixed(d)}`,
   odds: (v) => `${+(v||0)>0?"+":""}${+(v||0)}`,
   date: (v) => new Intl.DateTimeFormat("en-US",{weekday:"long",month:"long",day:"numeric",year:"numeric"}).format(new Date(`${v}T12:00:00`)),
   time: (v) => new Intl.DateTimeFormat("en-US",{hour:"numeric",minute:"2-digit",timeZone:"America/New_York"}).format(new Date(v)),
@@ -108,12 +109,14 @@ function renderHero(payload) {
 
 /* ── Render Summary ── */
 function renderSummary(s) {
+  const dollarsWon = (+(s.units_profit || 0)) * 100;
+  const dollarsRisked = (+(s.units_risked || 0)) * 100;
   const cards = [
+    ["Won/Lost",    fmt.money(dollarsWon),            `${fmt.money(dollarsRisked,0).replace("+","") } risked at $100 per bet`],
     ["ROI",         fmt.pct(s.roi),                   `${fmt.sign(s.units_profit)} units`],
     ["Tracked",     s.tracked_bets,                   `${s.wins}-${s.losses}-${s.pushes} W-L-P`],
     ["Hit Rate",    fmt.pct(s.hit_rate),               "graded picks"],
     ["CLV 50",      s.clv_last_50==null?"n/a":fmt.sign(s.clv_last_50,3), "last 50"],
-    ["CLV 200",     s.clv_last_200==null?"n/a":fmt.sign(s.clv_last_200,3), "last 200"],
     ["Today",       s.lineup_card_count,               `${s.daily_pick_count} pick${s.daily_pick_count!==1?"s":""}`],
   ];
   $summaryGrid.innerHTML = cards.map(([l,v,d])=>`
