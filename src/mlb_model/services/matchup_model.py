@@ -17,6 +17,8 @@ class MatchupModelService:
     def score_pitcher_profile(self, pitcher_profile: dict[str, Any]) -> dict[str, Any]:
         weights = self.feature_weights["pitcher"]
         group_weight = sum(weights.values()) or 1.0
+        arsenal = pitcher_profile.get("pitch_arsenal") or []
+        primary_pitch = arsenal[0] if arsenal else {}
         xba_score = self._inverse_rate_score(pitcher_profile.get("xba"), baseline=0.290, spread=0.08)
         run_value_score = self._inverse_rate_score(pitcher_profile.get("weighted_run_value"), baseline=0.0, spread=1.5)
         hard_hit_score = self._inverse_rate_score(pitcher_profile.get("hard_hit_pct"), baseline=0.375, spread=0.14)
@@ -25,7 +27,7 @@ class MatchupModelService:
         barrel_score = self._inverse_rate_score(pitcher_profile.get("barrel_pct"), baseline=0.08, spread=0.08)
         ev50_score = self._inverse_rate_score(pitcher_profile.get("ev50"), baseline=89.0, spread=12.0)
         movement_raw = float(pitcher_profile.get("movement_score", 0.0))
-        spin_modifier = 1 + min(abs(float(pitcher_profile.get("pitch_arsenal", [{}])[0].get("spin_axis", 180.0)) - 180.0) / 360.0, 0.18)
+        spin_modifier = 1 + min(abs(float(primary_pitch.get("spin_axis", 180.0)) - 180.0) / 360.0, 0.18)
         extension_modifier = 1 + min(max(float(pitcher_profile.get("extension", 6.1)) - 6.0, -0.5) * 0.08, 0.12)
         movement_score = clamp((movement_raw * spin_modifier * extension_modifier) * 2.6, 20, 90)
         quality_score = (
@@ -184,10 +186,12 @@ class MatchupModelService:
     ) -> float:
         swing_path = float(batter_profile.get("swing_path_score", 0.0))
         attack_angle = float(batter_profile.get("attack_angle", 0.0))
+        arsenal = pitcher_profile.get("pitch_arsenal") or []
+        primary_pitch = arsenal[0] if arsenal else {}
         arm_angle = float((pitch_profile or {}).get("arm_angle", pitcher_profile.get("arm_angle", 45.0)))
         vertical = float((pitch_profile or {}).get("vertical_movement", pitcher_profile.get("movement_score", 1.0) / 30))
         horizontal = float((pitch_profile or {}).get("horizontal_movement", pitcher_profile.get("movement_score", 1.0) / 30))
-        spin_dir = float((pitch_profile or {}).get("spin_dir", pitcher_profile.get("pitch_arsenal", [{}])[0].get("spin_dir", 180.0)))
+        spin_dir = float((pitch_profile or {}).get("spin_dir", primary_pitch.get("spin_dir", 180.0)))
         swing_plane_alignment = 58 - min(abs((attack_angle + swing_path * 0.04) - (vertical * 10)) * 4.5, 24)
         angle_disruption = 14 - min(abs((arm_angle * 0.32) - abs(horizontal * 10)) * 1.8, 14)
         spin_fit = 12 - min(abs((spin_dir % 180) - (swing_path % 180)) / 6, 12)

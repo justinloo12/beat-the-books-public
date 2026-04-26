@@ -3,6 +3,7 @@ from __future__ import annotations
 from datetime import date
 from functools import lru_cache
 from pathlib import Path
+import re
 from typing import Any
 
 import pandas as pd
@@ -88,12 +89,19 @@ class BaseballSavantProvider:
         return self._normalize_frame(frame)
 
     def load_statcast(self, start_date: date | None = None, end_date: date | None = None) -> pd.DataFrame:
-        files = sorted(path.name for path in self.data_dir.glob("statcast_*.csv"))
+        statcast_range = re.compile(r"^statcast_\d{4}-\d{2}-\d{2}_\d{4}-\d{2}-\d{2}\.csv$")
+        files = sorted(
+            path.name
+            for path in self.data_dir.glob("statcast_*.csv")
+            if statcast_range.match(path.name)
+        )
         frame = self._load_files(tuple(files))
         if frame.empty:
             return frame
         if "game_date" in frame.columns:
             frame["game_date"] = pd.to_datetime(frame["game_date"]).dt.date
+        else:
+            return pd.DataFrame()
         if start_date:
             frame = frame[frame["game_date"] >= start_date]
         if end_date:
