@@ -69,7 +69,10 @@ async def download_odds(target_date: date, markets: list[str]) -> DownloadSummar
     ensure_dirs()
     files_written: list[Path] = []
     requests_made = 0
-    base_url = "https://api.the-odds-api.com/v4/historical/sports/baseball_mlb/odds"
+    today_et = datetime.now().astimezone().date()
+    use_current_endpoint = target_date >= today_et
+    current_url = "https://api.the-odds-api.com/v4/sports/baseball_mlb/odds"
+    historical_url = "https://api.the-odds-api.com/v4/historical/sports/baseball_mlb/odds"
     async with httpx.AsyncClient(timeout=60.0) as client:
         for market in markets:
             path = ODDS_DIR / f"{target_date.isoformat()}_{market}.json"
@@ -83,9 +86,16 @@ async def download_odds(target_date: date, markets: list[str]) -> DownloadSummar
                 "oddsFormat": "american",
                 "dateFormat": "iso",
                 "bookmakers": "draftkings",
-                "date": f"{target_date.isoformat()}T12:00:00Z",
             }
-            payload = await fetch_json(client, base_url, params=params)
+            if use_current_endpoint:
+                payload = await fetch_json(client, current_url, params=params)
+                payload = {"timestamp": datetime.utcnow().isoformat(), "data": payload}
+            else:
+                historical_params = {
+                    **params,
+                    "date": f"{target_date.isoformat()}T12:00:00Z",
+                }
+                payload = await fetch_json(client, historical_url, params=historical_params)
             requests_made += 1
             path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
             files_written.append(path)
