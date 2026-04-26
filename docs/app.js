@@ -186,11 +186,62 @@ function fmtMarketType(t) {
 }
 
 function pickBlurb(pick) {
+  if (pick.specific_blurb) return pick.specific_blurb;
+  const card = currentCards.find(c => c.matchup === pick.matchup);
+  if (card) {
+    const homeAvg = avgMatchup(card.home_lineup?.players || []);
+    const awayAvg = avgMatchup(card.away_lineup?.players || []);
+    const homeTop = topPlayers(card.home_lineup?.players || []);
+    const awayTop = topPlayers(card.away_lineup?.players || []);
+    const weatherNote = +(card.weather?.wind_speed_mph || 0) >= 12 ? ` Wind is up at ${windLabel(card.weather)}.` : "";
+
+    if (pick.market_type === "game_total" && pick.pick === "Over") {
+      const attackingHome = homeAvg >= awayAvg;
+      const attackPlayers = attackingHome ? homeTop : awayTop;
+      const targetPitcher = attackingHome ? card.away_pitcher : card.home_pitcher;
+      return `${joinPlayers(attackPlayers)} rate as the strongest hitter-pitcher matchups on this board against ${targetPitcher?.name || "the opposing starter"}, who is allowing ${fmt.num(targetPitcher?.xba,3)} xBA and ${fmt.pct(targetPitcher?.hard_hit_pct,0)} hard-hit contact. The sim sits at ${fmt.num(card.simulated_total,1)} versus ${pick.line}.${weatherNote}`;
+    }
+
+    if (pick.market_type === "game_total" && pick.pick === "Under") {
+      const suppressHome = lowPlayers(card.home_lineup?.players || []);
+      const suppressAway = lowPlayers(card.away_lineup?.players || []);
+      return `${card.away_pitcher?.name || "Away starter"} and ${card.home_pitcher?.name || "Home starter"} both project to limit clean contact early, and the weakest matchup clusters belong to ${joinPlayers(suppressHome)} and ${joinPlayers(suppressAway)}. The sim lands at ${fmt.num(card.simulated_total,1)} against ${pick.line}.${weatherNote}`;
+    }
+
+    if (pick.market_type === "moneyline") {
+      const teamSide = pick.pick === card.home_pitcher?.team || pick.pick === card.home_lineup?.team;
+      const teamPlayers = teamSide ? homeTop : awayTop;
+      const starter = teamSide ? card.home_pitcher : card.away_pitcher;
+      const oppStarter = teamSide ? card.away_pitcher : card.home_pitcher;
+      const teamRuns = teamSide ? card.simulated_home_runs : card.simulated_away_runs;
+      const oppRuns = teamSide ? card.simulated_away_runs : card.simulated_home_runs;
+      return `${starter?.name || pick.pick} gives this side the cleaner starter setup over ${oppStarter?.name || "the opponent"}, while ${joinPlayers(teamPlayers)} own the best arsenal matchups in the lineup. The sim has it ${fmt.num(teamRuns,1)} to ${fmt.num(oppRuns,1)}.${weatherNote}`;
+    }
+  }
   const market = fmtMarketType(pick.market_type);
   const lineup = pick.lineup_status === "confirmed" ? "confirmed lineups" : "projected lineups";
   const top = (pick.top_features || [])[0];
   const featureText = top ? `${top.feature} is a key driver` : "the simulation is pricing this side above market";
   return `${market} ${pick.pick}${pick.line != null ? ` ${pick.line}` : ""} cleared the board with a ${fmt.pctS(pick.edge)} edge. ${featureText}, and this card is still using ${lineup}.`;
+}
+
+function avgMatchup(players) {
+  if (!players.length) return 0;
+  return players.reduce((sum, player) => sum + (+(player.matchup_score || 0)), 0) / players.length;
+}
+
+function topPlayers(players) {
+  return players.slice().sort((a, b) => (+(b.matchup_score || 0)) - (+(a.matchup_score || 0))).slice(0, 2);
+}
+
+function lowPlayers(players) {
+  return players.slice().sort((a, b) => (+(a.matchup_score || 0)) - (+(b.matchup_score || 0))).slice(0, 2);
+}
+
+function joinPlayers(players) {
+  if (!players.length) return "this lineup";
+  if (players.length === 1) return `${players[0].name} (${fmt.num(players[0].matchup_score,0)})`;
+  return `${players[0].name} and ${players[1].name} (${fmt.num(players[0].matchup_score,0)}/${fmt.num(players[1].matchup_score,0)})`;
 }
 
 /* ── Render Game Tabs ── */
@@ -631,10 +682,12 @@ function renderSkipped(skipped) {
 async function loadBoard() {
   try {
     const payload = await fetchPayload();
+    currentCards = payload.daily.lineup_cards || [];
     renderHero(payload);
+    renderSummary(payload.summary || {});
     renderPicks(payload.daily.picks || []);
     if ($historyTbl) renderHistory(payload.history || []);
-    renderGames(payload.daily.lineup_cards || []);
+    renderGames(currentCards);
 
     // after DOM is built, store pitcher references for arsenal tab switching
     document.querySelectorAll("[data-pitcher-panel]").forEach(panel => {

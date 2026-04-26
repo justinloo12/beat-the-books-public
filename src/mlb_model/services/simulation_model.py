@@ -587,7 +587,123 @@ class SimulationModelService:
             "start_time": context["start_time"],
             "lineup_status": "confirmed" if context.get("home_lineup_confirmed") and context.get("away_lineup_confirmed") else "projected",
             "simulation_trials": self.trials,
+            "specific_blurb": self._build_specific_pick_blurb(
+                context=context,
+                market_type=market_type,
+                side=side,
+                line=line,
+                model_prob=model_prob,
+                no_vig_prob=no_vig_prob,
+            ),
         }
+
+    def _build_specific_pick_blurb(
+        self,
+        context: dict[str, Any],
+        market_type: str,
+        side: str,
+        line: float,
+        model_prob: float,
+        no_vig_prob: float,
+    ) -> str:
+        home_leaders = self._lineup_matchup_leaders(context.get("home_lineup_matchups", []), descending=True)
+        away_leaders = self._lineup_matchup_leaders(context.get("away_lineup_matchups", []), descending=True)
+        home_laggards = self._lineup_matchup_leaders(context.get("home_lineup_matchups", []), descending=False)
+        away_laggards = self._lineup_matchup_leaders(context.get("away_lineup_matchups", []), descending=False)
+
+        home_team = context.get("home_team", "Home")
+        away_team = context.get("away_team", "Away")
+        home_pitcher = context.get("home_pitcher_name", home_team)
+        away_pitcher = context.get("away_pitcher_name", away_team)
+        home_offense = float((context.get("home_offense") or {}).get("offense_score", 50.0))
+        away_offense = float((context.get("away_offense") or {}).get("offense_score", 50.0))
+        total_mean = float((context.get("simulation") or {}).get("total_mean", 0.0))
+        home_mean = float((context.get("simulation") or {}).get("home_runs_mean", 0.0))
+        away_mean = float((context.get("simulation") or {}).get("away_runs_mean", 0.0))
+        weather = context.get("weather", {}) or {}
+        edge_pts = (model_prob - no_vig_prob) * 100
+        weather_tail = self._weather_tail(weather)
+
+        if market_type == "game_total" and side == "Over":
+            attack_team = home_team if home_offense >= away_offense else away_team
+            attack_leaders = home_leaders if home_offense >= away_offense else away_leaders
+            target_pitcher = away_pitcher if home_offense >= away_offense else home_pitcher
+            target_profile = context.get("away_pitcher_profile") if home_offense >= away_offense else context.get("home_pitcher_profile")
+            leaders_text = self._leaders_text(attack_leaders)
+            pitcher_text = self._pitcher_contact_text(target_pitcher, target_profile)
+            return f"{leaders_text} profile best into {target_pitcher}'s pitch mix for {attack_team}, and {pitcher_text}; the sim lands at {total_mean:.1f} runs versus {line:g}{weather_tail}"
+
+        if market_type == "game_total" and side == "Under":
+            strong_arms = f"{away_pitcher} and {home_pitcher}"
+            suppressors = self._leaders_text(home_laggards, fallback=home_team) + " / " + self._leaders_text(away_laggards, fallback=away_team)
+            return f"{strong_arms} project to keep quality contact down early, and the softest batter matchups on the board are {suppressors}; the sim sits at {total_mean:.1f} against {line:g}{weather_tail}"
+
+        if market_type == "moneyline":
+            team = side
+            is_home = team == home_team
+            team_mean = home_mean if is_home else away_mean
+            opp_mean = away_mean if is_home else home_mean
+            starter = home_pitcher if is_home else away_pitcher
+            leaders = home_leaders if is_home else away_leaders
+            opp_pitcher = away_pitcher if is_home else home_pitcher
+            return f"{starter} gives {team} the cleaner starter setup, and {self._leaders_text(leaders, fallback=team)} carry the best hitter-vs-arsenal edges against {opp_pitcher}; the sim has it {team_mean:.1f} to {opp_mean:.1f} with a {edge_pts:.1f}-point edge"
+
+        if market_type == "runline":
+            team = side
+            is_home = team == home_team
+            leaders = home_leaders if is_home else away_leaders
+            margin = abs(home_mean - away_mean)
+            return f"{self._leaders_text(leaders, fallback=team)} give {team} the strongest matchup cluster in this game, and the sim creates about a {margin:.1f}-run gap on average"
+
+        return f"The model prices this side {edge_pts:.1f} percentage points above no-vig market odds based on the current hitter-pitcher matchup set."
+
+    def _lineup_matchup_leaders(
+        self,
+        matchups: list[dict[str, Any]],
+        descending: bool = True,
+        count: int = 2,
+    ) -> list[dict[str, Any]]:
+        ranked: list[dict[str, Any]] = []
+        for entry in matchups:
+            matchup = entry.get("matchup") or {}
+            pitch_matchup = entry.get("pitch_matchup") or {}
+            profile = entry.get("profile") or {}
+            score = float(matchup.get("matchup_score") or 0.0)
+            xwoba = float(pitch_matchup.get("matchup_xwoba") or profile.get("xwoba") or 0.0)
+            ranked.append(
+                {
+                    "name": entry.get("name", "Batter"),
+                    "score": score,
+                    "xwoba": xwoba,
+                }
+            )
+        ranked.sort(key=lambda item: item["score"], reverse=descending)
+        return ranked[:count]
+
+    def _leaders_text(
+        self,
+        leaders: list[dict[str, Any]],
+        fallback: str = "the lineup",
+    ) -> str:
+        if not leaders:
+            return fallback
+        if len(leaders) == 1:
+            return f"{leaders[0]['name']} ({leaders[0]['score']:.0f} matchup)"
+        first, second = leaders[0], leaders[1]
+        return f"{first['name']} and {second['name']} ({first['score']:.0f}/{second['score']:.0f} matchup scores)"
+
+    def _pitcher_contact_text(self, pitcher_name: str, profile: dict[str, Any] | None) -> str:
+        profile = profile or {}
+        xba = float(profile.get("xba") or 0.255)
+        hh = float(profile.get("hard_hit_pct") or 0.375)
+        return f"{pitcher_name} is carrying a .{int(round(xba * 1000)):03d} xBA allowed and {hh * 100:.0f}% hard-hit rate"
+
+    def _weather_tail(self, weather: dict[str, Any]) -> str:
+        wind = float(weather.get("wind_speed_mph", 0.0) or 0.0)
+        stack = float(weather.get("weather_stack_score", 0.0) or 0.0)
+        if wind >= 12 or stack >= 2.0:
+            return f", with weather adding another push ({wind:.0f} mph wind)"
+        return ""
 
     def _fallback_total_probability(self, mean_total: float, line: float) -> float:
         z = (mean_total - line) / 2.0
