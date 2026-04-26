@@ -1,16 +1,16 @@
 {
-  "as_of": "2026-04-26T16:03:38.157192",
+  "as_of": "2026-04-26T16:14:29.024636",
   "date": "2026-04-26",
   "summary": {
-    "tracked_bets": 0,
-    "graded_bets": 0,
-    "wins": 0,
+    "tracked_bets": 3,
+    "graded_bets": 3,
+    "wins": 3,
     "losses": 0,
     "pushes": 0,
-    "units_risked": 0,
-    "units_profit": 0.0,
-    "roi": 0.0,
-    "hit_rate": 0.0,
+    "units_risked": 3.0,
+    "units_profit": 2.8763,
+    "roi": 0.9587666666666667,
+    "hit_rate": 1.0,
     "clv_last_50": null,
     "clv_last_200": null,
     "daily_pick_count": 4,
@@ -2202,8 +2202,8 @@
         "simulated_total": 8.76,
         "simulated_home_runs": 4.45,
         "simulated_away_runs": 4.31,
-        "home_win_prob": 0.5,
-        "away_win_prob": 0.5,
+        "home_win_prob": 0.496,
+        "away_win_prob": 0.504,
         "top_game_picks": [
           {
             "matchup": "Chicago Cubs @ Los Angeles Dodgers",
@@ -2211,9 +2211,9 @@
             "pick": "Under",
             "line": 9.0,
             "american_odds": -112,
-            "model_probability": 0.5401,
+            "model_probability": 0.5436,
             "no_vig_probability": 0.5043,
-            "edge": 0.0358,
+            "edge": 0.0393,
             "tier": "pass",
             "bankroll_fraction": 0.0,
             "top_features": [
@@ -2245,9 +2245,9 @@
             "pick": "Over",
             "line": 9.0,
             "american_odds": -108,
-            "model_probability": 0.4599,
+            "model_probability": 0.4564,
             "no_vig_probability": 0.4957,
-            "edge": -0.0358,
+            "edge": -0.0393,
             "tier": "pass",
             "bankroll_fraction": 0.0,
             "top_features": [
@@ -2279,9 +2279,9 @@
             "pick": "Chicago Cubs",
             "line": 0.0,
             "american_odds": 104,
-            "model_probability": 0.4847,
+            "model_probability": 0.4868,
             "no_vig_probability": 0.4679,
-            "edge": 0.0169,
+            "edge": 0.0189,
             "tier": "pass",
             "bankroll_fraction": 0.0,
             "top_features": [
@@ -2305,7 +2305,7 @@
             "start_time": "4:10 PM ET",
             "lineup_status": "projected",
             "simulation_trials": 10000,
-            "specific_blurb": "Shota Imanaga gives Chicago Cubs the cleaner starter setup, and Seiya Suzuki and Michael Conforto (55/55 matchup scores) carry the best hitter-vs-arsenal edges against Justin Wrobleski; the sim has it 4.3 to 4.5 with a 1.7-point edge"
+            "specific_blurb": "Shota Imanaga gives Chicago Cubs the cleaner starter setup, and Seiya Suzuki and Michael Conforto (55/55 matchup scores) carry the best hitter-vs-arsenal edges against Justin Wrobleski; the sim has it 4.3 to 4.5 with a 1.9-point edge"
           },
           {
             "matchup": "Chicago Cubs @ Los Angeles Dodgers",
@@ -2313,9 +2313,9 @@
             "pick": "Los Angeles Dodgers",
             "line": 0.0,
             "american_odds": -126,
-            "model_probability": 0.5153,
+            "model_probability": 0.5132,
             "no_vig_probability": 0.5321,
-            "edge": -0.0169,
+            "edge": -0.0189,
             "tier": "pass",
             "bankroll_fraction": 0.0,
             "top_features": [
@@ -2339,7 +2339,7 @@
             "start_time": "4:10 PM ET",
             "lineup_status": "projected",
             "simulation_trials": 10000,
-            "specific_blurb": "Justin Wrobleski gives Los Angeles Dodgers the cleaner starter setup, and Dalton Rushing and Max Muncy (64/58 matchup scores) carry the best hitter-vs-arsenal edges against Shota Imanaga; the sim has it 4.5 to 4.3 with a -1.7-point edge"
+            "specific_blurb": "Justin Wrobleski gives Los Angeles Dodgers the cleaner starter setup, and Dalton Rushing and Max Muncy (64/58 matchup scores) carry the best hitter-vs-arsenal edges against Shota Imanaga; the sim has it 4.5 to 4.3 with a -1.9-point edge"
           },
           {
             "matchup": "Chicago Cubs @ Los Angeles Dodgers",
@@ -2347,9 +2347,9 @@
             "pick": "Chicago Cubs",
             "line": 1.5,
             "american_odds": 156,
-            "model_probability": 0.2947,
+            "model_probability": 0.3012,
             "no_vig_probability": 0.3735,
-            "edge": -0.0788,
+            "edge": -0.0723,
             "tier": "pass",
             "bankroll_fraction": 0.0,
             "top_features": [
@@ -2454,14 +2454,14 @@
               "simulation": {
                 "pa": 3.07,
                 "ab": 2.86,
-                "hits": 0.37,
+                "hits": 0.38,
                 "hr": 0.03,
                 "bb": 0.16,
                 "k": 0.56,
-                "rbi": 0.33,
-                "tb": 0.56,
-                "hit_prob": 0.121,
-                "hr_prob": 0.01
+                "rbi": 0.35,
+                "tb": 0.57,
+                "hit_prob": 0.123,
+                "hr_prob": 0.011
               }
             },
             {
@@ -2481,15 +2481,15 @@
               "pitch_profiles": [],
               "pitch_vs_starter": [],
               "simulation": {
-                "pa": 2.84,
+                "pa": 2.83,
                 "ab": 2.64,
-                "hits": 0.35,
+                "hits": 0.34,
                 "hr": 0.03,
-                "bb": 0.16,
-                "k": 0.51,
-                "rbi": 0.37,
-                "tb": 0.53,
-                "hit_prob": 0.125,
+                "bb": 0.15,
+                "k": 0.53,
+                "rbi": 0.35,
+                "tb": 0.51,
+                "hit_prob": 0.122,
                 "hr_prob": 0.011
               }
             },
@@ -2510,15 +2510,15 @@
               "pitch_profiles": [],
               "pitch_vs_starter": [],
               "simulation": {
-                "pa": 3.03,
-                "ab": 2.81,
+                "pa": 3.02,
+                "ab": 2.82,
                 "hits": 0.37,
                 "hr": 0.04,
-                "bb": 0.17,
-                "k": 0.56,
-                "rbi": 0.37,
-                "tb": 0.57,
-                "hit_prob": 0.123,
+                "bb": 0.16,
+                "k": 0.55,
+                "rbi": 0.36,
+                "tb": 0.56,
+                "hit_prob": 0.121,
                 "hr_prob": 0.012
               }
             },
@@ -2541,14 +2541,14 @@
               "simulation": {
                 "pa": 3.23,
                 "ab": 3.01,
-                "hits": 0.38,
+                "hits": 0.39,
                 "hr": 0.04,
-                "bb": 0.17,
-                "k": 0.59,
+                "bb": 0.18,
+                "k": 0.58,
                 "rbi": 0.34,
                 "tb": 0.59,
-                "hit_prob": 0.119,
-                "hr_prob": 0.012
+                "hit_prob": 0.12,
+                "hr_prob": 0.011
               }
             },
             {
@@ -2574,8 +2574,8 @@
                 "hr": 0.03,
                 "bb": 0.13,
                 "k": 0.45,
-                "rbi": 0.35,
-                "tb": 0.46,
+                "rbi": 0.34,
+                "tb": 0.45,
                 "hit_prob": 0.119,
                 "hr_prob": 0.011
               }
@@ -2598,15 +2598,15 @@
               "pitch_vs_starter": [],
               "simulation": {
                 "pa": 3.11,
-                "ab": 2.91,
-                "hits": 0.36,
-                "hr": 0.04,
+                "ab": 2.9,
+                "hits": 0.37,
+                "hr": 0.03,
                 "bb": 0.16,
-                "k": 0.57,
+                "k": 0.56,
                 "rbi": 0.33,
-                "tb": 0.56,
+                "tb": 0.55,
                 "hit_prob": 0.117,
-                "hr_prob": 0.012
+                "hr_prob": 0.011
               }
             },
             {
@@ -2627,11 +2627,11 @@
               "pitch_vs_starter": [],
               "simulation": {
                 "pa": 2.98,
-                "ab": 2.77,
+                "ab": 2.76,
                 "hits": 0.34,
                 "hr": 0.03,
                 "bb": 0.17,
-                "k": 0.55,
+                "k": 0.53,
                 "rbi": 0.35,
                 "tb": 0.52,
                 "hit_prob": 0.115,
@@ -2655,16 +2655,16 @@
               "pitch_profiles": [],
               "pitch_vs_starter": [],
               "simulation": {
-                "pa": 2.64,
-                "ab": 2.46,
-                "hits": 0.31,
+                "pa": 2.63,
+                "ab": 2.45,
+                "hits": 0.3,
                 "hr": 0.03,
                 "bb": 0.14,
-                "k": 0.48,
+                "k": 0.47,
                 "rbi": 0.35,
-                "tb": 0.48,
-                "hit_prob": 0.116,
-                "hr_prob": 0.012
+                "tb": 0.46,
+                "hit_prob": 0.115,
+                "hr_prob": 0.01
               }
             },
             {
@@ -2687,9 +2687,9 @@
                 "pa": 2.31,
                 "ab": 2.16,
                 "hits": 0.26,
-                "hr": 0.03,
+                "hr": 0.02,
                 "bb": 0.12,
-                "k": 0.43,
+                "k": 0.42,
                 "rbi": 0.32,
                 "tb": 0.4,
                 "hit_prob": 0.113,
@@ -2713,16 +2713,16 @@
               "pitch_profiles": [],
               "pitch_vs_starter": [],
               "simulation": {
-                "pa": 2.75,
-                "ab": 2.56,
+                "pa": 2.74,
+                "ab": 2.55,
                 "hits": 0.31,
                 "hr": 0.03,
                 "bb": 0.15,
                 "k": 0.51,
-                "rbi": 0.34,
-                "tb": 0.47,
-                "hit_prob": 0.112,
-                "hr_prob": 0.011
+                "rbi": 0.35,
+                "tb": 0.48,
+                "hit_prob": 0.114,
+                "hr_prob": 0.012
               }
             },
             {
@@ -2742,16 +2742,16 @@
               "pitch_profiles": [],
               "pitch_vs_starter": [],
               "simulation": {
-                "pa": 3.16,
-                "ab": 2.94,
-                "hits": 0.35,
+                "pa": 3.17,
+                "ab": 2.95,
+                "hits": 0.36,
                 "hr": 0.04,
                 "bb": 0.17,
-                "k": 0.58,
-                "rbi": 0.32,
+                "k": 0.59,
+                "rbi": 0.33,
                 "tb": 0.55,
                 "hit_prob": 0.112,
-                "hr_prob": 0.012
+                "hr_prob": 0.011
               }
             },
             {
@@ -2772,14 +2772,14 @@
               "pitch_vs_starter": [],
               "simulation": {
                 "pa": 2.41,
-                "ab": 2.25,
+                "ab": 2.24,
                 "hits": 0.27,
                 "hr": 0.03,
-                "bb": 0.12,
-                "k": 0.44,
-                "rbi": 0.33,
-                "tb": 0.42,
-                "hit_prob": 0.11,
+                "bb": 0.13,
+                "k": 0.43,
+                "rbi": 0.34,
+                "tb": 0.43,
+                "hit_prob": 0.113,
                 "hr_prob": 0.013
               }
             },
@@ -2800,16 +2800,16 @@
               "pitch_profiles": [],
               "pitch_vs_starter": [],
               "simulation": {
-                "pa": 2.92,
+                "pa": 2.91,
                 "ab": 2.72,
                 "hits": 0.32,
                 "hr": 0.03,
-                "bb": 0.16,
+                "bb": 0.15,
                 "k": 0.53,
                 "rbi": 0.35,
-                "tb": 0.49,
+                "tb": 0.5,
                 "hit_prob": 0.109,
-                "hr_prob": 0.011
+                "hr_prob": 0.012
               }
             }
           ]
@@ -2837,14 +2837,14 @@
               "pitch_vs_starter": [],
               "simulation": {
                 "pa": 2.26,
-                "ab": 2.11,
-                "hits": 0.28,
+                "ab": 2.1,
+                "hits": 0.27,
                 "hr": 0.03,
                 "bb": 0.12,
-                "k": 0.41,
-                "rbi": 0.33,
-                "tb": 0.43,
-                "hit_prob": 0.125,
+                "k": 0.4,
+                "rbi": 0.32,
+                "tb": 0.41,
+                "hit_prob": 0.121,
                 "hr_prob": 0.012
               }
             },
@@ -2865,15 +2865,15 @@
               "pitch_profiles": [],
               "pitch_vs_starter": [],
               "simulation": {
-                "pa": 2.89,
+                "pa": 2.88,
                 "ab": 2.69,
                 "hits": 0.35,
                 "hr": 0.03,
-                "bb": 0.16,
-                "k": 0.53,
+                "bb": 0.15,
+                "k": 0.52,
                 "rbi": 0.36,
-                "tb": 0.53,
-                "hit_prob": 0.119,
+                "tb": 0.54,
+                "hit_prob": 0.123,
                 "hr_prob": 0.012
               }
             },
@@ -2894,15 +2894,15 @@
               "pitch_profiles": [],
               "pitch_vs_starter": [],
               "simulation": {
-                "pa": 3.13,
-                "ab": 2.9,
+                "pa": 3.12,
+                "ab": 2.91,
                 "hits": 0.38,
                 "hr": 0.04,
-                "bb": 0.18,
-                "k": 0.57,
+                "bb": 0.17,
+                "k": 0.56,
                 "rbi": 0.34,
                 "tb": 0.58,
-                "hit_prob": 0.122,
+                "hit_prob": 0.123,
                 "hr_prob": 0.012
               }
             },
@@ -2925,13 +2925,13 @@
               "simulation": {
                 "pa": 2.69,
                 "ab": 2.5,
-                "hits": 0.31,
+                "hits": 0.32,
                 "hr": 0.03,
                 "bb": 0.15,
-                "k": 0.48,
-                "rbi": 0.35,
-                "tb": 0.49,
-                "hit_prob": 0.116,
+                "k": 0.49,
+                "rbi": 0.36,
+                "tb": 0.5,
+                "hit_prob": 0.121,
                 "hr_prob": 0.012
               }
             },
@@ -2952,16 +2952,16 @@
               "pitch_profiles": [],
               "pitch_vs_starter": [],
               "simulation": {
-                "pa": 3.09,
+                "pa": 3.08,
                 "ab": 2.87,
                 "hits": 0.36,
-                "hr": 0.03,
+                "hr": 0.04,
                 "bb": 0.17,
                 "k": 0.57,
                 "rbi": 0.33,
-                "tb": 0.54,
-                "hit_prob": 0.115,
-                "hr_prob": 0.011
+                "tb": 0.56,
+                "hit_prob": 0.117,
+                "hr_prob": 0.012
               }
             },
             {
@@ -2981,15 +2981,15 @@
               "pitch_profiles": [],
               "pitch_vs_starter": [],
               "simulation": {
-                "pa": 3.05,
+                "pa": 3.04,
                 "ab": 2.84,
-                "hits": 0.36,
+                "hits": 0.35,
                 "hr": 0.04,
-                "bb": 0.16,
+                "bb": 0.17,
                 "k": 0.55,
-                "rbi": 0.34,
+                "rbi": 0.35,
                 "tb": 0.55,
-                "hit_prob": 0.117,
+                "hit_prob": 0.116,
                 "hr_prob": 0.012
               }
             },
@@ -3010,13 +3010,13 @@
               "pitch_profiles": [],
               "pitch_vs_starter": [],
               "simulation": {
-                "pa": 2.46,
-                "ab": 2.28,
-                "hits": 0.29,
+                "pa": 2.45,
+                "ab": 2.29,
+                "hits": 0.28,
                 "hr": 0.03,
                 "bb": 0.14,
-                "k": 0.44,
-                "rbi": 0.32,
+                "k": 0.45,
+                "rbi": 0.33,
                 "tb": 0.44,
                 "hit_prob": 0.116,
                 "hr_prob": 0.011
@@ -3039,16 +3039,16 @@
               "pitch_profiles": [],
               "pitch_vs_starter": [],
               "simulation": {
-                "pa": 3.01,
-                "ab": 2.8,
-                "hits": 0.34,
+                "pa": 3.0,
+                "ab": 2.79,
+                "hits": 0.35,
                 "hr": 0.03,
                 "bb": 0.17,
-                "k": 0.54,
-                "rbi": 0.34,
-                "tb": 0.53,
-                "hit_prob": 0.114,
-                "hr_prob": 0.012
+                "k": 0.55,
+                "rbi": 0.35,
+                "tb": 0.54,
+                "hit_prob": 0.116,
+                "hr_prob": 0.011
               }
             },
             {
@@ -3068,15 +3068,15 @@
               "pitch_profiles": [],
               "pitch_vs_starter": [],
               "simulation": {
-                "pa": 3.19,
+                "pa": 3.18,
                 "ab": 2.97,
-                "hits": 0.36,
+                "hits": 0.35,
                 "hr": 0.04,
-                "bb": 0.18,
-                "k": 0.59,
-                "rbi": 0.32,
-                "tb": 0.56,
-                "hit_prob": 0.112,
+                "bb": 0.17,
+                "k": 0.58,
+                "rbi": 0.31,
+                "tb": 0.55,
+                "hit_prob": 0.11,
                 "hr_prob": 0.012
               }
             },
@@ -3097,15 +3097,15 @@
               "pitch_profiles": [],
               "pitch_vs_starter": [],
               "simulation": {
-                "pa": 2.8,
-                "ab": 2.61,
-                "hits": 0.31,
+                "pa": 2.79,
+                "ab": 2.6,
+                "hits": 0.3,
                 "hr": 0.03,
                 "bb": 0.15,
-                "k": 0.5,
-                "rbi": 0.34,
-                "tb": 0.48,
-                "hit_prob": 0.111,
+                "k": 0.51,
+                "rbi": 0.33,
+                "tb": 0.47,
+                "hit_prob": 0.109,
                 "hr_prob": 0.011
               }
             },
@@ -3126,15 +3126,15 @@
               "pitch_profiles": [],
               "pitch_vs_starter": [],
               "simulation": {
-                "pa": 2.96,
-                "ab": 2.76,
-                "hits": 0.31,
-                "hr": 0.03,
+                "pa": 2.95,
+                "ab": 2.75,
+                "hits": 0.32,
+                "hr": 0.04,
                 "bb": 0.16,
-                "k": 0.55,
+                "k": 0.52,
                 "rbi": 0.33,
-                "tb": 0.49,
-                "hit_prob": 0.105,
+                "tb": 0.5,
+                "hit_prob": 0.108,
                 "hr_prob": 0.012
               }
             },
@@ -3155,16 +3155,16 @@
               "pitch_profiles": [],
               "pitch_vs_starter": [],
               "simulation": {
-                "pa": 2.35,
-                "ab": 2.19,
+                "pa": 2.34,
+                "ab": 2.18,
                 "hits": 0.25,
                 "hr": 0.03,
                 "bb": 0.13,
-                "k": 0.43,
-                "rbi": 0.3,
-                "tb": 0.39,
+                "k": 0.42,
+                "rbi": 0.29,
+                "tb": 0.38,
                 "hit_prob": 0.106,
-                "hr_prob": 0.012
+                "hr_prob": 0.011
               }
             },
             {
@@ -3184,15 +3184,15 @@
               "pitch_profiles": [],
               "pitch_vs_starter": [],
               "simulation": {
-                "pa": 2.58,
+                "pa": 2.57,
                 "ab": 2.4,
-                "hits": 0.25,
+                "hits": 0.26,
                 "hr": 0.03,
-                "bb": 0.15,
+                "bb": 0.14,
                 "k": 0.48,
                 "rbi": 0.31,
                 "tb": 0.41,
-                "hit_prob": 0.099,
+                "hit_prob": 0.101,
                 "hr_prob": 0.012
               }
             }
@@ -6244,22 +6244,22 @@
       {
         "matchup": "Los Angeles Angels @ Kansas City Royals",
         "venue": "Kauffman Stadium",
-        "start_time": "7:20 PM ET",
+        "start_time": "4:10 PM ET",
         "lineup_status": "projected",
-        "weather_stack_score": 2.45,
+        "weather_stack_score": 2.31,
         "weather": {
-          "temperature_f": 22.6,
-          "wind_speed_mph": 15.1,
-          "wind_direction": 310,
-          "humidity": 60,
+          "temperature_f": 26.4,
+          "wind_speed_mph": 25.6,
+          "wind_direction": 151,
+          "humidity": 46,
           "weather_missing": false
         },
         "projected_total": 8.3,
         "simulated_total": 8.3,
         "simulated_home_runs": 4.16,
         "simulated_away_runs": 4.14,
-        "home_win_prob": 0.465,
-        "away_win_prob": 0.535,
+        "home_win_prob": 0.544,
+        "away_win_prob": 0.456,
         "top_game_picks": [
           {
             "matchup": "Los Angeles Angels @ Kansas City Royals",
@@ -6267,11 +6267,11 @@
             "pick": "Under",
             "line": 8.5,
             "american_odds": -105,
-            "model_probability": 0.5352,
+            "model_probability": 0.5279,
             "no_vig_probability": 0.4892,
-            "edge": 0.046,
-            "tier": "monitor",
-            "bankroll_fraction": 0.01,
+            "edge": 0.0388,
+            "tier": "pass",
+            "bankroll_fraction": 0.0,
             "top_features": [
               {
                 "feature": "Simulated total",
@@ -6280,7 +6280,7 @@
               },
               {
                 "feature": "Weather stack",
-                "value": 2.45,
+                "value": 2.31,
                 "direction": "up"
               },
               {
@@ -6289,11 +6289,11 @@
                 "direction": "up"
               }
             ],
-            "weather_stack_score": 2.45,
-            "start_time": "7:20 PM ET",
+            "weather_stack_score": 2.31,
+            "start_time": "4:10 PM ET",
             "lineup_status": "projected",
             "simulation_trials": 10000,
-            "specific_blurb": "Reid Detmers and Seth Lugo project to keep quality contact down early, and the softest batter matchups on the board are Starling Marte and Michael Massey (37/39 matchup scores) / Bryce Teodosio and Josh Lowe (27/34 matchup scores); the sim sits at 8.3 against 8.5, with weather adding another push (15 mph wind)"
+            "specific_blurb": "Reid Detmers and Seth Lugo project to keep quality contact down early, and the softest batter matchups on the board are Starling Marte and Michael Massey (37/39 matchup scores) / Bryce Teodosio and Josh Lowe (27/34 matchup scores); the sim sits at 8.3 against 8.5, with weather adding another push (26 mph wind)"
           },
           {
             "matchup": "Los Angeles Angels @ Kansas City Royals",
@@ -6301,9 +6301,9 @@
             "pick": "Over",
             "line": 8.5,
             "american_odds": -115,
-            "model_probability": 0.4648,
+            "model_probability": 0.4721,
             "no_vig_probability": 0.5108,
-            "edge": -0.046,
+            "edge": -0.0388,
             "tier": "pass",
             "bankroll_fraction": 0.0,
             "top_features": [
@@ -6314,7 +6314,7 @@
               },
               {
                 "feature": "Weather stack",
-                "value": 2.45,
+                "value": 2.31,
                 "direction": "up"
               },
               {
@@ -6323,45 +6323,11 @@
                 "direction": "up"
               }
             ],
-            "weather_stack_score": 2.45,
-            "start_time": "7:20 PM ET",
+            "weather_stack_score": 2.31,
+            "start_time": "4:10 PM ET",
             "lineup_status": "projected",
             "simulation_trials": 10000,
-            "specific_blurb": "Bobby Witt Jr. and Nick Loftin (52/51 matchup scores) profile best into Reid Detmers's pitch mix for Kansas City Royals, and Reid Detmers is carrying a .255 xBA allowed and 38% hard-hit rate; the sim lands at 8.3 runs versus 8.5, with weather adding another push (15 mph wind)"
-          },
-          {
-            "matchup": "Los Angeles Angels @ Kansas City Royals",
-            "market_type": "moneyline",
-            "pick": "Los Angeles Angels",
-            "line": 0.0,
-            "american_odds": 102,
-            "model_probability": 0.5055,
-            "no_vig_probability": 0.4739,
-            "edge": 0.0316,
-            "tier": "pass",
-            "bankroll_fraction": 0.0,
-            "top_features": [
-              {
-                "feature": "Simulated total",
-                "value": 8.3,
-                "direction": "up"
-              },
-              {
-                "feature": "Weather stack",
-                "value": 2.45,
-                "direction": "up"
-              },
-              {
-                "feature": "Pitcher vulnerability",
-                "value": 28.43,
-                "direction": "up"
-              }
-            ],
-            "weather_stack_score": 2.45,
-            "start_time": "7:20 PM ET",
-            "lineup_status": "projected",
-            "simulation_trials": 10000,
-            "specific_blurb": "Reid Detmers gives Los Angeles Angels the cleaner starter setup, and Mike Trout and Vaughn Grissom (64/49 matchup scores) carry the best hitter-vs-arsenal edges against Seth Lugo; the sim has it 4.1 to 4.2 with a 3.2-point edge"
+            "specific_blurb": "Bobby Witt Jr. and Nick Loftin (52/51 matchup scores) profile best into Reid Detmers's pitch mix for Kansas City Royals, and Reid Detmers is carrying a .255 xBA allowed and 38% hard-hit rate; the sim lands at 8.3 runs versus 8.5, with weather adding another push (26 mph wind)"
           },
           {
             "matchup": "Los Angeles Angels @ Kansas City Royals",
@@ -6369,9 +6335,9 @@
             "pick": "Kansas City Royals",
             "line": 0.0,
             "american_odds": -122,
-            "model_probability": 0.4945,
+            "model_probability": 0.5353,
             "no_vig_probability": 0.5261,
-            "edge": -0.0316,
+            "edge": 0.0092,
             "tier": "pass",
             "bankroll_fraction": 0.0,
             "top_features": [
@@ -6382,7 +6348,7 @@
               },
               {
                 "feature": "Weather stack",
-                "value": 2.45,
+                "value": 2.31,
                 "direction": "up"
               },
               {
@@ -6391,11 +6357,45 @@
                 "direction": "up"
               }
             ],
-            "weather_stack_score": 2.45,
-            "start_time": "7:20 PM ET",
+            "weather_stack_score": 2.31,
+            "start_time": "4:10 PM ET",
             "lineup_status": "projected",
             "simulation_trials": 10000,
-            "specific_blurb": "Seth Lugo gives Kansas City Royals the cleaner starter setup, and Bobby Witt Jr. and Nick Loftin (52/51 matchup scores) carry the best hitter-vs-arsenal edges against Reid Detmers; the sim has it 4.2 to 4.1 with a -3.2-point edge"
+            "specific_blurb": "Seth Lugo gives Kansas City Royals the cleaner starter setup, and Bobby Witt Jr. and Nick Loftin (52/51 matchup scores) carry the best hitter-vs-arsenal edges against Reid Detmers; the sim has it 4.2 to 4.1 with a 0.9-point edge"
+          },
+          {
+            "matchup": "Los Angeles Angels @ Kansas City Royals",
+            "market_type": "moneyline",
+            "pick": "Los Angeles Angels",
+            "line": 0.0,
+            "american_odds": 102,
+            "model_probability": 0.4647,
+            "no_vig_probability": 0.4739,
+            "edge": -0.0092,
+            "tier": "pass",
+            "bankroll_fraction": 0.0,
+            "top_features": [
+              {
+                "feature": "Simulated total",
+                "value": 8.3,
+                "direction": "up"
+              },
+              {
+                "feature": "Weather stack",
+                "value": 2.31,
+                "direction": "up"
+              },
+              {
+                "feature": "Pitcher vulnerability",
+                "value": 28.43,
+                "direction": "up"
+              }
+            ],
+            "weather_stack_score": 2.31,
+            "start_time": "4:10 PM ET",
+            "lineup_status": "projected",
+            "simulation_trials": 10000,
+            "specific_blurb": "Reid Detmers gives Los Angeles Angels the cleaner starter setup, and Mike Trout and Vaughn Grissom (64/49 matchup scores) carry the best hitter-vs-arsenal edges against Seth Lugo; the sim has it 4.1 to 4.2 with a -0.9-point edge"
           },
           {
             "matchup": "Los Angeles Angels @ Kansas City Royals",
@@ -6403,9 +6403,9 @@
             "pick": "Los Angeles Angels",
             "line": 1.5,
             "american_odds": 160,
-            "model_probability": 0.2987,
+            "model_probability": 0.3015,
             "no_vig_probability": 0.3678,
-            "edge": -0.0692,
+            "edge": -0.0664,
             "tier": "pass",
             "bankroll_fraction": 0.0,
             "top_features": [
@@ -6416,7 +6416,7 @@
               },
               {
                 "feature": "Weather stack",
-                "value": 2.45,
+                "value": 2.31,
                 "direction": "up"
               },
               {
@@ -6425,8 +6425,8 @@
                 "direction": "up"
               }
             ],
-            "weather_stack_score": 2.45,
-            "start_time": "7:20 PM ET",
+            "weather_stack_score": 2.31,
+            "start_time": "4:10 PM ET",
             "lineup_status": "projected",
             "simulation_trials": 10000,
             "specific_blurb": "Mike Trout and Vaughn Grissom (64/49 matchup scores) give Los Angeles Angels the strongest matchup cluster in this game, and the sim creates about a 0.0-run gap on average"
@@ -6510,13 +6510,13 @@
               "simulation": {
                 "pa": 3.13,
                 "ab": 2.92,
-                "hits": 0.37,
+                "hits": 0.38,
                 "hr": 0.04,
                 "bb": 0.18,
                 "k": 0.57,
                 "rbi": 0.32,
-                "tb": 0.57,
-                "hit_prob": 0.119,
+                "tb": 0.59,
+                "hit_prob": 0.121,
                 "hr_prob": 0.012
               }
             },
@@ -6539,13 +6539,13 @@
               "simulation": {
                 "pa": 2.5,
                 "ab": 2.33,
-                "hits": 0.3,
+                "hits": 0.29,
                 "hr": 0.03,
                 "bb": 0.14,
-                "k": 0.44,
-                "rbi": 0.33,
-                "tb": 0.46,
-                "hit_prob": 0.119,
+                "k": 0.46,
+                "rbi": 0.32,
+                "tb": 0.45,
+                "hit_prob": 0.118,
                 "hr_prob": 0.012
               }
             },
@@ -6567,14 +6567,14 @@
               "pitch_vs_starter": [],
               "simulation": {
                 "pa": 3.09,
-                "ab": 2.87,
+                "ab": 2.88,
                 "hits": 0.36,
                 "hr": 0.04,
-                "bb": 0.18,
+                "bb": 0.17,
                 "k": 0.57,
                 "rbi": 0.32,
                 "tb": 0.56,
-                "hit_prob": 0.116,
+                "hit_prob": 0.118,
                 "hr_prob": 0.012
               }
             },
@@ -6596,15 +6596,15 @@
               "pitch_vs_starter": [],
               "simulation": {
                 "pa": 2.98,
-                "ab": 2.78,
-                "hits": 0.35,
+                "ab": 2.77,
+                "hits": 0.34,
                 "hr": 0.04,
-                "bb": 0.16,
-                "k": 0.56,
+                "bb": 0.17,
+                "k": 0.55,
                 "rbi": 0.34,
                 "tb": 0.54,
-                "hit_prob": 0.116,
-                "hr_prob": 0.012
+                "hit_prob": 0.114,
+                "hr_prob": 0.013
               }
             },
             {
@@ -6624,8 +6624,8 @@
               "pitch_profiles": [],
               "pitch_vs_starter": [],
               "simulation": {
-                "pa": 2.73,
-                "ab": 2.55,
+                "pa": 2.74,
+                "ab": 2.56,
                 "hits": 0.32,
                 "hr": 0.04,
                 "bb": 0.15,
@@ -6654,15 +6654,15 @@
               "pitch_vs_starter": [],
               "simulation": {
                 "pa": 2.84,
-                "ab": 2.65,
-                "hits": 0.31,
-                "hr": 0.03,
+                "ab": 2.64,
+                "hits": 0.32,
+                "hr": 0.04,
                 "bb": 0.16,
-                "k": 0.52,
-                "rbi": 0.33,
-                "tb": 0.49,
-                "hit_prob": 0.111,
-                "hr_prob": 0.012
+                "k": 0.51,
+                "rbi": 0.34,
+                "tb": 0.51,
+                "hit_prob": 0.113,
+                "hr_prob": 0.013
               }
             },
             {
@@ -6683,14 +6683,14 @@
               "pitch_vs_starter": [],
               "simulation": {
                 "pa": 2.92,
-                "ab": 2.71,
+                "ab": 2.73,
                 "hits": 0.33,
                 "hr": 0.04,
-                "bb": 0.17,
+                "bb": 0.16,
                 "k": 0.53,
                 "rbi": 0.34,
                 "tb": 0.52,
-                "hit_prob": 0.113,
+                "hit_prob": 0.114,
                 "hr_prob": 0.013
               }
             },
@@ -6712,15 +6712,15 @@
               "pitch_vs_starter": [],
               "simulation": {
                 "pa": 3.05,
-                "ab": 2.84,
+                "ab": 2.85,
                 "hits": 0.34,
                 "hr": 0.04,
-                "bb": 0.18,
-                "k": 0.55,
+                "bb": 0.17,
+                "k": 0.56,
                 "rbi": 0.32,
                 "tb": 0.54,
-                "hit_prob": 0.112,
-                "hr_prob": 0.012
+                "hit_prob": 0.113,
+                "hr_prob": 0.013
               }
             },
             {
@@ -6741,14 +6741,14 @@
               "pitch_vs_starter": [],
               "simulation": {
                 "pa": 2.2,
-                "ab": 2.06,
-                "hits": 0.25,
+                "ab": 2.05,
+                "hits": 0.24,
                 "hr": 0.03,
                 "bb": 0.12,
-                "k": 0.39,
-                "rbi": 0.3,
-                "tb": 0.39,
-                "hit_prob": 0.113,
+                "k": 0.4,
+                "rbi": 0.29,
+                "tb": 0.37,
+                "hit_prob": 0.109,
                 "hr_prob": 0.012
               }
             },
@@ -6774,10 +6774,10 @@
                 "hits": 0.26,
                 "hr": 0.03,
                 "bb": 0.13,
-                "k": 0.43,
+                "k": 0.44,
                 "rbi": 0.3,
-                "tb": 0.41,
-                "hit_prob": 0.109,
+                "tb": 0.4,
+                "hit_prob": 0.107,
                 "hr_prob": 0.012
               }
             },
@@ -6800,13 +6800,13 @@
               "simulation": {
                 "pa": 3.02,
                 "ab": 2.81,
-                "hits": 0.33,
+                "hits": 0.32,
                 "hr": 0.04,
                 "bb": 0.17,
-                "k": 0.54,
-                "rbi": 0.33,
+                "k": 0.55,
+                "rbi": 0.32,
                 "tb": 0.52,
-                "hit_prob": 0.109,
+                "hit_prob": 0.107,
                 "hr_prob": 0.013
               }
             },
@@ -6827,13 +6827,13 @@
               "pitch_profiles": [],
               "pitch_vs_starter": [],
               "simulation": {
-                "pa": 2.62,
+                "pa": 2.63,
                 "ab": 2.44,
                 "hits": 0.28,
                 "hr": 0.03,
-                "bb": 0.14,
-                "k": 0.47,
-                "rbi": 0.31,
+                "bb": 0.15,
+                "k": 0.48,
+                "rbi": 0.32,
                 "tb": 0.44,
                 "hit_prob": 0.107,
                 "hr_prob": 0.012
@@ -6857,15 +6857,15 @@
               "pitch_vs_starter": [],
               "simulation": {
                 "pa": 2.28,
-                "ab": 2.13,
+                "ab": 2.12,
                 "hits": 0.24,
                 "hr": 0.03,
-                "bb": 0.12,
-                "k": 0.41,
-                "rbi": 0.29,
-                "tb": 0.38,
-                "hit_prob": 0.104,
-                "hr_prob": 0.013
+                "bb": 0.13,
+                "k": 0.42,
+                "rbi": 0.3,
+                "tb": 0.39,
+                "hit_prob": 0.107,
+                "hr_prob": 0.012
               }
             }
           ]
@@ -6892,16 +6892,16 @@
               "pitch_profiles": [],
               "pitch_vs_starter": [],
               "simulation": {
-                "pa": 2.83,
-                "ab": 2.64,
+                "pa": 2.84,
+                "ab": 2.65,
                 "hits": 0.37,
-                "hr": 0.03,
+                "hr": 0.04,
                 "bb": 0.16,
                 "k": 0.52,
-                "rbi": 0.35,
-                "tb": 0.55,
-                "hit_prob": 0.13,
-                "hr_prob": 0.011
+                "rbi": 0.36,
+                "tb": 0.56,
+                "hit_prob": 0.129,
+                "hr_prob": 0.012
               }
             },
             {
@@ -6927,9 +6927,9 @@
                 "hr": 0.03,
                 "bb": 0.13,
                 "k": 0.43,
-                "rbi": 0.32,
+                "rbi": 0.33,
                 "tb": 0.44,
-                "hit_prob": 0.118,
+                "hit_prob": 0.117,
                 "hr_prob": 0.013
               }
             },
@@ -6952,13 +6952,13 @@
               "simulation": {
                 "pa": 2.62,
                 "ab": 2.44,
-                "hits": 0.31,
+                "hits": 0.3,
                 "hr": 0.03,
-                "bb": 0.14,
-                "k": 0.46,
-                "rbi": 0.34,
-                "tb": 0.48,
-                "hit_prob": 0.119,
+                "bb": 0.15,
+                "k": 0.48,
+                "rbi": 0.33,
+                "tb": 0.46,
+                "hit_prob": 0.114,
                 "hr_prob": 0.012
               }
             },
@@ -6979,16 +6979,16 @@
               "pitch_profiles": [],
               "pitch_vs_starter": [],
               "simulation": {
-                "pa": 2.49,
+                "pa": 2.5,
                 "ab": 2.33,
-                "hits": 0.29,
+                "hits": 0.28,
                 "hr": 0.03,
-                "bb": 0.13,
-                "k": 0.46,
-                "rbi": 0.32,
+                "bb": 0.14,
+                "k": 0.45,
+                "rbi": 0.33,
                 "tb": 0.45,
-                "hit_prob": 0.115,
-                "hr_prob": 0.012
+                "hit_prob": 0.113,
+                "hr_prob": 0.013
               }
             },
             {
@@ -7008,15 +7008,15 @@
               "pitch_profiles": [],
               "pitch_vs_starter": [],
               "simulation": {
-                "pa": 2.19,
-                "ab": 2.05,
+                "pa": 2.2,
+                "ab": 2.06,
                 "hits": 0.25,
                 "hr": 0.03,
                 "bb": 0.12,
-                "k": 0.4,
-                "rbi": 0.3,
+                "k": 0.41,
+                "rbi": 0.31,
                 "tb": 0.39,
-                "hit_prob": 0.115,
+                "hit_prob": 0.114,
                 "hr_prob": 0.012
               }
             },
@@ -7038,15 +7038,15 @@
               "pitch_vs_starter": [],
               "simulation": {
                 "pa": 3.05,
-                "ab": 2.84,
+                "ab": 2.85,
                 "hits": 0.35,
                 "hr": 0.04,
                 "bb": 0.17,
                 "k": 0.56,
-                "rbi": 0.32,
+                "rbi": 0.31,
                 "tb": 0.54,
                 "hit_prob": 0.114,
-                "hr_prob": 0.013
+                "hr_prob": 0.012
               }
             },
             {
@@ -7067,15 +7067,15 @@
               "pitch_vs_starter": [],
               "simulation": {
                 "pa": 3.02,
-                "ab": 2.81,
+                "ab": 2.8,
                 "hits": 0.34,
                 "hr": 0.04,
                 "bb": 0.17,
-                "k": 0.56,
-                "rbi": 0.33,
-                "tb": 0.54,
-                "hit_prob": 0.113,
-                "hr_prob": 0.013
+                "k": 0.55,
+                "rbi": 0.32,
+                "tb": 0.53,
+                "hit_prob": 0.112,
+                "hr_prob": 0.012
               }
             },
             {
@@ -7096,15 +7096,15 @@
               "pitch_vs_starter": [],
               "simulation": {
                 "pa": 2.28,
-                "ab": 2.13,
+                "ab": 2.12,
                 "hits": 0.25,
                 "hr": 0.03,
-                "bb": 0.12,
+                "bb": 0.13,
                 "k": 0.41,
                 "rbi": 0.3,
-                "tb": 0.4,
+                "tb": 0.39,
                 "hit_prob": 0.11,
-                "hr_prob": 0.013
+                "hr_prob": 0.012
               }
             },
             {
@@ -7124,15 +7124,15 @@
               "pitch_profiles": [],
               "pitch_vs_starter": [],
               "simulation": {
-                "pa": 2.91,
-                "ab": 2.71,
-                "hits": 0.32,
+                "pa": 2.92,
+                "ab": 2.72,
+                "hits": 0.31,
                 "hr": 0.04,
                 "bb": 0.17,
-                "k": 0.53,
-                "rbi": 0.33,
-                "tb": 0.5,
-                "hit_prob": 0.11,
+                "k": 0.54,
+                "rbi": 0.32,
+                "tb": 0.49,
+                "hit_prob": 0.106,
                 "hr_prob": 0.012
               }
             },
@@ -7153,15 +7153,15 @@
               "pitch_profiles": [],
               "pitch_vs_starter": [],
               "simulation": {
-                "pa": 2.73,
-                "ab": 2.54,
+                "pa": 2.74,
+                "ab": 2.55,
                 "hits": 0.3,
                 "hr": 0.03,
-                "bb": 0.16,
+                "bb": 0.15,
                 "k": 0.49,
                 "rbi": 0.32,
-                "tb": 0.46,
-                "hit_prob": 0.109,
+                "tb": 0.47,
+                "hit_prob": 0.108,
                 "hr_prob": 0.012
               }
             },
@@ -7182,16 +7182,16 @@
               "pitch_profiles": [],
               "pitch_vs_starter": [],
               "simulation": {
-                "pa": 3.13,
-                "ab": 2.92,
+                "pa": 3.14,
+                "ab": 2.93,
                 "hits": 0.33,
                 "hr": 0.04,
-                "bb": 0.17,
-                "k": 0.58,
-                "rbi": 0.29,
-                "tb": 0.52,
-                "hit_prob": 0.105,
-                "hr_prob": 0.012
+                "bb": 0.18,
+                "k": 0.57,
+                "rbi": 0.3,
+                "tb": 0.54,
+                "hit_prob": 0.107,
+                "hr_prob": 0.013
               }
             },
             {
@@ -7211,7 +7211,7 @@
               "pitch_profiles": [],
               "pitch_vs_starter": [],
               "simulation": {
-                "pa": 2.97,
+                "pa": 2.98,
                 "ab": 2.77,
                 "hits": 0.31,
                 "hr": 0.04,
@@ -7219,8 +7219,8 @@
                 "k": 0.55,
                 "rbi": 0.32,
                 "tb": 0.5,
-                "hit_prob": 0.106,
-                "hr_prob": 0.012
+                "hit_prob": 0.105,
+                "hr_prob": 0.013
               }
             },
             {
@@ -7241,14 +7241,14 @@
               "pitch_vs_starter": [],
               "simulation": {
                 "pa": 3.09,
-                "ab": 2.87,
-                "hits": 0.33,
+                "ab": 2.88,
+                "hits": 0.32,
                 "hr": 0.04,
-                "bb": 0.18,
-                "k": 0.57,
+                "bb": 0.17,
+                "k": 0.58,
                 "rbi": 0.3,
-                "tb": 0.53,
-                "hit_prob": 0.107,
+                "tb": 0.52,
+                "hit_prob": 0.105,
                 "hr_prob": 0.013
               }
             }
@@ -15421,14 +15421,72 @@
         "reason": "lineups not confirmed"
       },
       {
-        "matchup": "Chicago Cubs @ Los Angeles Dodgers",
+        "matchup": "Los Angeles Angels @ Kansas City Royals",
         "reason": "lineups not confirmed"
       },
       {
-        "matchup": "Los Angeles Angels @ Kansas City Royals",
+        "matchup": "Chicago Cubs @ Los Angeles Dodgers",
         "reason": "lineups not confirmed"
       }
     ]
   },
-  "history": []
+  "history": [
+    {
+      "date": "2026-04-25",
+      "matchup": "Colorado Rockies @ New York Mets",
+      "market_type": "game_total",
+      "pick": "Over",
+      "line": 8.0,
+      "american_odds": -105,
+      "edge": 0.0664,
+      "tier": "moderate",
+      "result": "no_result",
+      "pnl": 0.0
+    },
+    {
+      "date": "2026-04-25",
+      "matchup": "Philadelphia Phillies @ Atlanta Braves",
+      "market_type": "moneyline",
+      "pick": "Philadelphia Phillies",
+      "line": 0.0,
+      "american_odds": 109,
+      "edge": 0.0738,
+      "tier": "moderate",
+      "result": "win",
+      "pnl": 109.0,
+      "away_score": 8,
+      "home_score": 5,
+      "final_total": 13
+    },
+    {
+      "date": "2026-04-25",
+      "matchup": "Seattle Mariners @ St. Louis Cardinals",
+      "market_type": "game_total",
+      "pick": "Over",
+      "line": 7.5,
+      "american_odds": -110,
+      "edge": 0.0767,
+      "tier": "moderate",
+      "result": "win",
+      "pnl": 90.91,
+      "away_score": 11,
+      "home_score": 9,
+      "final_total": 20
+    },
+    {
+      "date": "2026-04-25",
+      "matchup": "San Diego Padres @ Arizona Diamondbacks",
+      "market_type": "game_total",
+      "pick": "Under",
+      "line": 15.5,
+      "american_odds": -114,
+      "edge": 0.1521,
+      "tier": "strong",
+      "result": "win",
+      "pnl": 87.72,
+      "away_score": 6,
+      "home_score": 4,
+      "final_total": 10
+    }
+  ]
 }

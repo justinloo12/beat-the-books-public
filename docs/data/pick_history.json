@@ -1,0 +1,59 @@
+[
+  {
+    "date": "2026-04-25",
+    "matchup": "San Diego Padres @ Arizona Diamondbacks",
+    "market_type": "game_total",
+    "pick": "Under",
+    "line": 15.5,
+    "american_odds": -114,
+    "edge": 0.1521,
+    "tier": "strong",
+    "result": "win",
+    "pnl": 87.72,
+    "away_score": 6,
+    "home_score": 4,
+    "final_total": 10
+  },
+  {
+    "date": "2026-04-25",
+    "matchup": "Seattle Mariners @ St. Louis Cardinals",
+    "market_type": "game_total",
+    "pick": "Over",
+    "line": 7.5,
+    "american_odds": -110,
+    "edge": 0.0767,
+    "tier": "moderate",
+    "result": "win",
+    "pnl": 90.91,
+    "away_score": 11,
+    "home_score": 9,
+    "final_total": 20
+  },
+  {
+    "date": "2026-04-25",
+    "matchup": "Philadelphia Phillies @ Atlanta Braves",
+    "market_type": "moneyline",
+    "pick": "Philadelphia Phillies",
+    "line": 0.0,
+    "american_odds": 109,
+    "edge": 0.0738,
+    "tier": "moderate",
+    "result": "win",
+    "pnl": 109.0,
+    "away_score": 8,
+    "home_score": 5,
+    "final_total": 13
+  },
+  {
+    "date": "2026-04-25",
+    "matchup": "Colorado Rockies @ New York Mets",
+    "market_type": "game_total",
+    "pick": "Over",
+    "line": 8.0,
+    "american_odds": -105,
+    "edge": 0.0664,
+    "tier": "moderate",
+    "result": "no_result",
+    "pnl": 0.0
+  }
+]

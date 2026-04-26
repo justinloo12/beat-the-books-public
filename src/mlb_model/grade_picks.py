@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import ssl
 import urllib.request
 from datetime import date, timedelta
 from pathlib import Path
@@ -46,7 +47,8 @@ def _fetch_results(game_date: date) -> list[dict]:
         url,
         headers={"User-Agent": "Mozilla/5.0 (beat-the-books/1.0)"},
     )
-    with urllib.request.urlopen(req, timeout=30) as resp:
+    context = ssl._create_unverified_context()
+    with urllib.request.urlopen(req, context=context, timeout=30) as resp:
         data = json.loads(resp.read())
 
     games: list[dict] = []

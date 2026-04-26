@@ -20,6 +20,29 @@ def _load_pick_history() -> list[dict]:
     return []
 
 
+def _history_summary(entries: list[dict]) -> dict:
+    graded = [e for e in entries if e.get("result") in {"win", "loss", "push"}]
+    wins = sum(1 for e in graded if e.get("result") == "win")
+    losses = sum(1 for e in graded if e.get("result") == "loss")
+    pushes = sum(1 for e in graded if e.get("result") == "push")
+    units_risked = float(len(graded))
+    units_profit = round(sum(float(e.get("pnl", 0.0)) / 100.0 for e in graded), 4)
+    tracked = len(graded)
+    hit_rate = (wins / tracked) if tracked else 0.0
+    roi = (units_profit / units_risked) if units_risked else 0.0
+    return {
+        "tracked_bets": tracked,
+        "graded_bets": tracked,
+        "wins": wins,
+        "losses": losses,
+        "pushes": pushes,
+        "units_risked": units_risked,
+        "units_profit": units_profit,
+        "roi": roi,
+        "hit_rate": hit_rate,
+    }
+
+
 async def main() -> None:
     parser = argparse.ArgumentParser(description="Export a static site snapshot for GitHub Pages.")
     parser.add_argument("--date", default=date.today().isoformat())
@@ -33,6 +56,7 @@ async def main() -> None:
     graded_history = _load_pick_history()
     if graded_history:
         payload["history"] = list(reversed(graded_history))
+        payload["summary"].update(_history_summary(graded_history))
 
     docs_data = Path(__file__).resolve().parents[2] / "docs" / "data"
     docs_data.mkdir(parents=True, exist_ok=True)
