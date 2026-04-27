@@ -164,6 +164,7 @@ async def download_savant_leaderboards(seasons: list[int]) -> DownloadSummary:
     from pybaseball import (
         batting_stats_bref,
         pitching_stats_bref,
+        statcast_batter_exitvelo_barrels,
         statcast_batter_expected_stats,
         statcast_batter_percentile_ranks,
         statcast_pitcher_arsenal_stats,
@@ -183,6 +184,7 @@ async def download_savant_leaderboards(seasons: list[int]) -> DownloadSummary:
             f"statcast_pitcher_exitvelo_barrels_{season}.csv": lambda season=season: statcast_pitcher_exitvelo_barrels(season, minBBE=0),
             f"statcast_pitcher_arsenal_stats_{season}.csv": lambda season=season: statcast_pitcher_arsenal_stats(season, minPA=0),
             f"statcast_batter_expected_stats_{season}.csv": lambda season=season: statcast_batter_expected_stats(season, minPA=0),
+            f"statcast_batter_exitvelo_barrels_{season}.csv": lambda season=season: statcast_batter_exitvelo_barrels(season, minBBE=0),
             f"statcast_batter_percentile_ranks_{season}.csv": lambda season=season: statcast_batter_percentile_ranks(season),
             f"pitching_stats_bref_{season}.csv": lambda season=season: pitching_stats_bref(season),
             f"batting_stats_bref_{season}.csv": lambda season=season: batting_stats_bref(season),

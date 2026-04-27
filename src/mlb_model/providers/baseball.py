@@ -129,6 +129,27 @@ class BaseballSavantProvider:
             return pd.DataFrame()
         return pd.read_csv(path, low_memory=False)
 
+    @lru_cache(maxsize=6)
+    def _load_pitcher_expected_stats(self, season: int) -> pd.DataFrame:
+        path = self.data_dir / f"statcast_pitcher_expected_stats_{season}.csv"
+        if not path.exists():
+            return pd.DataFrame()
+        return pd.read_csv(path, low_memory=False)
+
+    @lru_cache(maxsize=6)
+    def _load_pitcher_exitvelo_barrels(self, season: int) -> pd.DataFrame:
+        path = self.data_dir / f"statcast_pitcher_exitvelo_barrels_{season}.csv"
+        if not path.exists():
+            return pd.DataFrame()
+        return pd.read_csv(path, low_memory=False)
+
+    @lru_cache(maxsize=6)
+    def _load_batter_exitvelo_barrels(self, season: int) -> pd.DataFrame:
+        path = self.data_dir / f"statcast_batter_exitvelo_barrels_{season}.csv"
+        if not path.exists():
+            return pd.DataFrame()
+        return pd.read_csv(path, low_memory=False)
+
     def _pitch_quality_score(self, rv100: float, whiff_pct: float, est_woba: float) -> int:
         """Compute a Stuff+ proxy (60–170 scale, 100 = average) from outcome metrics."""
         score = (
@@ -198,6 +219,132 @@ class BaseballSavantProvider:
             return 0.0
         return float(numeric)
 
+    def _season_candidates(self, season: int | None) -> list[int]:
+        current = season or date.today().year
+        candidates: list[int] = [current]
+        if current - 1 >= 2020:
+            candidates.append(current - 1)
+        return candidates
+
+    def _leaderboard_profile_default(self, pitcher_id: int) -> dict[str, Any]:
+        return {
+            "pitcher_id": pitcher_id,
+            "sample_pitches": 0,
+            "sample_bbe": 0,
+            "handedness": None,
+            "arm_angle": 45.0,
+            "extension": 6.0,
+            "xba": None,
+            "hard_hit_pct": None,
+            "barrel_pct": None,
+            "ev50": None,
+            "weighted_run_value": 0.0,
+            "weighted_k_pct": None,
+            "weighted_bb_pct": None,
+            "movement_score": 0.0,
+            "stuff_plus": None,
+            "k_pct": None,
+            "bb_pct": None,
+            "recent_xba": None,
+            "recent_hard_hit_pct": None,
+            "recent_barrel_pct": None,
+            "recent_ev50": None,
+            "recent_k_pct": None,
+            "recent_bb_pct": None,
+            "pitch_arsenal": [],
+        }
+
+    def _pitcher_profile_from_leaderboards(self, pitcher_id: int, season: int | None) -> dict[str, Any]:
+        expected_df = pd.DataFrame()
+        exitvelo_df = pd.DataFrame()
+        arsenal_df = pd.DataFrame()
+        for candidate in self._season_candidates(season):
+            if expected_df.empty:
+                expected_df = self._load_pitcher_expected_stats(candidate)
+            if exitvelo_df.empty:
+                exitvelo_df = self._load_pitcher_exitvelo_barrels(candidate)
+            if arsenal_df.empty:
+                arsenal_df = self._load_pitcher_arsenal_stats(candidate)
+
+        expected_row = expected_df[pd.to_numeric(expected_df.get("player_id"), errors="coerce") == pitcher_id] if not expected_df.empty else pd.DataFrame()
+        exitvelo_row = exitvelo_df[pd.to_numeric(exitvelo_df.get("player_id"), errors="coerce") == pitcher_id] if not exitvelo_df.empty else pd.DataFrame()
+        arsenal_rows = arsenal_df[pd.to_numeric(arsenal_df.get("player_id"), errors="coerce") == pitcher_id] if not arsenal_df.empty else pd.DataFrame()
+
+        if expected_row.empty and exitvelo_row.empty and arsenal_rows.empty:
+            return self._leaderboard_profile_default(pitcher_id)
+
+        expected_item = expected_row.iloc[0].to_dict() if not expected_row.empty else {}
+        exitvelo_item = exitvelo_row.iloc[0].to_dict() if not exitvelo_row.empty else {}
+        arsenal: list[dict[str, Any]] = []
+        for _, row in arsenal_rows.iterrows():
+            item = row.to_dict()
+            rv100 = self._nan_to_zero(item.get("run_value_per_100"))
+            whiff_pct = self._nan_to_zero(item.get("whiff_percent"))
+            est_woba = self._nan_to_zero(item.get("est_woba")) or 0.315
+            usage_pct = self._nan_to_zero(item.get("pitch_usage")) / 100.0
+            arsenal.append(
+                {
+                    "pitch_type": str(item.get("pitch_type", "")),
+                    "pitch_name": str(item.get("pitch_name", item.get("pitch_type", ""))),
+                    "usage_pct": round(usage_pct, 4),
+                    "xba": round(self._nan_to_zero(item.get("est_ba")), 4) or None,
+                    "hard_hit_pct": round(self._nan_to_zero(item.get("hard_hit_percent")) / 100.0, 4) or None,
+                    "k_pct": round(self._nan_to_zero(item.get("k_percent")) / 100.0, 4) or None,
+                    "bb_pct": None,
+                    "barrel_pct": None,
+                    "extension": 6.0,
+                    "ev50": None,
+                    "run_value": round(self._nan_to_zero(item.get("run_value")), 4),
+                    "run_value_per_100": round(rv100, 2),
+                    "whiff_pct": round(whiff_pct, 1),
+                    "pitch_quality": self._pitch_quality_score(rv100, whiff_pct or 20.0, est_woba or 0.315),
+                    "quality_of_contact": round(est_woba, 4) if est_woba else None,
+                    "vertical_movement": 0.0,
+                    "horizontal_movement": 0.0,
+                    "spin_dir": 180.0,
+                    "spin_axis": 180.0,
+                    "arm_angle": 45.0,
+                }
+            )
+        arsenal.sort(key=lambda item: item.get("usage_pct") or 0.0, reverse=True)
+        quality_pitches = [(p["pitch_quality"], p["usage_pct"]) for p in arsenal if p.get("pitch_quality") is not None and p.get("usage_pct") is not None]
+        total_quality_weight = sum(u for _, u in quality_pitches)
+        weighted_k = sum((p.get("k_pct") or 0.0) * (p.get("usage_pct") or 0.0) for p in arsenal)
+        weighted_run_value = sum((p.get("run_value") or 0.0) * (p.get("usage_pct") or 0.0) for p in arsenal)
+
+        xba = round(self._nan_to_zero(expected_item.get("est_ba")), 4) if expected_item else None
+        hard_hit = round(self._nan_to_zero(exitvelo_item.get("ev95percent")) / 100.0, 4) if exitvelo_item else None
+        barrel_pct = round(self._nan_to_zero(exitvelo_item.get("brl_percent")) / 100.0, 4) if exitvelo_item else None
+        ev50 = round(self._nan_to_zero(exitvelo_item.get("ev50")), 3) if exitvelo_item else None
+        sample_bbe = int(self._nan_to_zero(exitvelo_item.get("attempts"))) if exitvelo_item else int(self._nan_to_zero(expected_item.get("bip")))
+        sample_pa = int(self._nan_to_zero(expected_item.get("pa")))
+        return {
+            "pitcher_id": pitcher_id,
+            "sample_pitches": int(sum(self._nan_to_zero(row.get("pitches")) for _, row in arsenal_rows.iterrows())) if not arsenal_rows.empty else 0,
+            "sample_bbe": sample_bbe,
+            "handedness": None,
+            "arm_angle": 45.0,
+            "extension": 6.0,
+            "xba": xba,
+            "hard_hit_pct": hard_hit,
+            "barrel_pct": barrel_pct,
+            "ev50": ev50,
+            "weighted_run_value": round(weighted_run_value, 4),
+            "weighted_k_pct": round(weighted_k, 4) if arsenal else None,
+            "weighted_bb_pct": 0.08 if arsenal else None,
+            "movement_score": 0.0,
+            "stuff_plus": round(sum(q * u for q, u in quality_pitches) / total_quality_weight) if total_quality_weight > 0 else None,
+            "k_pct": round(weighted_k, 4) if arsenal else None,
+            "bb_pct": 0.08 if arsenal else None,
+            "recent_xba": xba,
+            "recent_hard_hit_pct": hard_hit,
+            "recent_barrel_pct": barrel_pct,
+            "recent_ev50": ev50,
+            "recent_k_pct": round(weighted_k, 4) if arsenal else None,
+            "recent_bb_pct": 0.08 if arsenal else None,
+            "pitch_arsenal": arsenal,
+        }
+
     def build_pitcher_arsenal_profile(
         self,
         pitcher_id: int,
@@ -205,14 +352,15 @@ class BaseballSavantProvider:
         start_date: date | None = None,
         end_date: date | None = None,
     ) -> dict[str, Any]:
+        leaderboard_fallback = self._pitcher_profile_from_leaderboards(pitcher_id, end_date.year if end_date else None)
         frame = self.load_statcast(start_date, end_date)
         if frame.empty:
-            return {"pitcher_id": pitcher_id, "pitch_arsenal": [], "handedness": None}
+            return leaderboard_fallback
         pitcher_frame = frame[pd.to_numeric(frame["pitcher"], errors="coerce") == pitcher_id].copy()
         if batter_hand:
             pitcher_frame = pitcher_frame[pitcher_frame["stand"] == batter_hand]
         if pitcher_frame.empty:
-            return {"pitcher_id": pitcher_id, "pitch_arsenal": [], "handedness": None}
+            return leaderboard_fallback
 
         batter_frame = pitcher_frame[pitcher_frame["description"].isin(STATCAST_BATTED_BALL_DESCRIPTIONS)].copy()
         # Only include the last pitch of each PA (events set) — not intermediate pitches (events=NaN)
@@ -435,9 +583,12 @@ class BaseballSavantProvider:
         for pitch in pitcher_arsenal:
             pt = pitch.get("pitch_type")
             u = pitch.get("pitch_usage")
+            if u is None:
+                u = pitch.get("usage_pct")
             if pt and u is not None:
                 try:
-                    usage[str(pt)] = float(u) / 100.0
+                    value = float(u)
+                    usage[str(pt)] = value / 100.0 if value > 1 else value
                 except (ValueError, TypeError):
                     pass
         total_usage = sum(usage.values())
@@ -481,9 +632,13 @@ class BaseballSavantProvider:
     def build_batter_summary_profile(self, batter_id: int, season: int) -> dict[str, Any]:
         expected = self._load_batter_expected_stats(season)
         percentiles = self._load_batter_percentiles(season)
+        exitvelo = self._load_batter_exitvelo_barrels(season)
+        if exitvelo.empty and season - 1 >= 2020:
+            exitvelo = self._load_batter_exitvelo_barrels(season - 1)
         expected_row = expected[pd.to_numeric(expected.get("player_id"), errors="coerce") == batter_id]
         percentile_row = percentiles[pd.to_numeric(percentiles.get("player_id"), errors="coerce") == batter_id]
-        if expected_row.empty and percentile_row.empty:
+        exitvelo_row = exitvelo[pd.to_numeric(exitvelo.get("player_id"), errors="coerce") == batter_id] if not exitvelo.empty else pd.DataFrame()
+        if expected_row.empty and percentile_row.empty and exitvelo_row.empty:
             return {
                 "batter_id": batter_id,
                 "sample_pa": 0,
@@ -506,26 +661,26 @@ class BaseballSavantProvider:
                 "pitch_profiles": [],
             }
         expected_item = expected_row.iloc[0].to_dict() if not expected_row.empty else {}
-        percentile_item = percentile_row.iloc[0].to_dict() if not percentile_row.empty else {}
+        exitvelo_item = exitvelo_row.iloc[0].to_dict() if not exitvelo_row.empty else {}
         est_woba = expected_item.get("est_woba")
         xwoba_val = round(self._nan_to_zero(est_woba), 4) if est_woba is not None and not (isinstance(est_woba, float) and pd.isna(est_woba)) else None
         return {
             "batter_id": batter_id,
-            "sample_pa": 0,
-            "sample_bbe": 0,
+            "sample_pa": int(self._nan_to_zero(expected_item.get("pa"))),
+            "sample_bbe": int(self._nan_to_zero(expected_item.get("bip") or exitvelo_item.get("attempts"))),
             "handedness": None,
             "xwoba": xwoba_val,
-            "ev50": None,
-            "hard_hit_pct": None,
+            "ev50": round(self._nan_to_zero(exitvelo_item.get("ev50")), 3) if exitvelo_item else None,
+            "hard_hit_pct": round(self._nan_to_zero(exitvelo_item.get("ev95percent")) / 100.0, 4) if exitvelo_item else None,
             "bb_pct": None,
             "k_pct": None,
-            "quality_of_contact": 0.0,
+            "quality_of_contact": xwoba_val or 0.0,
             "recent_xwoba": xwoba_val,
-            "recent_ev50": None,
-            "recent_hard_hit_pct": None,
+            "recent_ev50": round(self._nan_to_zero(exitvelo_item.get("ev50")), 3) if exitvelo_item else None,
+            "recent_hard_hit_pct": round(self._nan_to_zero(exitvelo_item.get("ev95percent")) / 100.0, 4) if exitvelo_item else None,
             "recent_bb_pct": None,
             "recent_k_pct": None,
-            "recent_quality_of_contact": 0.0,
+            "recent_quality_of_contact": xwoba_val or 0.0,
             "attack_angle": 0.0,
             "swing_path_tilt": 0.0,
             "pitch_profiles": [],

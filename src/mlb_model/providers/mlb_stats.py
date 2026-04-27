@@ -50,7 +50,10 @@ class MLBStatsProvider:
     async def fetch_team_hitters(self, team_id: int) -> list[dict[str, Any]]:
         cache_path = _ROSTER_CACHE_DIR / f"roster_{team_id}.json"
         url = f"{self.base_url}/teams/{team_id}/roster"
-        params = {"rosterType": "active"}
+        params = {
+            "rosterType": "active",
+            "hydrate": f"person(stats(type=[season],group=[hitting],season={date.today().year}),batSide)",
+        }
         try:
             async with httpx.AsyncClient(timeout=20.0) as client:
                 response = await client.get(url, params=params)
@@ -63,12 +66,20 @@ class MLBStatsProvider:
                 if position == "P":
                     continue
                 person = player.get("person") or {}
+                stats = (((person.get("stats") or [{}])[0].get("splits") or [{}])[0].get("stat") or {})
+                plate_appearances = float(stats.get("plateAppearances") or 0.0)
+                strikeouts = float(stats.get("strikeOuts") or 0.0)
+                walks = float(stats.get("baseOnBalls") or 0.0)
                 hitters.append(
                     {
                         "id": person.get("id"),
                         "fullName": person.get("fullName"),
                         "position": position,
                         "status": (player.get("status") or {}).get("description"),
+                        "handedness": ((person.get("batSide") or {}).get("code")),
+                        "plate_appearances": plate_appearances,
+                        "k_pct": (strikeouts / plate_appearances) if plate_appearances else None,
+                        "bb_pct": (walks / plate_appearances) if plate_appearances else None,
                     }
                 )
             if hitters:

@@ -393,7 +393,16 @@ class DailyPredictionService:
             if not batter_id:
                 continue
             profile = self.baseball.build_batter_summary_profile(int(batter_id), slate_date.year)
-            matchup_score = max(20.0, min(80.0, 45 + (profile.get("xwoba", 0.0) - 0.315) * 120))
+            if profile.get("handedness") is None:
+                profile["handedness"] = batter.get("handedness")
+            if profile.get("k_pct") is None:
+                profile["k_pct"] = batter.get("k_pct")
+                profile["recent_k_pct"] = batter.get("k_pct")
+            if profile.get("bb_pct") is None:
+                profile["bb_pct"] = batter.get("bb_pct")
+                profile["recent_bb_pct"] = batter.get("bb_pct")
+            xwoba = float(profile.get("xwoba") or 0.315)
+            matchup_score = max(20.0, min(80.0, 45 + (xwoba - 0.315) * 120))
             reports.append(
                 {
                     "slot": batter.get("position") or "-",
@@ -409,7 +418,13 @@ class DailyPredictionService:
         pitch_arsenal = pitcher_profile.get("pitch_arsenal", [])
         if not pitch_arsenal:
             return {}
-        weighted = lambda key: sum(float(p.get(key, 0.0)) * float(p.get("usage_pct", 0.0)) for p in pitch_arsenal)
+        def _num(value: Any) -> float:
+            try:
+                return float(value) if value is not None else 0.0
+            except (TypeError, ValueError):
+                return 0.0
+
+        weighted = lambda key: sum(_num(p.get(key)) * _num(p.get("usage_pct")) for p in pitch_arsenal)
 
         xba = float(pitcher_profile.get("xba") or 0.245)
         hard_hit = float(pitcher_profile.get("hard_hit_pct") or 0.36) * 100
@@ -423,7 +438,7 @@ class DailyPredictionService:
         recent_xba = float(pitcher_profile.get("recent_xba") or xba)
         recent_xera = max(2.5, min(6.5, 3.0 + (recent_xba - 0.220) / 0.050 * 1.0))
         # weighted movement profile: more vertical movement correlates with higher GB%
-        vert_movement = sum(abs(float(p.get("vertical_movement", 0))) * float(p.get("usage_pct", 0)) for p in pitch_arsenal)
+        vert_movement = sum(abs(_num(p.get("vertical_movement"))) * _num(p.get("usage_pct")) for p in pitch_arsenal)
         gb_pct = max(30.0, min(58.0, 42.0 + vert_movement * 4.5))
         k_pct = weighted("k_pct") * 100
         bb_pct = weighted("bb_pct") * 100
