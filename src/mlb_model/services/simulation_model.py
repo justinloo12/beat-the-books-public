@@ -211,7 +211,13 @@ class SimulationModelService:
                 first = outcomes[0]
                 second = outcomes[1]
                 line = float(first["point"])
-                over_prob = total_lines.get(line, self._fallback_total_probability(simulation.total_mean, line))
+                empirical_over = total_lines.get(line, self._fallback_total_probability(simulation.total_mean, line))
+                over_prob = self._projected_total_probability(
+                    context=context,
+                    raw_over_probability=empirical_over,
+                    mean_total=simulation.total_mean,
+                    line=line,
+                )
                 under_prob = 1 - over_prob
                 candidates.extend(
                     self._two_sided_candidates(
@@ -540,8 +546,47 @@ class SimulationModelService:
             shrink += 0.05
         if context.get("home_lineup_confirmed") and context.get("away_lineup_confirmed"):
             shrink += 0.08
+        if market_type == "game_total" and (not context.get("home_lineup_confirmed") or not context.get("away_lineup_confirmed")):
+            shrink -= 0.14
+        if market_type == "game_total":
+            if not context.get("home_pitcher_profile", {}).get("handedness"):
+                shrink -= 0.06
+            if not context.get("away_pitcher_profile", {}).get("handedness"):
+                shrink -= 0.06
         shrink = clamp(shrink, 0.22, 0.85)
         return clamp(no_vig_probability + (raw_probability - no_vig_probability) * shrink, 0.02, 0.98)
+
+    def _projected_total_probability(
+        self,
+        context: dict[str, Any],
+        raw_over_probability: float,
+        mean_total: float,
+        line: float,
+    ) -> float:
+        if context.get("home_lineup_confirmed") and context.get("away_lineup_confirmed"):
+            return clamp(raw_over_probability, 0.05, 0.95)
+
+        weather = context.get("weather", {}) or {}
+        anchored_mean = line + ((mean_total - line) * 0.42)
+        anchored_mean -= 0.35
+
+        if weather.get("weather_missing"):
+            anchored_mean -= 0.15
+        if context.get("home_bullpen", {}).get("bullpen_score", 65.0) == 65.0 and context.get("away_bullpen", {}).get("bullpen_score", 65.0) == 65.0:
+            anchored_mean -= 0.10
+        if not context.get("home_pitcher_profile", {}).get("handedness"):
+            anchored_mean -= 0.12
+        if not context.get("away_pitcher_profile", {}).get("handedness"):
+            anchored_mean -= 0.12
+
+        wind = float(weather.get("wind_speed_mph", 0.0) or 0.0)
+        stack = float(weather.get("weather_stack_score", 0.0) or 0.0)
+        if wind >= 15 or stack >= 2.0:
+            anchored_mean += 0.20
+
+        anchored_over = self._fallback_total_probability(anchored_mean, line)
+        blended = (raw_over_probability * 0.35) + (anchored_over * 0.65)
+        return clamp(blended, 0.05, 0.95)
 
     def _candidate(
         self,

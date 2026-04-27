@@ -163,6 +163,14 @@ class DailyPredictionService:
         home_pitcher_vs_r = self.baseball.build_pitcher_arsenal_profile(home_pitcher_id, batter_hand="R", start_date=sample_start, end_date=slate_date)
         away_pitcher_vs_l = self.baseball.build_pitcher_arsenal_profile(away_pitcher_id, batter_hand="L", start_date=sample_start, end_date=slate_date)
         away_pitcher_vs_r = self.baseball.build_pitcher_arsenal_profile(away_pitcher_id, batter_hand="R", start_date=sample_start, end_date=slate_date)
+        home_pitcher_hand = await self.stats.fetch_pitcher_hand(home_pitcher_id)
+        away_pitcher_hand = await self.stats.fetch_pitcher_hand(away_pitcher_id)
+        for profile in (home_pitcher_profile, home_pitcher_vs_l, home_pitcher_vs_r):
+            if not profile.get("handedness"):
+                profile["handedness"] = home_pitcher_hand
+        for profile in (away_pitcher_profile, away_pitcher_vs_l, away_pitcher_vs_r):
+            if not profile.get("handedness"):
+                profile["handedness"] = away_pitcher_hand
         home_pitcher_score = self.pitchers.score_pitcher(self._pitcher_stats_from_arsenal(home_pitcher_profile))
         away_pitcher_score = self.pitchers.score_pitcher(self._pitcher_stats_from_arsenal(away_pitcher_profile))
         home_pitcher_matchup = self.matchups.score_pitcher_profile(home_pitcher_profile)
