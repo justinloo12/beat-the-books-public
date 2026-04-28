@@ -14,6 +14,14 @@ class MatchupModelService:
     def __init__(self) -> None:
         self.feature_weights = model_settings.feature_weights
 
+    def _safe_float(self, value: Any, default: float) -> float:
+        try:
+            if value is None:
+                return default
+            return float(value)
+        except (TypeError, ValueError):
+            return default
+
     def score_pitcher_profile(self, pitcher_profile: dict[str, Any]) -> dict[str, Any]:
         weights = self.feature_weights["pitcher"]
         group_weight = sum(weights.values()) or 1.0
@@ -22,13 +30,15 @@ class MatchupModelService:
         xba_score = self._inverse_rate_score(pitcher_profile.get("xba"), baseline=0.290, spread=0.08)
         run_value_score = self._inverse_rate_score(pitcher_profile.get("weighted_run_value"), baseline=0.0, spread=1.5)
         hard_hit_score = self._inverse_rate_score(pitcher_profile.get("hard_hit_pct"), baseline=0.375, spread=0.14)
-        k_minus_bb = float(pitcher_profile.get("weighted_k_pct", 0.22)) - float(pitcher_profile.get("weighted_bb_pct", 0.08))
+        weighted_k = self._safe_float(pitcher_profile.get("weighted_k_pct"), 0.22)
+        weighted_bb = self._safe_float(pitcher_profile.get("weighted_bb_pct"), 0.08)
+        k_minus_bb = weighted_k - weighted_bb
         k_minus_bb_score = self._rate_score(k_minus_bb, baseline=0.14, spread=0.18)
         barrel_score = self._inverse_rate_score(pitcher_profile.get("barrel_pct"), baseline=0.08, spread=0.08)
         ev50_score = self._inverse_rate_score(pitcher_profile.get("ev50"), baseline=89.0, spread=12.0)
-        movement_raw = float(pitcher_profile.get("movement_score", 0.0))
-        spin_modifier = 1 + min(abs(float(primary_pitch.get("spin_axis", 180.0)) - 180.0) / 360.0, 0.18)
-        extension_modifier = 1 + min(max(float(pitcher_profile.get("extension", 6.1)) - 6.0, -0.5) * 0.08, 0.12)
+        movement_raw = self._safe_float(pitcher_profile.get("movement_score"), 0.0)
+        spin_modifier = 1 + min(abs(self._safe_float(primary_pitch.get("spin_axis"), 180.0) - 180.0) / 360.0, 0.18)
+        extension_modifier = 1 + min(max(self._safe_float(pitcher_profile.get("extension"), 6.1) - 6.0, -0.5) * 0.08, 0.12)
         movement_score = clamp((movement_raw * spin_modifier * extension_modifier) * 2.6, 20, 90)
         quality_score = (
             xba_score * (weights["xba_split"] / group_weight)
@@ -40,10 +50,10 @@ class MatchupModelService:
             + movement_score * (weights["movement_profile"] / group_weight)
         )
         recent_delta = (
-            (float(pitcher_profile.get("recent_xba", pitcher_profile.get("xba", 0.245))) - float(pitcher_profile.get("xba", 0.245))) * 180
-            + (float(pitcher_profile.get("recent_hard_hit_pct", pitcher_profile.get("hard_hit_pct", 0.36))) - float(pitcher_profile.get("hard_hit_pct", 0.36))) * 75
-            + (float(pitcher_profile.get("recent_barrel_pct", pitcher_profile.get("barrel_pct", 0.08))) - float(pitcher_profile.get("barrel_pct", 0.08))) * 130
-            - (float(pitcher_profile.get("recent_k_pct", pitcher_profile.get("weighted_k_pct", 0.22))) - float(pitcher_profile.get("weighted_k_pct", 0.22))) * 50
+            (self._safe_float(pitcher_profile.get("recent_xba"), self._safe_float(pitcher_profile.get("xba"), 0.245)) - self._safe_float(pitcher_profile.get("xba"), 0.245)) * 180
+            + (self._safe_float(pitcher_profile.get("recent_hard_hit_pct"), self._safe_float(pitcher_profile.get("hard_hit_pct"), 0.36)) - self._safe_float(pitcher_profile.get("hard_hit_pct"), 0.36)) * 75
+            + (self._safe_float(pitcher_profile.get("recent_barrel_pct"), self._safe_float(pitcher_profile.get("barrel_pct"), 0.08)) - self._safe_float(pitcher_profile.get("barrel_pct"), 0.08)) * 130
+            - (self._safe_float(pitcher_profile.get("recent_k_pct"), weighted_k) - weighted_k) * 50
         )
         vulnerability = clamp(100 - quality_score, 12, 92)
         return {

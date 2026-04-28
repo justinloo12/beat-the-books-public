@@ -115,5 +115,20 @@
     "away_score": 3,
     "home_score": 1,
     "final_total": 4
+  },
+  {
+    "date": "2026-04-27",
+    "matchup": "Miami Marlins @ Los Angeles Dodgers",
+    "market_type": "moneyline",
+    "pick": "Miami Marlins",
+    "line": 0.0,
+    "american_odds": 248,
+    "edge": 0.0773,
+    "tier": "moderate",
+    "result": "loss",
+    "pnl": -100.0,
+    "away_score": 4,
+    "home_score": 5,
+    "final_total": 9
   }
 ]
