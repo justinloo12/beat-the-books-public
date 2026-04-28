@@ -33,6 +33,12 @@ jobs:
       - name: Resolve ET slate window
         id: slate
         run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "run_refresh=true" >> "$GITHUB_OUTPUT"
+            echo "slate_date=$(date +%F)" >> "$GITHUB_OUTPUT"
+            echo "grade_date=$(date -d 'yesterday' +%F)" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
           hour=$(date +%H)
           valid_hours="10 11 12 15 16 17 18 19"
           if ! echo "$valid_hours" | grep -qw "$hour"; then
