@@ -13,47 +13,12 @@
     "hit_rate": 0.5,
     "clv_last_50": null,
     "clv_last_200": null,
-    "daily_pick_count": 1,
+    "daily_pick_count": 0,
     "lineup_card_count": 11
   },
   "daily": {
     "date": "2026-04-28",
-    "picks": [
-      {
-        "matchup": "Houston Astros @ Baltimore Orioles",
-        "market_type": "moneyline",
-        "pick": "Houston Astros",
-        "line": 0.0,
-        "american_odds": 113,
-        "model_probability": 0.5476,
-        "no_vig_probability": 0.4489,
-        "edge": 0.0986,
-        "tier": "strong",
-        "bankroll_fraction": 0.03,
-        "top_features": [
-          {
-            "feature": "Simulated total",
-            "value": 9.25,
-            "direction": "up"
-          },
-          {
-            "feature": "Weather stack",
-            "value": 2.82,
-            "direction": "up"
-          },
-          {
-            "feature": "Pitcher vulnerability",
-            "value": 45.92,
-            "direction": "up"
-          }
-        ],
-        "weather_stack_score": 2.82,
-        "start_time": "6:35 PM ET",
-        "lineup_status": "projected",
-        "simulation_trials": 10000,
-        "specific_blurb": "Kai-Wei Teng gives Houston Astros the cleaner starter setup, and Braden Shewmake and Yordan Alvarez (80/73 matchup scores) carry the best hitter-vs-arsenal edges against Shane Baz; the sim has it 5.1 to 4.2 with a 9.9-point edge"
-      }
-    ],
+    "picks": [],
     "lineup_cards": [
       {
         "matchup": "Arizona Diamondbacks @ Milwaukee Brewers",

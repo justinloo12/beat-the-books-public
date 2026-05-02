@@ -13,47 +13,12 @@
     "hit_rate": 0.5714285714285714,
     "clv_last_50": null,
     "clv_last_200": null,
-    "daily_pick_count": 1,
+    "daily_pick_count": 0,
     "lineup_card_count": 8
   },
   "daily": {
     "date": "2026-04-27",
-    "picks": [
-      {
-        "matchup": "Miami Marlins @ Los Angeles Dodgers",
-        "market_type": "moneyline",
-        "pick": "Miami Marlins",
-        "line": 0.0,
-        "american_odds": 248,
-        "model_probability": 0.3521,
-        "no_vig_probability": 0.2748,
-        "edge": 0.0773,
-        "tier": "moderate",
-        "bankroll_fraction": 0.02,
-        "top_features": [
-          {
-            "feature": "Simulated total",
-            "value": 9.34,
-            "direction": "up"
-          },
-          {
-            "feature": "Weather stack",
-            "value": 4.24,
-            "direction": "up"
-          },
-          {
-            "feature": "Pitcher vulnerability",
-            "value": 54.07,
-            "direction": "up"
-          }
-        ],
-        "weather_stack_score": 4.24,
-        "start_time": "10:10 PM ET",
-        "lineup_status": "projected",
-        "simulation_trials": 10000,
-        "specific_blurb": "Chris Paddack gives Miami Marlins the cleaner starter setup, and Kyle Stowers and Liam Hicks (56/51 matchup scores) carry the best hitter-vs-arsenal edges against Yoshinobu Yamamoto; the sim has it 4.4 to 4.9 with a 7.7-point edge"
-      }
-    ],
+    "picks": [],
     "lineup_cards": [
       {
         "matchup": "Boston Red Sox @ Toronto Blue Jays",
