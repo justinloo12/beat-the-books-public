@@ -1,3 +1,40 @@
 {
-  "dates": []
+  "dates": [
+    {
+      "date": "2026-05-02",
+      "picks": 1,
+      "strong": 0,
+      "games": 14
+    },
+    {
+      "date": "2026-04-29",
+      "picks": 0,
+      "strong": 0,
+      "games": 15
+    },
+    {
+      "date": "2026-04-28",
+      "picks": 0,
+      "strong": 0,
+      "games": 11
+    },
+    {
+      "date": "2026-04-27",
+      "picks": 0,
+      "strong": 0,
+      "games": 8
+    },
+    {
+      "date": "2026-04-26",
+      "picks": 0,
+      "strong": 0,
+      "games": 15
+    },
+    {
+      "date": "2026-04-25",
+      "picks": 0,
+      "strong": 0,
+      "games": 15
+    }
+  ]
 }
