@@ -1,1 +1,17 @@
-[]
+[
+  {
+    "date": "2026-05-02",
+    "matchup": "Houston Astros @ Boston Red Sox",
+    "market_type": "moneyline",
+    "pick": "Houston Astros",
+    "line": 0.0,
+    "american_odds": 113,
+    "edge": 0.0731,
+    "tier": "moderate",
+    "result": "win",
+    "pnl": 113.0,
+    "away_score": 6,
+    "home_score": 3,
+    "final_total": 9
+  }
+]
