@@ -3,9 +3,9 @@ name: Refresh Site
 on:
   workflow_dispatch:
   schedule:
-    # Trigger at both 15:00 and 16:00 UTC, then gate on local ET hour below.
-    # This keeps the actual refresh fixed at 11:00 AM America/New_York across DST.
-    - cron: "0 15,16 * * *"
+    # Retry through the late-morning ET window so a delayed GitHub cron still
+    # has multiple chances to publish today's board.
+    - cron: "*/15 14,15,16 * * *"
 
 permissions:
   contents: write
@@ -41,7 +41,7 @@ jobs:
             exit 0
           fi
           hour=$(date +%H)
-          valid_hours="11"
+          valid_hours="10 11 12"
           if ! echo "$valid_hours" | grep -qw "$hour"; then
             echo "run_refresh=false" >> "$GITHUB_OUTPUT"
             exit 0
