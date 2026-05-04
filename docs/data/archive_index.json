@@ -1,6 +1,12 @@
 {
   "dates": [
     {
+      "date": "2026-05-04",
+      "picks": 3,
+      "strong": 2,
+      "games": 10
+    },
+    {
       "date": "2026-05-03",
       "picks": 1,
       "strong": 0,

@@ -13,5 +13,20 @@
     "away_score": 6,
     "home_score": 3,
     "final_total": 9
+  },
+  {
+    "date": "2026-05-03",
+    "matchup": "Arizona Diamondbacks @ Chicago Cubs",
+    "market_type": "game_total",
+    "pick": "Under",
+    "line": 11.5,
+    "american_odds": -105,
+    "edge": 0.0746,
+    "tier": "moderate",
+    "result": "loss",
+    "pnl": -100.0,
+    "away_score": 4,
+    "home_score": 8,
+    "final_total": 12
   }
 ]
