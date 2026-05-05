@@ -28,5 +28,50 @@
     "away_score": 4,
     "home_score": 8,
     "final_total": 12
+  },
+  {
+    "date": "2026-05-04",
+    "matchup": "Boston Red Sox @ Detroit Tigers",
+    "market_type": "moneyline",
+    "pick": "Boston Red Sox",
+    "line": 0.0,
+    "american_odds": 163,
+    "edge": 0.1035,
+    "tier": "strong",
+    "result": "win",
+    "pnl": 163.0,
+    "away_score": 5,
+    "home_score": 4,
+    "final_total": 9
+  },
+  {
+    "date": "2026-05-04",
+    "matchup": "Cincinnati Reds @ Chicago Cubs",
+    "market_type": "moneyline",
+    "pick": "Cincinnati Reds",
+    "line": 0.0,
+    "american_odds": 169,
+    "edge": 0.0911,
+    "tier": "strong",
+    "result": "loss",
+    "pnl": -100.0,
+    "away_score": 4,
+    "home_score": 5,
+    "final_total": 9
+  },
+  {
+    "date": "2026-05-04",
+    "matchup": "Cincinnati Reds @ Chicago Cubs",
+    "market_type": "game_total",
+    "pick": "Under",
+    "line": 11.5,
+    "american_odds": -118,
+    "edge": 0.071,
+    "tier": "moderate",
+    "result": "win",
+    "pnl": 84.75,
+    "away_score": 4,
+    "home_score": 5,
+    "final_total": 9
   }
 ]
