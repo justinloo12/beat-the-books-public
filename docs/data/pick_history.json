@@ -73,5 +73,35 @@
     "away_score": 4,
     "home_score": 5,
     "final_total": 9
+  },
+  {
+    "date": "2026-05-05",
+    "matchup": "Boston Red Sox @ Detroit Tigers",
+    "market_type": "moneyline",
+    "pick": "Boston Red Sox",
+    "line": 0.0,
+    "american_odds": 135,
+    "edge": 0.0863,
+    "tier": "moderate",
+    "result": "win",
+    "pnl": 135.0,
+    "away_score": 10,
+    "home_score": 3,
+    "final_total": 13
+  },
+  {
+    "date": "2026-05-05",
+    "matchup": "Los Angeles Dodgers @ Houston Astros",
+    "market_type": "moneyline",
+    "pick": "Houston Astros",
+    "line": 0.0,
+    "american_odds": 189,
+    "edge": 0.0831,
+    "tier": "moderate",
+    "result": "win",
+    "pnl": 189.0,
+    "away_score": 1,
+    "home_score": 2,
+    "final_total": 3
   }
 ]
