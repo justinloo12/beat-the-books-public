@@ -103,5 +103,20 @@
     "away_score": 1,
     "home_score": 2,
     "final_total": 3
+  },
+  {
+    "date": "2026-05-06",
+    "matchup": "Cincinnati Reds @ Chicago Cubs",
+    "market_type": "game_total",
+    "pick": "Over",
+    "line": 8.0,
+    "american_odds": -112,
+    "edge": 0.0698,
+    "tier": "moderate",
+    "result": "win",
+    "pnl": 89.29,
+    "away_score": 6,
+    "home_score": 7,
+    "final_total": 13
   }
 ]
