@@ -131,7 +131,7 @@ function renderSummary(s) {
 /* ── Render Picks ── */
 function renderPicks(picks) {
   if (!picks.length) {
-    $dailyPicks.innerHTML = `<div class="empty-state">No picks cleared the threshold today.</div>`;
+    $dailyPicks.innerHTML = `<div class="empty-state">No picks cleared the threshold today — picks are only generated before game time.</div>`;
     $dailyMeta.textContent = "";
     return;
   }
@@ -683,6 +683,7 @@ function renderSkipped(skipped) {
 
 /* ── Main ── */
 async function loadBoard() {
+  $dailyPicks.innerHTML = `<div class="loading-state"><div class="loading-spinner"></div>Loading picks…</div>`;
   try {
     const payload = await fetchPayload();
     currentCards = payload.daily.lineup_cards || [];
@@ -700,6 +701,7 @@ async function loadBoard() {
     });
   } catch (err) {
     console.error("loadBoard failed:", err);
+    $dailyPicks.innerHTML = `<div class="empty-state">Could not load today's board. Check back after 10 AM ET.</div>`;
   }
 }
 

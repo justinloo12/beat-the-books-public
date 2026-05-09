@@ -68,11 +68,23 @@ class DailyPredictionService:
         picks: list[dict[str, Any]] = []
         lineup_cards: list[dict[str, Any]] = []
         skipped: list[dict[str, Any]] = []
+        now_et = datetime.now(ZoneInfo("America/New_York"))
 
         for game in games:
             away_team = game["teams"]["away"]["team"]["name"]
             home_team = game["teams"]["home"]["team"]["name"]
             matchup_label = f"{away_team} @ {home_team}"
+            # Skip games that have already started (5-min grace window) so a
+            # late manual re-run never overwrites picks with mid-game data.
+            game_date_str = game.get("gameDate")
+            if game_date_str:
+                try:
+                    game_start = datetime.fromisoformat(game_date_str.replace("Z", "+00:00"))
+                    if game_start.astimezone(ZoneInfo("America/New_York")) < now_et - timedelta(minutes=5):
+                        skipped.append({"matchup": matchup_label, "reason": "game already started"})
+                        continue
+                except (ValueError, AttributeError):
+                    pass
             try:
                 away_team_id = game["teams"]["away"]["team"]["id"]
                 home_team_id = game["teams"]["home"]["team"]["id"]
