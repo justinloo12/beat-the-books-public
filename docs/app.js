@@ -20,7 +20,7 @@ const fmt = {
   pctS: (v, d=1) => `${+(v||0)>=0?"+":""}${(+(v||0)*100).toFixed(d)}%`,
   num:  (v, d=2) => v == null ? "—" : `${(+v).toFixed(d)}`,
   sign: (v, d=2) => `${+(v||0)>=0?"+":""}${(+(v||0)).toFixed(d)}`,
-  money: (v, d=2) => v == null ? "—" : `${+(v||0)>=0?"+":""}$${Math.abs(+(v||0)).toFixed(d)}`,
+  money: (v, d=2) => v == null ? "—" : `${+(v||0)>=0?"+":"-"}$${Math.abs(+(v||0)).toFixed(d)}`,
   odds: (v) => `${+(v||0)>0?"+":""}${+(v||0)}`,
   date: (v) => new Intl.DateTimeFormat("en-US",{weekday:"long",month:"long",day:"numeric",year:"numeric"}).format(new Date(`${v}T12:00:00`)),
   time: (v) => new Intl.DateTimeFormat("en-US",{hour:"numeric",minute:"2-digit",timeZone:"America/New_York"}).format(new Date(v)),
