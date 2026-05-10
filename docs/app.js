@@ -395,6 +395,7 @@ function renderPitcherPanel(pitcher, side) {
       </div>
       <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
         <span class="badge ${hand==="L"?"badge-lhb":"badge-rhb"}">${hand}HP</span>
+        ${pitcher.is_opener?`<span class="badge badge-opener" title="Opener — projected ~1 IP; model blends bullpen averages for remaining innings">OPENER</span>`:""}
         <span class="badge ${flagBadge}">${flag||"—"}</span>
         <span class="badge badge-neutral">Qlty ${fmt.num(pitcher.quality_score,1)}</span>
         ${pitcher.stuff_plus!=null?`<span class="badge ${stuffBadgeClass(pitcher.stuff_plus)}">Stuff+ ${pitcher.stuff_plus}</span>`:""}

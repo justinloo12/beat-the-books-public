@@ -184,3 +184,48 @@ class MLBStatsProvider:
             if cache_path.exists():
                 return json.loads(cache_path.read_text(encoding="utf-8"))
             return []
+
+    async def fetch_pitcher_season_role(self, pitcher_id: int, season: int) -> dict:
+        """Return role metadata for a pitcher: is_opener, ip_per_start, games_started."""
+        cache_path = _PLAYER_CACHE_DIR / f"role_{pitcher_id}_{season}.json"
+        url = f"{self.base_url}/people/{pitcher_id}/stats"
+        params = {"stats": "season", "group": "pitching", "season": season}
+        try:
+            async with httpx.AsyncClient(timeout=15.0) as client:
+                response = await client.get(url, params=params)
+                response.raise_for_status()
+                payload = response.json()
+            splits = (payload.get("stats") or [{}])[0].get("splits") or []
+            stat = splits[0].get("stat") if splits else {}
+            result = self._parse_pitcher_role(stat)
+            _PLAYER_CACHE_DIR.mkdir(parents=True, exist_ok=True)
+            cache_path.write_text(json.dumps(result), encoding="utf-8")
+            return result
+        except Exception:
+            if cache_path.exists():
+                try:
+                    return json.loads(cache_path.read_text(encoding="utf-8"))
+                except Exception:
+                    pass
+            return {"is_opener": False, "ip_per_start": None, "games_started": 0}
+
+    @staticmethod
+    def _parse_pitcher_role(stat: dict) -> dict:
+        gs = int(stat.get("gamesStarted") or 0)
+        gp = int(stat.get("gamesPlayed") or 0)
+        # inningsPitched from the API is a string like "45.2"
+        ip_str = str(stat.get("inningsPitched") or "0.0")
+        try:
+            ip = float(ip_str)
+        except ValueError:
+            ip = 0.0
+        ip_per_start = round(ip / gs, 2) if gs > 0 else None
+        # Opener criterion: has starts but averages < 2 IP per start
+        is_opener = gs > 0 and ip_per_start is not None and ip_per_start < 2.0
+        return {
+            "is_opener": is_opener,
+            "ip_per_start": ip_per_start,
+            "games_started": gs,
+            "games_played": gp,
+        }
+
