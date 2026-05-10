@@ -148,5 +148,20 @@
     "away_score": 3,
     "home_score": 1,
     "final_total": 4
+  },
+  {
+    "date": "2026-05-09",
+    "matchup": "Detroit Tigers @ Kansas City Royals",
+    "market_type": "moneyline",
+    "pick": "Detroit Tigers",
+    "line": 0.0,
+    "american_odds": 119,
+    "edge": 0.0668,
+    "tier": "moderate",
+    "result": "loss",
+    "pnl": -100.0,
+    "away_score": 1,
+    "home_score": 5,
+    "final_total": 6
   }
 ]
