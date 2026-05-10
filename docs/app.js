@@ -300,6 +300,23 @@ function renderGames(cards) {
 }
 
 /* ── Game Card ── */
+function renderBullpenHealth(teamName, bullpen) {
+  if (!bullpen || bullpen.bullpen_score == null) return "";
+  const score = +(bullpen.bullpen_score || 65);
+  const cls = score >= 70 ? "val-good" : score >= 52 ? "val-warn" : "val-bad";
+  const flags = (bullpen.fatigue_flags || []).slice(0, 2);
+  const tip = [
+    `Score: ${score}`,
+    bullpen.depleted ? "DEPLETED" : "",
+    bullpen.closer_status !== "fresh" ? `Closer: ${bullpen.closer_status}` : "",
+    ...flags,
+  ].filter(Boolean).join(" · ");
+  return `<div class="weather-item" title="${tip}">
+    <span class="wlabel">${teamName??""} Pen</span>
+    <span class="wval ${cls}">${score.toFixed(0)}${bullpen.depleted?" ⚠":""}</span>
+  </div>`;
+}
+
 function renderGameCard(card) {
   if (!card) return "";
   const weather = card.weather || {};
@@ -348,6 +365,8 @@ function renderGameCard(card) {
         <span class="wlabel">Humidity</span>
         <span class="wval">${fmt.num(weather.humidity,0)}%</span>
       </div>
+      ${renderBullpenHealth(card.home_pitcher?.team, card.home_bullpen)}
+      ${renderBullpenHealth(card.away_pitcher?.team, card.away_bullpen)}
     </div>
 
     ${topPicks.length ? `
@@ -395,7 +414,8 @@ function renderPitcherPanel(pitcher, side) {
       </div>
       <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
         <span class="badge ${hand==="L"?"badge-lhb":"badge-rhb"}">${hand}HP</span>
-        ${pitcher.is_opener?`<span class="badge badge-opener" title="Opener — projected ~1 IP; model blends bullpen averages for remaining innings">OPENER</span>`:""}
+        ${pitcher.is_opener?`<span class="badge badge-opener" title="Opener — projected ~1 IP; model blends bulk reliever stats for remaining innings">OPENER</span>`:""}
+        ${pitcher.is_opener && pitcher.bulk_pitcher_name?`<span class="badge badge-neutral" title="Identified bulk reliever following the opener">Bulk: ${pitcher.bulk_pitcher_name}</span>`:""}
         <span class="badge ${flagBadge}">${flag||"—"}</span>
         <span class="badge badge-neutral">Qlty ${fmt.num(pitcher.quality_score,1)}</span>
         ${pitcher.stuff_plus!=null?`<span class="badge ${stuffBadgeClass(pitcher.stuff_plus)}">Stuff+ ${pitcher.stuff_plus}</span>`:""}
