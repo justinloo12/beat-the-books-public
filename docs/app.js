@@ -428,7 +428,6 @@ function renderPitcherPanel(pitcher, side) {
       <div class="pitcher-stat"><div class="label">Barrel%</div><div class="val ${valClass(pitcher.barrel_pct,false,0.07,0.12)}">${fmt.pct(pitcher.barrel_pct)}</div></div>
       <div class="pitcher-stat"><div class="label">EV50</div><div class="val">${fmt.num(pitcher.ev50,1)}</div></div>
       <div class="pitcher-stat"><div class="label">K%</div><div class="val ${valClass(pitcher.weighted_k_pct,true,0.22,0.18)}">${fmt.pct(pitcher.weighted_k_pct)}</div></div>
-      <div class="pitcher-stat"><div class="label">BB%</div><div class="val ${valClass(pitcher.weighted_bb_pct,false,0.08,0.12)}">${fmt.pct(pitcher.weighted_bb_pct)}</div></div>
       <div class="pitcher-stat"><div class="label">Ext</div><div class="val">${fmt.num(pitcher.extension,1)} ft</div></div>
       <div class="pitcher-stat"><div class="label">Run Val</div><div class="val">${fmt.sign(pitcher.weighted_run_value,3)}</div></div>
     </div>
@@ -548,7 +547,6 @@ function renderPitchVsStarter(player) {
       ${p.has_batter_data ? `
         <span class="pitch-vs-stat"><span class="pv-label">xwOBA</span> <span class="pv-val ${xwobaCls}">${fmt.num(p.batter_xwoba, 3)}</span></span>
         <span class="pitch-vs-stat"><span class="pv-label">K%</span> <span class="pv-val ${kCls}">${fmt.pct(p.batter_k_pct)}</span></span>
-        <span class="pitch-vs-stat"><span class="pv-label">BB%</span> <span class="pv-val">${fmt.pct(p.batter_bb_pct)}</span></span>
       ` : `
         <span class="pv-no-data">no batter data · P xBA ${fmt.num(p.pitcher_xba, 3)} · P K% ${fmt.pct(p.pitcher_k_pct)}</span>
       `}
@@ -610,10 +608,6 @@ function renderPlayerRow(player) {
         <div class="ps-label">K%</div>
         <div class="ps-val ${kCls}">${fmt.pct(player.k_pct)}</div>
       </div>
-      <div class="player-stat">
-        <div class="ps-label">BB%</div>
-        <div class="ps-val ${bbCls}">${fmt.pct(player.bb_pct)}</div>
-      </div>
     </div>
 
     ${renderPitchVsStarter(player)}
@@ -623,7 +617,6 @@ function renderPlayerRow(player) {
     ${hasSim ? `
     <div class="sim-row">
       <div class="sim-divider"></div>
-      <div class="sim-stat sim-featured"><div class="sim-lbl">R</div><div class="sim-val">${fmt.num(sim.runs,2)}</div></div>
       <div class="sim-stat sim-featured"><div class="sim-lbl">RBI</div><div class="sim-val">${fmt.num(sim.rbi,2)}</div></div>
       <div class="sim-stat sim-featured"><div class="sim-lbl">H</div><div class="sim-val">${fmt.num(sim.hits,2)}</div></div>
       <div class="sim-divider"></div>
