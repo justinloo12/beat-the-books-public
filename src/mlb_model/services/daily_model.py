@@ -188,22 +188,22 @@ class DailyPredictionService:
         return blended
 
         async def _build_game_projection(
-        self,
-        slate_date: date,
-        home_team: str,
-        away_team: str,
-        home_team_id: int,
-        away_team_id: int,
-        home_pitcher: dict[str, Any],
-        away_pitcher: dict[str, Any],
-        home_lineup: list[dict[str, Any]],
-        away_lineup: list[dict[str, Any]],
-        home_lineup_confirmed: bool,
-        away_lineup_confirmed: bool,
-        venue: str,
-        home_pitcher_role: dict[str, Any] | None = None,
-        away_pitcher_role: dict[str, Any] | None = None,
-        start_time: str | None = None,
+            self,
+            slate_date: date,
+            home_team: str,
+            away_team: str,
+            home_team_id: int,
+            away_team_id: int,
+            home_pitcher: dict[str, Any],
+            away_pitcher: dict[str, Any],
+            home_lineup: list[dict[str, Any]],
+            away_lineup: list[dict[str, Any]],
+            home_lineup_confirmed: bool,
+            away_lineup_confirmed: bool,
+            venue: str,
+            home_pitcher_role: dict[str, Any] | None = None,
+            away_pitcher_role: dict[str, Any] | None = None,
+            start_time: str | None = None,
     ) -> dict[str, Any]:
         sample_start = slate_date - timedelta(days=365)
         home_pitcher_id = int(home_pitcher["id"])
