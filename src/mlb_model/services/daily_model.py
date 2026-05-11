@@ -249,17 +249,21 @@ class DailyPredictionService:
         # their Savant profile instead of generic league-average bullpen constants.
         home_bulk_profile: dict[str, Any] | None = None
         away_bulk_profile: dict[str, Any] | None = None
+        home_bulk_name: str | None = None
+        away_bulk_name: str | None = None
         if home_is_opener:
-            bulk_id = await self.stats.fetch_bulk_reliever_id(home_team_id, slate_date)
-            if bulk_id:
+            bulk_info = await self.stats.fetch_bulk_reliever_id(home_team_id, slate_date)
+            if bulk_info:
+                home_bulk_name = bulk_info["name"]
                 home_bulk_profile = self.baseball.build_pitcher_arsenal_profile(
-                    bulk_id, start_date=sample_start, end_date=slate_date
+                    bulk_info["id"], start_date=sample_start, end_date=slate_date
                 )
         if away_is_opener:
-            bulk_id = await self.stats.fetch_bulk_reliever_id(away_team_id, slate_date)
-            if bulk_id:
+            bulk_info = await self.stats.fetch_bulk_reliever_id(away_team_id, slate_date)
+            if bulk_info:
+                away_bulk_name = bulk_info["name"]
                 away_bulk_profile = self.baseball.build_pitcher_arsenal_profile(
-                    bulk_id, start_date=sample_start, end_date=slate_date
+                    bulk_info["id"], start_date=sample_start, end_date=slate_date
                 )
 
         home_profile_for_runs = self._opener_blend(home_pitcher_profile, home_bulk_profile) if home_is_opener else home_pitcher_profile
@@ -347,8 +351,8 @@ class DailyPredictionService:
             "away_pitcher_name": away_pitcher.get("fullName") or away_pitcher.get("name", ""),
             "home_pitcher_is_opener": home_is_opener,
             "away_pitcher_is_opener": away_is_opener,
-            "home_bulk_pitcher_name": (home_bulk_profile or {}).get("pitcher_name"),
-            "away_bulk_pitcher_name": (away_bulk_profile or {}).get("pitcher_name"),
+            "home_bulk_pitcher_name": home_bulk_name,
+            "away_bulk_pitcher_name": away_bulk_name,
             "home_bullpen": home_bullpen,
             "away_bullpen": away_bullpen,
             "home_pitcher_profile": home_pitcher_profile,

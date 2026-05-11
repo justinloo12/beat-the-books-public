@@ -302,11 +302,11 @@ class MLBStatsProvider:
             })
         return result
 
-    async def fetch_bulk_reliever_id(self, team_id: int, before_date: date, lookback_days: int = 10) -> int | None:
+    async def fetch_bulk_reliever_id(self, team_id: int, before_date: date, lookback_days: int = 10) -> dict[str, Any] | None:
         """Find the pitcher most likely to be the bulk arm after an opener.
 
         Scans recent games, finds ones where the first pitcher threw < 2 IP (opener),
-        and returns the non-opener who threw the most innings in that game.
+        and returns {"id": int, "name": str} for the non-opener who threw the most innings.
         """
         url = f"{self.base_url}/schedule"
         params = {
@@ -358,9 +358,10 @@ class MLBStatsProvider:
                     continue  # traditional starter, not an opener game
 
                 # Bulk arm = the non-opener pitcher with the most innings
-                bulk_id, bulk_ip = None, 0.0
+                bulk_id, bulk_ip, bulk_name = None, 0.0, None
                 for pid in pitchers_list[1:]:
-                    p_stats = (players.get(f"ID{pid}") or {}).get("stats", {}).get("pitching") or {}
+                    p_entry = players.get(f"ID{pid}") or {}
+                    p_stats = p_entry.get("stats", {}).get("pitching") or {}
                     try:
                         p_ip = float(str(p_stats.get("inningsPitched") or "0.0"))
                     except ValueError:
@@ -368,10 +369,11 @@ class MLBStatsProvider:
                     if p_ip > bulk_ip:
                         bulk_ip = p_ip
                         bulk_id = int(pid)
+                        bulk_name = (p_entry.get("person") or {}).get("fullName") or str(pid)
 
                 # Must have thrown at least 3 innings to be considered the bulk arm
                 if bulk_id and bulk_ip >= 3.0:
-                    return bulk_id
+                    return {"id": bulk_id, "name": bulk_name or str(bulk_id)}
 
         return None
 
@@ -457,11 +459,14 @@ class MLBStatsProvider:
         except ValueError:
             ip = 0.0
         ip_per_start = round(ip / gs, 2) if gs > 0 else None
-        # Opener criterion: has starts but averages < 2 IP per start
-        is_opener = gs > 0 and ip_per_start is not None and ip_per_start < 2.0
+        ip_per_app = round(ip / gp, 2) if gp > 0 else None
+        # Opener criterion: averages < 2 IP per appearance across all games,
+        # regardless of whether those appearances were starts or relief.
+        is_opener = gp > 0 and ip_per_app is not None and ip_per_app < 2.0
         return {
             "is_opener": is_opener,
             "ip_per_start": ip_per_start,
+            "ip_per_app": ip_per_app,
             "games_started": gs,
             "games_played": gp,
         }
