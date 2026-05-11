@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-05-11T13:26:33.004893",
+  "as_of": "2026-05-11T16:07:08.653378",
   "date": "2026-05-11",
   "summary": {
     "tracked_bets": 11,
@@ -9,8 +9,8 @@
     "pushes": 0,
     "units_risked": 11.0,
     "units_profit": 8.5997,
-    "roi": 0.781791,
-    "hit_rate": 0.818182,
+    "roi": 0.7817909090909091,
+    "hit_rate": 0.8181818181818182,
     "clv_last_50": null,
     "clv_last_200": null,
     "daily_pick_count": 1,
@@ -25,20 +25,20 @@
         "pick": "San Francisco Giants",
         "line": 0.0,
         "american_odds": 159,
-        "model_probability": 0.4654,
+        "model_probability": 0.4568,
         "no_vig_probability": 0.3691,
-        "edge": 0.0962,
-        "tier": "strong",
-        "bankroll_fraction": 0.03,
+        "edge": 0.0877,
+        "tier": "moderate",
+        "bankroll_fraction": 0.02,
         "top_features": [
           {
             "feature": "Simulated total",
-            "value": 8.84,
+            "value": 8.64,
             "direction": "up"
           },
           {
             "feature": "Weather stack",
-            "value": 3.45,
+            "value": 3.33,
             "direction": "up"
           },
           {
@@ -47,11 +47,11 @@
             "direction": "up"
           }
         ],
-        "weather_stack_score": 3.45,
+        "weather_stack_score": 3.33,
         "start_time": "10:10 PM ET",
         "lineup_status": "projected",
         "simulation_trials": 10000,
-        "specific_blurb": "Trevor McDonald gives San Francisco Giants the cleaner starter setup, and Jesus Rodriguez and Casey Schmitt (54/50 matchup scores) carry the best hitter-vs-arsenal edges against Roki Sasaki; the sim has it 4.5 to 4.3 with a 9.6-point edge"
+        "specific_blurb": "Trevor McDonald gives San Francisco Giants the cleaner starter setup, and Jesus Rodriguez and Casey Schmitt (54/50 matchup scores) carry the best hitter-vs-arsenal edges against Roki Sasaki; the sim has it 4.4 to 4.2 with a 8.8-point edge"
       }
     ],
     "lineup_cards": [
@@ -60,20 +60,20 @@
         "venue": "Globe Life Field",
         "start_time": "8:05 PM ET",
         "lineup_status": "projected",
-        "weather_stack_score": 1.77,
+        "weather_stack_score": 0.02,
         "weather": {
-          "temperature_f": 25.2,
-          "wind_speed_mph": 10.3,
-          "wind_direction": 25,
-          "humidity": 53,
-          "weather_missing": false
+          "temperature_f": 72.0,
+          "wind_speed_mph": 0.0,
+          "wind_direction": "neutral",
+          "humidity": 50.0,
+          "weather_missing": true
         },
-        "projected_total": 9.08,
-        "simulated_total": 9.08,
-        "simulated_home_runs": 4.89,
-        "simulated_away_runs": 4.19,
-        "home_win_prob": 0.556,
-        "away_win_prob": 0.444,
+        "projected_total": 9.0,
+        "simulated_total": 9.0,
+        "simulated_home_runs": 4.85,
+        "simulated_away_runs": 4.15,
+        "home_win_prob": 0.565,
+        "away_win_prob": 0.435,
         "top_game_picks": [
           {
             "matchup": "Arizona Diamondbacks @ Texas Rangers",
@@ -81,20 +81,20 @@
             "pick": "Over",
             "line": 7.5,
             "american_odds": -112,
-            "model_probability": 0.539,
+            "model_probability": 0.5147,
             "no_vig_probability": 0.5043,
-            "edge": 0.0347,
+            "edge": 0.0104,
             "tier": "pass",
             "bankroll_fraction": 0.0,
             "top_features": [
               {
                 "feature": "Simulated total",
-                "value": 9.08,
+                "value": 9.0,
                 "direction": "up"
               },
               {
                 "feature": "Weather stack",
-                "value": 1.77,
+                "value": 0.02,
                 "direction": "up"
               },
               {
@@ -103,11 +103,11 @@
                 "direction": "up"
               }
             ],
-            "weather_stack_score": 1.77,
+            "weather_stack_score": 0.02,
             "start_time": "8:05 PM ET",
             "lineup_status": "projected",
             "simulation_trials": 10000,
-            "specific_blurb": "Brandon Nimmo and Josh Jung (52/50 matchup scores) profile best into Michael Soroka's pitch mix for Texas Rangers, and Michael Soroka is carrying a .274 xBA allowed and 41% hard-hit rate; the sim lands at 9.1 runs versus 7.5"
+            "specific_blurb": "Brandon Nimmo and Josh Jung (52/50 matchup scores) profile best into Michael Soroka's pitch mix for Texas Rangers, and Michael Soroka is carrying a .274 xBA allowed and 41% hard-hit rate; the sim lands at 9.0 runs versus 7.5"
           },
           {
             "matchup": "Arizona Diamondbacks @ Texas Rangers",
@@ -115,20 +115,20 @@
             "pick": "Under",
             "line": 7.5,
             "american_odds": -108,
-            "model_probability": 0.461,
+            "model_probability": 0.4853,
             "no_vig_probability": 0.4957,
-            "edge": -0.0347,
+            "edge": -0.0104,
             "tier": "pass",
             "bankroll_fraction": 0.0,
             "top_features": [
               {
                 "feature": "Simulated total",
-                "value": 9.08,
+                "value": 9.0,
                 "direction": "up"
               },
               {
                 "feature": "Weather stack",
-                "value": 1.77,
+                "value": 0.02,
                 "direction": "up"
               },
               {
@@ -137,32 +137,32 @@
                 "direction": "up"
               }
             ],
-            "weather_stack_score": 1.77,
+            "weather_stack_score": 0.02,
             "start_time": "8:05 PM ET",
             "lineup_status": "projected",
             "simulation_trials": 10000,
-            "specific_blurb": "Michael Soroka and Nathan Eovaldi project to keep quality contact down early, and the softest batter matchups on the board are Danny Jansen and Evan Carter (37/45 matchup scores) / James McCann and Jorge Barrosa (31/35 matchup scores); the sim sits at 9.1 against 7.5"
+            "specific_blurb": "Michael Soroka and Nathan Eovaldi project to keep quality contact down early, and the softest batter matchups on the board are Danny Jansen and Evan Carter (37/45 matchup scores) / James McCann and Jorge Barrosa (31/35 matchup scores); the sim sits at 9.0 against 7.5"
           },
           {
             "matchup": "Arizona Diamondbacks @ Texas Rangers",
             "market_type": "moneyline",
             "pick": "Texas Rangers",
             "line": 0.0,
-            "american_odds": -136,
-            "model_probability": 0.5534,
-            "no_vig_probability": 0.5511,
-            "edge": 0.0024,
+            "american_odds": -131,
+            "model_probability": 0.5475,
+            "no_vig_probability": 0.5424,
+            "edge": 0.0051,
             "tier": "pass",
             "bankroll_fraction": 0.0,
             "top_features": [
               {
                 "feature": "Simulated total",
-                "value": 9.08,
+                "value": 9.0,
                 "direction": "up"
               },
               {
                 "feature": "Weather stack",
-                "value": 1.77,
+                "value": 0.02,
                 "direction": "up"
               },
               {
@@ -171,32 +171,32 @@
                 "direction": "up"
               }
             ],
-            "weather_stack_score": 1.77,
+            "weather_stack_score": 0.02,
             "start_time": "8:05 PM ET",
             "lineup_status": "projected",
             "simulation_trials": 10000,
-            "specific_blurb": "Nathan Eovaldi gives Texas Rangers the cleaner starter setup, and Brandon Nimmo and Josh Jung (52/50 matchup scores) carry the best hitter-vs-arsenal edges against Michael Soroka; the sim has it 4.9 to 4.2 with a 0.2-point edge"
+            "specific_blurb": "Nathan Eovaldi gives Texas Rangers the cleaner starter setup, and Brandon Nimmo and Josh Jung (52/50 matchup scores) carry the best hitter-vs-arsenal edges against Michael Soroka; the sim has it 4.8 to 4.2 with a 0.5-point edge"
           },
           {
             "matchup": "Arizona Diamondbacks @ Texas Rangers",
             "market_type": "moneyline",
             "pick": "Arizona Diamondbacks",
             "line": 0.0,
-            "american_odds": 113,
-            "model_probability": 0.4466,
-            "no_vig_probability": 0.4489,
-            "edge": -0.0024,
+            "american_odds": 109,
+            "model_probability": 0.4525,
+            "no_vig_probability": 0.4576,
+            "edge": -0.0051,
             "tier": "pass",
             "bankroll_fraction": 0.0,
             "top_features": [
               {
                 "feature": "Simulated total",
-                "value": 9.08,
+                "value": 9.0,
                 "direction": "up"
               },
               {
                 "feature": "Weather stack",
-                "value": 1.77,
+                "value": 0.02,
                 "direction": "up"
               },
               {
@@ -205,32 +205,32 @@
                 "direction": "up"
               }
             ],
-            "weather_stack_score": 1.77,
+            "weather_stack_score": 0.02,
             "start_time": "8:05 PM ET",
             "lineup_status": "projected",
             "simulation_trials": 10000,
-            "specific_blurb": "Michael Soroka gives Arizona Diamondbacks the cleaner starter setup, and Ketel Marte and Corbin Carroll (49/48 matchup scores) carry the best hitter-vs-arsenal edges against Nathan Eovaldi; the sim has it 4.2 to 4.9 with a -0.2-point edge"
+            "specific_blurb": "Michael Soroka gives Arizona Diamondbacks the cleaner starter setup, and Ketel Marte and Corbin Carroll (49/48 matchup scores) carry the best hitter-vs-arsenal edges against Nathan Eovaldi; the sim has it 4.2 to 4.8 with a -0.5-point edge"
           },
           {
             "matchup": "Arizona Diamondbacks @ Texas Rangers",
             "market_type": "runline",
             "pick": "Texas Rangers",
             "line": -1.5,
-            "american_odds": 159,
-            "model_probability": 0.3526,
-            "no_vig_probability": 0.3691,
-            "edge": -0.0165,
+            "american_odds": 163,
+            "model_probability": 0.3568,
+            "no_vig_probability": 0.3636,
+            "edge": -0.0067,
             "tier": "pass",
             "bankroll_fraction": 0.0,
             "top_features": [
               {
                 "feature": "Simulated total",
-                "value": 9.08,
+                "value": 9.0,
                 "direction": "up"
               },
               {
                 "feature": "Weather stack",
-                "value": 1.77,
+                "value": 0.02,
                 "direction": "up"
               },
               {
@@ -239,16 +239,36 @@
                 "direction": "up"
               }
             ],
-            "weather_stack_score": 1.77,
+            "weather_stack_score": 0.02,
             "start_time": "8:05 PM ET",
             "lineup_status": "projected",
             "simulation_trials": 10000,
             "specific_blurb": "Brandon Nimmo and Josh Jung (52/50 matchup scores) give Texas Rangers the strongest matchup cluster in this game, and the sim creates about a 0.7-run gap on average"
           }
         ],
+        "home_bullpen": {
+          "bullpen_score": 65.0,
+          "fresh_high_leverage_arms": 3,
+          "depleted": false,
+          "closer_status": "fresh",
+          "lhp_available": true,
+          "fatigue_flags": [
+            "Jacob Latz: high fatigue"
+          ]
+        },
+        "away_bullpen": {
+          "bullpen_score": 65.0,
+          "fresh_high_leverage_arms": 4,
+          "depleted": false,
+          "closer_status": "fresh",
+          "lhp_available": true,
+          "fatigue_flags": []
+        },
         "home_pitcher": {
           "team": "Texas Rangers",
           "name": "Nathan Eovaldi",
+          "is_opener": false,
+          "bulk_pitcher_name": null,
           "handedness": "R",
           "arm_angle": 45.0,
           "extension": 6.0,
@@ -675,6 +695,8 @@
         "away_pitcher": {
           "team": "Arizona Diamondbacks",
           "name": "Michael Soroka",
+          "is_opener": false,
+          "bulk_pitcher_name": null,
           "handedness": "R",
           "arm_angle": 45.0,
           "extension": 6.0,
@@ -1088,16 +1110,16 @@
                 }
               ],
               "simulation": {
-                "pa": 4.61,
-                "ab": 4.27,
-                "hits": 0.58,
-                "hr": 0.08,
+                "pa": 4.56,
+                "ab": 4.22,
+                "hits": 0.57,
+                "hr": 0.07,
                 "bb": 0.27,
-                "k": 0.98,
-                "rbi": 0.56,
-                "tb": 0.94,
+                "k": 1.01,
+                "rbi": 0.55,
+                "tb": 0.93,
                 "hit_prob": 0.125,
-                "hr_prob": 0.017
+                "hr_prob": 0.016
               }
             },
             {
@@ -1151,16 +1173,16 @@
                 }
               ],
               "simulation": {
-                "pa": 4.28,
-                "ab": 3.97,
+                "pa": 4.22,
+                "ab": 3.92,
                 "hits": 0.54,
                 "hr": 0.07,
-                "bb": 0.25,
-                "k": 0.91,
-                "rbi": 0.57,
+                "bb": 0.24,
+                "k": 0.93,
+                "rbi": 0.56,
                 "tb": 0.89,
-                "hit_prob": 0.127,
-                "hr_prob": 0.017
+                "hit_prob": 0.129,
+                "hr_prob": 0.018
               }
             },
             {
@@ -1214,15 +1236,15 @@
                 }
               ],
               "simulation": {
-                "pa": 3.73,
-                "ab": 3.49,
-                "hits": 0.47,
+                "pa": 3.68,
+                "ab": 3.44,
+                "hits": 0.46,
                 "hr": 0.06,
                 "bb": 0.19,
-                "k": 0.81,
-                "rbi": 0.55,
-                "tb": 0.77,
-                "hit_prob": 0.127,
+                "k": 0.84,
+                "rbi": 0.54,
+                "tb": 0.75,
+                "hit_prob": 0.124,
                 "hr_prob": 0.017
               }
             },
@@ -1277,15 +1299,15 @@
                 }
               ],
               "simulation": {
-                "pa": 4.38,
-                "ab": 4.06,
-                "hits": 0.52,
+                "pa": 4.34,
+                "ab": 4.02,
+                "hits": 0.51,
                 "hr": 0.07,
                 "bb": 0.25,
-                "k": 0.99,
-                "rbi": 0.54,
-                "tb": 0.85,
-                "hit_prob": 0.119,
+                "k": 1.02,
+                "rbi": 0.52,
+                "tb": 0.83,
+                "hit_prob": 0.118,
                 "hr_prob": 0.016
               }
             },
@@ -1340,15 +1362,15 @@
                 }
               ],
               "simulation": {
-                "pa": 3.97,
-                "ab": 3.66,
-                "hits": 0.48,
+                "pa": 3.92,
+                "ab": 3.62,
+                "hits": 0.47,
                 "hr": 0.06,
                 "bb": 0.24,
-                "k": 0.84,
-                "rbi": 0.54,
-                "tb": 0.77,
-                "hit_prob": 0.121,
+                "k": 0.88,
+                "rbi": 0.53,
+                "tb": 0.75,
+                "hit_prob": 0.119,
                 "hr_prob": 0.015
               }
             },
@@ -1403,15 +1425,15 @@
                 }
               ],
               "simulation": {
-                "pa": 4.49,
-                "ab": 4.17,
+                "pa": 4.44,
+                "ab": 4.12,
                 "hits": 0.55,
-                "hr": 0.07,
+                "hr": 0.08,
                 "bb": 0.26,
-                "k": 0.98,
-                "rbi": 0.54,
-                "tb": 0.89,
-                "hit_prob": 0.122,
+                "k": 0.99,
+                "rbi": 0.55,
+                "tb": 0.9,
+                "hit_prob": 0.124,
                 "hr_prob": 0.017
               }
             },
@@ -1466,15 +1488,15 @@
                 }
               ],
               "simulation": {
-                "pa": 4.08,
-                "ab": 3.77,
-                "hits": 0.48,
+                "pa": 4.03,
+                "ab": 3.72,
+                "hits": 0.49,
                 "hr": 0.07,
-                "bb": 0.24,
+                "bb": 0.25,
                 "k": 0.91,
-                "rbi": 0.54,
-                "tb": 0.79,
-                "hit_prob": 0.119,
+                "rbi": 0.55,
+                "tb": 0.8,
+                "hit_prob": 0.121,
                 "hr_prob": 0.016
               }
             },
@@ -1529,16 +1551,16 @@
                 }
               ],
               "simulation": {
-                "pa": 4.18,
-                "ab": 3.85,
-                "hits": 0.49,
-                "hr": 0.06,
+                "pa": 4.13,
+                "ab": 3.81,
+                "hits": 0.5,
+                "hr": 0.07,
                 "bb": 0.26,
-                "k": 0.9,
-                "rbi": 0.52,
-                "tb": 0.79,
-                "hit_prob": 0.117,
-                "hr_prob": 0.015
+                "k": 0.92,
+                "rbi": 0.54,
+                "tb": 0.82,
+                "hit_prob": 0.121,
+                "hr_prob": 0.016
               }
             },
             {
@@ -1592,15 +1614,15 @@
                 }
               ],
               "simulation": {
-                "pa": 3.85,
-                "ab": 3.58,
-                "hits": 0.45,
+                "pa": 3.8,
+                "ab": 3.54,
+                "hits": 0.43,
                 "hr": 0.06,
-                "bb": 0.21,
-                "k": 0.89,
-                "rbi": 0.52,
-                "tb": 0.72,
-                "hit_prob": 0.116,
+                "bb": 0.22,
+                "k": 0.93,
+                "rbi": 0.51,
+                "tb": 0.71,
+                "hit_prob": 0.114,
                 "hr_prob": 0.015
               }
             }
@@ -1662,15 +1684,15 @@
                 }
               ],
               "simulation": {
-                "pa": 4.45,
-                "ab": 4.11,
+                "pa": 4.39,
+                "ab": 4.08,
                 "hits": 0.52,
                 "hr": 0.07,
-                "bb": 0.27,
-                "k": 0.99,
-                "rbi": 0.5,
+                "bb": 0.26,
+                "k": 1.0,
+                "rbi": 0.49,
                 "tb": 0.85,
-                "hit_prob": 0.117,
+                "hit_prob": 0.119,
                 "hr_prob": 0.016
               }
             },
@@ -1725,16 +1747,16 @@
                 }
               ],
               "simulation": {
-                "pa": 4.35,
-                "ab": 4.02,
-                "hits": 0.48,
-                "hr": 0.06,
-                "bb": 0.26,
-                "k": 1.01,
-                "rbi": 0.48,
-                "tb": 0.78,
-                "hit_prob": 0.111,
-                "hr_prob": 0.014
+                "pa": 4.28,
+                "ab": 3.95,
+                "hits": 0.49,
+                "hr": 0.07,
+                "bb": 0.27,
+                "k": 1.03,
+                "rbi": 0.49,
+                "tb": 0.79,
+                "hit_prob": 0.114,
+                "hr_prob": 0.016
               }
             },
             {
@@ -1788,16 +1810,16 @@
                 }
               ],
               "simulation": {
-                "pa": 4.06,
-                "ab": 3.76,
+                "pa": 4.01,
+                "ab": 3.73,
                 "hits": 0.44,
                 "hr": 0.06,
                 "bb": 0.23,
-                "k": 0.82,
-                "rbi": 0.48,
+                "k": 0.85,
+                "rbi": 0.47,
                 "tb": 0.72,
-                "hit_prob": 0.109,
-                "hr_prob": 0.014
+                "hit_prob": 0.11,
+                "hr_prob": 0.015
               }
             },
             {
@@ -1851,14 +1873,14 @@
                 }
               ],
               "simulation": {
-                "pa": 4.25,
-                "ab": 3.89,
-                "hits": 0.46,
+                "pa": 4.19,
+                "ab": 3.85,
+                "hits": 0.45,
                 "hr": 0.06,
                 "bb": 0.28,
-                "k": 0.89,
-                "rbi": 0.48,
-                "tb": 0.74,
+                "k": 0.9,
+                "rbi": 0.46,
+                "tb": 0.73,
                 "hit_prob": 0.108,
                 "hr_prob": 0.014
               }
@@ -1914,15 +1936,15 @@
                 }
               ],
               "simulation": {
-                "pa": 3.95,
-                "ab": 3.64,
+                "pa": 3.9,
+                "ab": 3.61,
                 "hits": 0.42,
                 "hr": 0.05,
-                "bb": 0.24,
-                "k": 0.89,
-                "rbi": 0.46,
-                "tb": 0.66,
-                "hit_prob": 0.106,
+                "bb": 0.23,
+                "k": 0.92,
+                "rbi": 0.45,
+                "tb": 0.67,
+                "hit_prob": 0.107,
                 "hr_prob": 0.013
               }
             },
@@ -1977,16 +1999,16 @@
                 }
               ],
               "simulation": {
-                "pa": 4.15,
-                "ab": 3.85,
-                "hits": 0.43,
+                "pa": 4.1,
+                "ab": 3.82,
+                "hits": 0.44,
                 "hr": 0.06,
-                "bb": 0.24,
-                "k": 1.02,
-                "rbi": 0.46,
-                "tb": 0.7,
-                "hit_prob": 0.105,
-                "hr_prob": 0.013
+                "bb": 0.23,
+                "k": 1.06,
+                "rbi": 0.47,
+                "tb": 0.72,
+                "hit_prob": 0.107,
+                "hr_prob": 0.015
               }
             },
             {
@@ -2040,16 +2062,16 @@
                 }
               ],
               "simulation": {
-                "pa": 3.58,
-                "ab": 3.36,
-                "hits": 0.37,
+                "pa": 3.51,
+                "ab": 3.3,
+                "hits": 0.38,
                 "hr": 0.05,
-                "bb": 0.18,
-                "k": 0.92,
-                "rbi": 0.44,
-                "tb": 0.61,
-                "hit_prob": 0.104,
-                "hr_prob": 0.014
+                "bb": 0.17,
+                "k": 0.94,
+                "rbi": 0.45,
+                "tb": 0.62,
+                "hit_prob": 0.108,
+                "hr_prob": 0.015
               }
             },
             {
@@ -2103,15 +2125,15 @@
                 }
               ],
               "simulation": {
-                "pa": 3.71,
-                "ab": 3.42,
+                "pa": 3.64,
+                "ab": 3.37,
                 "hits": 0.36,
                 "hr": 0.04,
-                "bb": 0.23,
-                "k": 0.95,
+                "bb": 0.22,
+                "k": 0.96,
                 "rbi": 0.42,
-                "tb": 0.57,
-                "hit_prob": 0.097,
+                "tb": 0.58,
+                "hit_prob": 0.1,
                 "hr_prob": 0.012
               }
             },
@@ -2166,15 +2188,15 @@
                 }
               ],
               "simulation": {
-                "pa": 3.83,
-                "ab": 3.56,
-                "hits": 0.4,
+                "pa": 3.77,
+                "ab": 3.52,
+                "hits": 0.41,
                 "hr": 0.05,
-                "bb": 0.22,
-                "k": 0.96,
+                "bb": 0.21,
+                "k": 0.98,
                 "rbi": 0.46,
-                "tb": 0.65,
-                "hit_prob": 0.105,
+                "tb": 0.66,
+                "hit_prob": 0.109,
                 "hr_prob": 0.014
               }
             }
@@ -2186,20 +2208,20 @@
         "venue": "Oriole Park at Camden Yards",
         "start_time": "6:35 PM ET",
         "lineup_status": "projected",
-        "weather_stack_score": 2.75,
+        "weather_stack_score": 2.77,
         "weather": {
-          "temperature_f": 19.2,
-          "wind_speed_mph": 12.9,
-          "wind_direction": 333,
-          "humidity": 23,
+          "temperature_f": 18.8,
+          "wind_speed_mph": 16.8,
+          "wind_direction": 317,
+          "humidity": 22,
           "weather_missing": false
         },
-        "projected_total": 9.32,
-        "simulated_total": 9.32,
-        "simulated_home_runs": 4.5,
-        "simulated_away_runs": 4.82,
-        "home_win_prob": 0.467,
-        "away_win_prob": 0.533,
+        "projected_total": 9.18,
+        "simulated_total": 9.18,
+        "simulated_home_runs": 4.4,
+        "simulated_away_runs": 4.78,
+        "home_win_prob": 0.447,
+        "away_win_prob": 0.553,
         "top_game_picks": [
           {
             "matchup": "New York Yankees @ Baltimore Orioles",
@@ -2207,20 +2229,20 @@
             "pick": "Over",
             "line": 9.0,
             "american_odds": 102,
-            "model_probability": 0.4905,
+            "model_probability": 0.4819,
             "no_vig_probability": 0.4739,
-            "edge": 0.0166,
+            "edge": 0.008,
             "tier": "pass",
             "bankroll_fraction": 0.0,
             "top_features": [
               {
                 "feature": "Simulated total",
-                "value": 9.32,
+                "value": 9.18,
                 "direction": "up"
               },
               {
                 "feature": "Weather stack",
-                "value": 2.75,
+                "value": 2.77,
                 "direction": "up"
               },
               {
@@ -2229,11 +2251,11 @@
                 "direction": "up"
               }
             ],
-            "weather_stack_score": 2.75,
+            "weather_stack_score": 2.77,
             "start_time": "6:35 PM ET",
             "lineup_status": "projected",
             "simulation_trials": 10000,
-            "specific_blurb": "Aaron Judge and Ben Rice (61/60 matchup scores) profile best into Brandon Young's pitch mix for New York Yankees, and Brandon Young is carrying a .262 xBA allowed and 42% hard-hit rate; the sim lands at 9.3 runs versus 9, with weather adding another push (13 mph wind)"
+            "specific_blurb": "Aaron Judge and Ben Rice (61/60 matchup scores) profile best into Brandon Young's pitch mix for New York Yankees, and Brandon Young is carrying a .262 xBA allowed and 42% hard-hit rate; the sim lands at 9.2 runs versus 9, with weather adding another push (17 mph wind)"
           },
           {
             "matchup": "New York Yankees @ Baltimore Orioles",
@@ -2241,20 +2263,20 @@
             "pick": "Under",
             "line": 9.0,
             "american_odds": -122,
-            "model_probability": 0.5095,
+            "model_probability": 0.5181,
             "no_vig_probability": 0.5261,
-            "edge": -0.0166,
+            "edge": -0.008,
             "tier": "pass",
             "bankroll_fraction": 0.0,
             "top_features": [
               {
                 "feature": "Simulated total",
-                "value": 9.32,
+                "value": 9.18,
                 "direction": "up"
               },
               {
                 "feature": "Weather stack",
-                "value": 2.75,
+                "value": 2.77,
                 "direction": "up"
               },
               {
@@ -2263,32 +2285,32 @@
                 "direction": "up"
               }
             ],
-            "weather_stack_score": 2.75,
+            "weather_stack_score": 2.77,
             "start_time": "6:35 PM ET",
             "lineup_status": "projected",
             "simulation_trials": 10000,
-            "specific_blurb": "Ryan Weathers and Brandon Young project to keep quality contact down early, and the softest batter matchups on the board are Coby Mayo and Jeremiah Jackson (39/41 matchup scores) / Spencer Jones and Jazz Chisholm Jr. (35/39 matchup scores); the sim sits at 9.3 against 9, with weather adding another push (13 mph wind)"
+            "specific_blurb": "Ryan Weathers and Brandon Young project to keep quality contact down early, and the softest batter matchups on the board are Coby Mayo and Jeremiah Jackson (39/41 matchup scores) / Spencer Jones and Jazz Chisholm Jr. (35/39 matchup scores); the sim sits at 9.2 against 9, with weather adding another push (17 mph wind)"
           },
           {
             "matchup": "New York Yankees @ Baltimore Orioles",
             "market_type": "moneyline",
             "pick": "Baltimore Orioles",
             "line": 0.0,
-            "american_odds": 144,
-            "model_probability": 0.4307,
-            "no_vig_probability": 0.3917,
-            "edge": 0.0389,
+            "american_odds": 135,
+            "model_probability": 0.428,
+            "no_vig_probability": 0.4071,
+            "edge": 0.0209,
             "tier": "pass",
             "bankroll_fraction": 0.0,
             "top_features": [
               {
                 "feature": "Simulated total",
-                "value": 9.32,
+                "value": 9.18,
                 "direction": "up"
               },
               {
                 "feature": "Weather stack",
-                "value": 2.75,
+                "value": 2.77,
                 "direction": "up"
               },
               {
@@ -2297,32 +2319,32 @@
                 "direction": "up"
               }
             ],
-            "weather_stack_score": 2.75,
+            "weather_stack_score": 2.77,
             "start_time": "6:35 PM ET",
             "lineup_status": "projected",
             "simulation_trials": 10000,
-            "specific_blurb": "Brandon Young gives Baltimore Orioles the cleaner starter setup, and Weston Wilson and Taylor Ward (52/52 matchup scores) carry the best hitter-vs-arsenal edges against Ryan Weathers; the sim has it 4.5 to 4.8 with a 3.9-point edge"
+            "specific_blurb": "Brandon Young gives Baltimore Orioles the cleaner starter setup, and Weston Wilson and Taylor Ward (52/52 matchup scores) carry the best hitter-vs-arsenal edges against Ryan Weathers; the sim has it 4.4 to 4.8 with a 2.1-point edge"
           },
           {
             "matchup": "New York Yankees @ Baltimore Orioles",
             "market_type": "runline",
             "pick": "New York Yankees",
             "line": 1.5,
-            "american_odds": -108,
-            "model_probability": 0.3987,
-            "no_vig_probability": 0.4957,
-            "edge": -0.097,
+            "american_odds": 102,
+            "model_probability": 0.3869,
+            "no_vig_probability": 0.4739,
+            "edge": -0.087,
             "tier": "pass",
             "bankroll_fraction": 0.0,
             "top_features": [
               {
                 "feature": "Simulated total",
-                "value": 9.32,
+                "value": 9.18,
                 "direction": "up"
               },
               {
                 "feature": "Weather stack",
-                "value": 2.75,
+                "value": 2.77,
                 "direction": "up"
               },
               {
@@ -2331,32 +2353,32 @@
                 "direction": "up"
               }
             ],
-            "weather_stack_score": 2.75,
+            "weather_stack_score": 2.77,
             "start_time": "6:35 PM ET",
             "lineup_status": "projected",
             "simulation_trials": 10000,
-            "specific_blurb": "Aaron Judge and Ben Rice (61/60 matchup scores) give New York Yankees the strongest matchup cluster in this game, and the sim creates about a 0.3-run gap on average"
+            "specific_blurb": "Aaron Judge and Ben Rice (61/60 matchup scores) give New York Yankees the strongest matchup cluster in this game, and the sim creates about a 0.4-run gap on average"
           },
           {
             "matchup": "New York Yankees @ Baltimore Orioles",
             "market_type": "runline",
             "pick": "Baltimore Orioles",
             "line": 1.5,
-            "american_odds": -112,
-            "model_probability": 0.3528,
-            "no_vig_probability": 0.5043,
-            "edge": -0.1515,
+            "american_odds": -122,
+            "model_probability": 0.3714,
+            "no_vig_probability": 0.5261,
+            "edge": -0.1546,
             "tier": "pass",
             "bankroll_fraction": 0.0,
             "top_features": [
               {
                 "feature": "Simulated total",
-                "value": 9.32,
+                "value": 9.18,
                 "direction": "up"
               },
               {
                 "feature": "Weather stack",
-                "value": 2.75,
+                "value": 2.77,
                 "direction": "up"
               },
               {
@@ -2365,16 +2387,40 @@
                 "direction": "up"
               }
             ],
-            "weather_stack_score": 2.75,
+            "weather_stack_score": 2.77,
             "start_time": "6:35 PM ET",
             "lineup_status": "projected",
             "simulation_trials": 10000,
-            "specific_blurb": "Weston Wilson and Taylor Ward (52/52 matchup scores) give Baltimore Orioles the strongest matchup cluster in this game, and the sim creates about a 0.3-run gap on average"
+            "specific_blurb": "Weston Wilson and Taylor Ward (52/52 matchup scores) give Baltimore Orioles the strongest matchup cluster in this game, and the sim creates about a 0.4-run gap on average"
           }
         ],
+        "home_bullpen": {
+          "bullpen_score": 53.0,
+          "fresh_high_leverage_arms": 1,
+          "depleted": true,
+          "closer_status": "fresh",
+          "lhp_available": true,
+          "fatigue_flags": [
+            "Anthony Nunez: high fatigue",
+            "Rico Garcia: moderate fatigue"
+          ]
+        },
+        "away_bullpen": {
+          "bullpen_score": 65.0,
+          "fresh_high_leverage_arms": 3,
+          "depleted": false,
+          "closer_status": "fresh",
+          "lhp_available": true,
+          "fatigue_flags": [
+            "Paul Blackburn: moderate fatigue",
+            "Fernando Cruz: high fatigue"
+          ]
+        },
         "home_pitcher": {
           "team": "Baltimore Orioles",
           "name": "Brandon Young",
+          "is_opener": false,
+          "bulk_pitcher_name": null,
           "handedness": "R",
           "arm_angle": 45.0,
           "extension": 6.0,
@@ -2735,6 +2781,8 @@
         "away_pitcher": {
           "team": "New York Yankees",
           "name": "Ryan Weathers",
+          "is_opener": false,
+          "bulk_pitcher_name": null,
           "handedness": "L",
           "arm_angle": 45.0,
           "extension": 6.0,
@@ -3148,15 +3196,15 @@
                 }
               ],
               "simulation": {
-                "pa": 3.66,
-                "ab": 3.35,
-                "hits": 0.39,
+                "pa": 3.58,
+                "ab": 3.29,
+                "hits": 0.4,
                 "hr": 0.05,
-                "bb": 0.24,
-                "k": 0.82,
-                "rbi": 0.49,
+                "bb": 0.23,
+                "k": 0.85,
+                "rbi": 0.48,
                 "tb": 0.64,
-                "hit_prob": 0.107,
+                "hit_prob": 0.111,
                 "hr_prob": 0.014
               }
             },
@@ -3211,15 +3259,15 @@
                 }
               ],
               "simulation": {
-                "pa": 4.53,
-                "ab": 4.14,
-                "hits": 0.52,
+                "pa": 4.47,
+                "ab": 4.1,
+                "hits": 0.51,
                 "hr": 0.06,
-                "bb": 0.31,
-                "k": 1.0,
-                "rbi": 0.51,
-                "tb": 0.84,
-                "hit_prob": 0.115,
+                "bb": 0.3,
+                "k": 1.02,
+                "rbi": 0.49,
+                "tb": 0.82,
+                "hit_prob": 0.114,
                 "hr_prob": 0.014
               }
             },
@@ -3274,15 +3322,15 @@
                 }
               ],
               "simulation": {
-                "pa": 4.22,
-                "ab": 3.92,
-                "hits": 0.49,
+                "pa": 4.16,
+                "ab": 3.86,
+                "hits": 0.48,
                 "hr": 0.07,
                 "bb": 0.24,
-                "k": 0.97,
+                "k": 0.99,
                 "rbi": 0.52,
                 "tb": 0.8,
-                "hit_prob": 0.116,
+                "hit_prob": 0.117,
                 "hr_prob": 0.016
               }
             },
@@ -3337,15 +3385,15 @@
                 }
               ],
               "simulation": {
-                "pa": 4.31,
-                "ab": 4.0,
-                "hits": 0.53,
+                "pa": 4.26,
+                "ab": 3.95,
+                "hits": 0.52,
                 "hr": 0.06,
                 "bb": 0.25,
-                "k": 0.95,
-                "rbi": 0.53,
-                "tb": 0.84,
-                "hit_prob": 0.122,
+                "k": 1.0,
+                "rbi": 0.52,
+                "tb": 0.83,
+                "hit_prob": 0.121,
                 "hr_prob": 0.015
               }
             },
@@ -3400,16 +3448,16 @@
                 }
               ],
               "simulation": {
-                "pa": 3.9,
-                "ab": 3.6,
-                "hits": 0.44,
+                "pa": 3.83,
+                "ab": 3.53,
+                "hits": 0.42,
                 "hr": 0.05,
-                "bb": 0.23,
-                "k": 0.88,
-                "rbi": 0.5,
-                "tb": 0.71,
-                "hit_prob": 0.114,
-                "hr_prob": 0.014
+                "bb": 0.24,
+                "k": 0.92,
+                "rbi": 0.47,
+                "tb": 0.66,
+                "hit_prob": 0.109,
+                "hr_prob": 0.013
               }
             },
             {
@@ -3463,15 +3511,15 @@
                 }
               ],
               "simulation": {
-                "pa": 4.12,
-                "ab": 3.8,
-                "hits": 0.47,
+                "pa": 4.06,
+                "ab": 3.76,
+                "hits": 0.46,
                 "hr": 0.06,
-                "bb": 0.25,
-                "k": 0.93,
-                "rbi": 0.52,
-                "tb": 0.77,
-                "hit_prob": 0.115,
+                "bb": 0.24,
+                "k": 0.97,
+                "rbi": 0.5,
+                "tb": 0.74,
+                "hit_prob": 0.113,
                 "hr_prob": 0.015
               }
             },
@@ -3526,15 +3574,15 @@
                 }
               ],
               "simulation": {
-                "pa": 4.42,
-                "ab": 4.12,
-                "hits": 0.49,
+                "pa": 4.36,
+                "ab": 4.06,
+                "hits": 0.48,
                 "hr": 0.06,
                 "bb": 0.24,
-                "k": 1.06,
-                "rbi": 0.48,
+                "k": 1.09,
+                "rbi": 0.47,
                 "tb": 0.78,
-                "hit_prob": 0.11,
+                "hit_prob": 0.111,
                 "hr_prob": 0.014
               }
             },
@@ -3589,14 +3637,14 @@
                 }
               ],
               "simulation": {
-                "pa": 3.78,
-                "ab": 3.53,
-                "hits": 0.42,
+                "pa": 3.71,
+                "ab": 3.46,
+                "hits": 0.41,
                 "hr": 0.05,
-                "bb": 0.2,
-                "k": 0.91,
+                "bb": 0.21,
+                "k": 0.94,
                 "rbi": 0.48,
-                "tb": 0.67,
+                "tb": 0.66,
                 "hit_prob": 0.111,
                 "hr_prob": 0.014
               }
@@ -3652,15 +3700,15 @@
                 }
               ],
               "simulation": {
-                "pa": 4.01,
-                "ab": 3.75,
-                "hits": 0.43,
-                "hr": 0.06,
+                "pa": 3.95,
+                "ab": 3.69,
+                "hits": 0.42,
+                "hr": 0.05,
                 "bb": 0.21,
-                "k": 0.98,
-                "rbi": 0.47,
-                "tb": 0.7,
-                "hit_prob": 0.108,
+                "k": 1.03,
+                "rbi": 0.46,
+                "tb": 0.68,
+                "hit_prob": 0.107,
                 "hr_prob": 0.014
               }
             }
@@ -3722,16 +3770,16 @@
                 }
               ],
               "simulation": {
-                "pa": 4.42,
-                "ab": 4.06,
+                "pa": 4.39,
+                "ab": 4.05,
                 "hits": 0.52,
                 "hr": 0.07,
-                "bb": 0.28,
-                "k": 0.92,
-                "rbi": 0.54,
+                "bb": 0.27,
+                "k": 0.94,
+                "rbi": 0.53,
                 "tb": 0.84,
                 "hit_prob": 0.117,
-                "hr_prob": 0.015
+                "hr_prob": 0.016
               }
             },
             {
@@ -3785,15 +3833,15 @@
                 }
               ],
               "simulation": {
-                "pa": 4.53,
-                "ab": 4.16,
+                "pa": 4.5,
+                "ab": 4.15,
                 "hits": 0.54,
                 "hr": 0.07,
-                "bb": 0.29,
-                "k": 0.94,
+                "bb": 0.28,
+                "k": 0.93,
                 "rbi": 0.56,
-                "tb": 0.89,
-                "hit_prob": 0.119,
+                "tb": 0.88,
+                "hit_prob": 0.121,
                 "hr_prob": 0.016
               }
             },
@@ -3848,15 +3896,15 @@
                 }
               ],
               "simulation": {
-                "pa": 4.31,
-                "ab": 3.95,
-                "hits": 0.54,
+                "pa": 4.29,
+                "ab": 3.93,
+                "hits": 0.53,
                 "hr": 0.07,
                 "bb": 0.28,
-                "k": 0.82,
+                "k": 0.83,
                 "rbi": 0.57,
-                "tb": 0.87,
-                "hit_prob": 0.125,
+                "tb": 0.86,
+                "hit_prob": 0.124,
                 "hr_prob": 0.016
               }
             },
@@ -3911,16 +3959,16 @@
                 }
               ],
               "simulation": {
-                "pa": 4.64,
-                "ab": 4.27,
-                "hits": 0.57,
-                "hr": 0.08,
+                "pa": 4.62,
+                "ab": 4.25,
+                "hits": 0.56,
+                "hr": 0.07,
                 "bb": 0.29,
-                "k": 0.92,
-                "rbi": 0.57,
-                "tb": 0.93,
-                "hit_prob": 0.123,
-                "hr_prob": 0.017
+                "k": 0.95,
+                "rbi": 0.56,
+                "tb": 0.91,
+                "hit_prob": 0.121,
+                "hr_prob": 0.016
               }
             },
             {
@@ -3974,16 +4022,16 @@
                 }
               ],
               "simulation": {
-                "pa": 3.76,
-                "ab": 3.49,
-                "hits": 0.45,
-                "hr": 0.06,
+                "pa": 3.74,
+                "ab": 3.47,
+                "hits": 0.44,
+                "hr": 0.05,
                 "bb": 0.21,
                 "k": 0.82,
-                "rbi": 0.54,
-                "tb": 0.72,
-                "hit_prob": 0.119,
-                "hr_prob": 0.015
+                "rbi": 0.52,
+                "tb": 0.7,
+                "hit_prob": 0.116,
+                "hr_prob": 0.014
               }
             },
             {
@@ -4037,12 +4085,12 @@
                 }
               ],
               "simulation": {
-                "pa": 4.1,
-                "ab": 3.81,
-                "hits": 0.48,
+                "pa": 4.09,
+                "ab": 3.79,
+                "hits": 0.47,
                 "hr": 0.06,
                 "bb": 0.23,
-                "k": 0.89,
+                "k": 0.9,
                 "rbi": 0.53,
                 "tb": 0.77,
                 "hit_prob": 0.116,
@@ -4100,11 +4148,11 @@
                 }
               ],
               "simulation": {
-                "pa": 3.99,
-                "ab": 3.7,
+                "pa": 3.98,
+                "ab": 3.69,
                 "hits": 0.45,
                 "hr": 0.05,
-                "bb": 0.23,
+                "bb": 0.22,
                 "k": 0.85,
                 "rbi": 0.51,
                 "tb": 0.71,
@@ -4163,16 +4211,16 @@
                 }
               ],
               "simulation": {
-                "pa": 4.2,
-                "ab": 3.88,
+                "pa": 4.19,
+                "ab": 3.87,
                 "hits": 0.47,
                 "hr": 0.06,
                 "bb": 0.25,
                 "k": 0.94,
-                "rbi": 0.51,
-                "tb": 0.75,
-                "hit_prob": 0.111,
-                "hr_prob": 0.013
+                "rbi": 0.52,
+                "tb": 0.76,
+                "hit_prob": 0.113,
+                "hr_prob": 0.014
               }
             },
             {
@@ -4226,16 +4274,16 @@
                 }
               ],
               "simulation": {
-                "pa": 3.88,
-                "ab": 3.62,
+                "pa": 3.86,
+                "ab": 3.6,
                 "hits": 0.41,
-                "hr": 0.05,
-                "bb": 0.21,
-                "k": 0.94,
+                "hr": 0.06,
+                "bb": 0.2,
+                "k": 0.92,
                 "rbi": 0.49,
-                "tb": 0.67,
+                "tb": 0.68,
                 "hit_prob": 0.106,
-                "hr_prob": 0.014
+                "hr_prob": 0.015
               }
             }
           ]
@@ -4246,41 +4294,41 @@
         "venue": "UNIQLO Field at Dodger Stadium",
         "start_time": "10:10 PM ET",
         "lineup_status": "projected",
-        "weather_stack_score": 3.45,
+        "weather_stack_score": 3.33,
         "weather": {
-          "temperature_f": 19.9,
-          "wind_speed_mph": 11.6,
-          "wind_direction": 244,
-          "humidity": 71,
+          "temperature_f": 20.2,
+          "wind_speed_mph": 11.1,
+          "wind_direction": 245,
+          "humidity": 66,
           "weather_missing": false
         },
-        "projected_total": 8.84,
-        "simulated_total": 8.84,
-        "simulated_home_runs": 4.34,
-        "simulated_away_runs": 4.5,
-        "home_win_prob": 0.446,
-        "away_win_prob": 0.554,
+        "projected_total": 8.64,
+        "simulated_total": 8.64,
+        "simulated_home_runs": 4.24,
+        "simulated_away_runs": 4.4,
+        "home_win_prob": 0.44,
+        "away_win_prob": 0.56,
         "top_game_picks": [
           {
             "matchup": "San Francisco Giants @ Los Angeles Dodgers",
             "market_type": "game_total",
             "pick": "Under",
             "line": 9.5,
-            "american_odds": -120,
-            "model_probability": 0.542,
-            "no_vig_probability": 0.5217,
-            "edge": 0.0202,
+            "american_odds": -122,
+            "model_probability": 0.5506,
+            "no_vig_probability": 0.5261,
+            "edge": 0.0245,
             "tier": "pass",
             "bankroll_fraction": 0.0,
             "top_features": [
               {
                 "feature": "Simulated total",
-                "value": 8.84,
+                "value": 8.64,
                 "direction": "up"
               },
               {
                 "feature": "Weather stack",
-                "value": 3.45,
+                "value": 3.33,
                 "direction": "up"
               },
               {
@@ -4289,32 +4337,32 @@
                 "direction": "up"
               }
             ],
-            "weather_stack_score": 3.45,
+            "weather_stack_score": 3.33,
             "start_time": "10:10 PM ET",
             "lineup_status": "projected",
             "simulation_trials": 10000,
-            "specific_blurb": "Trevor McDonald and Roki Sasaki project to keep quality contact down early, and the softest batter matchups on the board are Alex Freeland and Alex Call (42/45 matchup scores) / Willy Adames and Drew Gilbert (38/39 matchup scores); the sim sits at 8.8 against 9.5, with weather adding another push (12 mph wind)"
+            "specific_blurb": "Trevor McDonald and Roki Sasaki project to keep quality contact down early, and the softest batter matchups on the board are Alex Freeland and Alex Call (42/45 matchup scores) / Willy Adames and Drew Gilbert (38/39 matchup scores); the sim sits at 8.6 against 9.5, with weather adding another push (11 mph wind)"
           },
           {
             "matchup": "San Francisco Giants @ Los Angeles Dodgers",
             "market_type": "game_total",
             "pick": "Over",
             "line": 9.5,
-            "american_odds": 100,
-            "model_probability": 0.458,
-            "no_vig_probability": 0.4783,
-            "edge": -0.0202,
+            "american_odds": 102,
+            "model_probability": 0.4494,
+            "no_vig_probability": 0.4739,
+            "edge": -0.0245,
             "tier": "pass",
             "bankroll_fraction": 0.0,
             "top_features": [
               {
                 "feature": "Simulated total",
-                "value": 8.84,
+                "value": 8.64,
                 "direction": "up"
               },
               {
                 "feature": "Weather stack",
-                "value": 3.45,
+                "value": 3.33,
                 "direction": "up"
               },
               {
@@ -4323,11 +4371,11 @@
                 "direction": "up"
               }
             ],
-            "weather_stack_score": 3.45,
+            "weather_stack_score": 3.33,
             "start_time": "10:10 PM ET",
             "lineup_status": "projected",
             "simulation_trials": 10000,
-            "specific_blurb": "Max Muncy and Shohei Ohtani (58/53 matchup scores) profile best into Trevor McDonald's pitch mix for Los Angeles Dodgers, and Trevor McDonald is carrying a .212 xBA allowed and 47% hard-hit rate; the sim lands at 8.8 runs versus 9.5, with weather adding another push (12 mph wind)"
+            "specific_blurb": "Max Muncy and Shohei Ohtani (58/53 matchup scores) profile best into Trevor McDonald's pitch mix for Los Angeles Dodgers, and Trevor McDonald is carrying a .212 xBA allowed and 47% hard-hit rate; the sim lands at 8.6 runs versus 9.5, with weather adding another push (11 mph wind)"
           },
           {
             "matchup": "San Francisco Giants @ Los Angeles Dodgers",
@@ -4335,20 +4383,20 @@
             "pick": "San Francisco Giants",
             "line": 0.0,
             "american_odds": 159,
-            "model_probability": 0.4654,
+            "model_probability": 0.4568,
             "no_vig_probability": 0.3691,
-            "edge": 0.0962,
-            "tier": "strong",
-            "bankroll_fraction": 0.03,
+            "edge": 0.0877,
+            "tier": "moderate",
+            "bankroll_fraction": 0.02,
             "top_features": [
               {
                 "feature": "Simulated total",
-                "value": 8.84,
+                "value": 8.64,
                 "direction": "up"
               },
               {
                 "feature": "Weather stack",
-                "value": 3.45,
+                "value": 3.33,
                 "direction": "up"
               },
               {
@@ -4357,11 +4405,11 @@
                 "direction": "up"
               }
             ],
-            "weather_stack_score": 3.45,
+            "weather_stack_score": 3.33,
             "start_time": "10:10 PM ET",
             "lineup_status": "projected",
             "simulation_trials": 10000,
-            "specific_blurb": "Trevor McDonald gives San Francisco Giants the cleaner starter setup, and Jesus Rodriguez and Casey Schmitt (54/50 matchup scores) carry the best hitter-vs-arsenal edges against Roki Sasaki; the sim has it 4.5 to 4.3 with a 9.6-point edge"
+            "specific_blurb": "Trevor McDonald gives San Francisco Giants the cleaner starter setup, and Jesus Rodriguez and Casey Schmitt (54/50 matchup scores) carry the best hitter-vs-arsenal edges against Roki Sasaki; the sim has it 4.4 to 4.2 with a 8.8-point edge"
           },
           {
             "matchup": "San Francisco Giants @ Los Angeles Dodgers",
@@ -4369,20 +4417,20 @@
             "pick": "San Francisco Giants",
             "line": -1.5,
             "american_odds": -131,
-            "model_probability": 0.4026,
+            "model_probability": 0.4134,
             "no_vig_probability": 0.5424,
-            "edge": -0.1398,
+            "edge": -0.129,
             "tier": "pass",
             "bankroll_fraction": 0.0,
             "top_features": [
               {
                 "feature": "Simulated total",
-                "value": 8.84,
+                "value": 8.64,
                 "direction": "up"
               },
               {
                 "feature": "Weather stack",
-                "value": 3.45,
+                "value": 3.33,
                 "direction": "up"
               },
               {
@@ -4391,7 +4439,7 @@
                 "direction": "up"
               }
             ],
-            "weather_stack_score": 3.45,
+            "weather_stack_score": 3.33,
             "start_time": "10:10 PM ET",
             "lineup_status": "projected",
             "simulation_trials": 10000,
@@ -4403,20 +4451,20 @@
             "pick": "Los Angeles Dodgers",
             "line": -1.5,
             "american_odds": 109,
-            "model_probability": 0.3454,
+            "model_probability": 0.355,
             "no_vig_probability": 0.4576,
-            "edge": -0.1122,
+            "edge": -0.1026,
             "tier": "pass",
             "bankroll_fraction": 0.0,
             "top_features": [
               {
                 "feature": "Simulated total",
-                "value": 8.84,
+                "value": 8.64,
                 "direction": "up"
               },
               {
                 "feature": "Weather stack",
-                "value": 3.45,
+                "value": 3.33,
                 "direction": "up"
               },
               {
@@ -4425,16 +4473,38 @@
                 "direction": "up"
               }
             ],
-            "weather_stack_score": 3.45,
+            "weather_stack_score": 3.33,
             "start_time": "10:10 PM ET",
             "lineup_status": "projected",
             "simulation_trials": 10000,
             "specific_blurb": "Max Muncy and Shohei Ohtani (58/53 matchup scores) give Los Angeles Dodgers the strongest matchup cluster in this game, and the sim creates about a 0.2-run gap on average"
           }
         ],
+        "home_bullpen": {
+          "bullpen_score": 65.0,
+          "fresh_high_leverage_arms": 5,
+          "depleted": false,
+          "closer_status": "fresh",
+          "lhp_available": true,
+          "fatigue_flags": []
+        },
+        "away_bullpen": {
+          "bullpen_score": 65.0,
+          "fresh_high_leverage_arms": 2,
+          "depleted": false,
+          "closer_status": "fresh",
+          "lhp_available": true,
+          "fatigue_flags": [
+            "Caleb Kilian: moderate fatigue",
+            "Joel Peguero: high fatigue",
+            "Ryan Borucki: high fatigue"
+          ]
+        },
         "home_pitcher": {
           "team": "Los Angeles Dodgers",
           "name": "Roki Sasaki",
+          "is_opener": false,
+          "bulk_pitcher_name": null,
           "handedness": "R",
           "arm_angle": 45.0,
           "extension": 6.0,
@@ -4663,6 +4733,8 @@
         "away_pitcher": {
           "team": "San Francisco Giants",
           "name": "Trevor McDonald",
+          "is_opener": false,
+          "bulk_pitcher_name": null,
           "handedness": "R",
           "arm_angle": 45.0,
           "extension": 6.0,
@@ -5010,15 +5082,15 @@
                 }
               ],
               "simulation": {
-                "pa": 4.1,
-                "ab": 3.79,
+                "pa": 4.03,
+                "ab": 3.75,
                 "hits": 0.46,
                 "hr": 0.06,
-                "bb": 0.24,
-                "k": 0.92,
-                "rbi": 0.5,
+                "bb": 0.23,
+                "k": 0.96,
+                "rbi": 0.49,
                 "tb": 0.75,
-                "hit_prob": 0.113,
+                "hit_prob": 0.115,
                 "hr_prob": 0.015
               }
             },
@@ -5073,16 +5145,16 @@
                 }
               ],
               "simulation": {
-                "pa": 4.52,
-                "ab": 4.18,
-                "hits": 0.5,
-                "hr": 0.06,
+                "pa": 4.45,
+                "ab": 4.11,
+                "hits": 0.49,
+                "hr": 0.07,
                 "bb": 0.27,
-                "k": 1.04,
-                "rbi": 0.5,
-                "tb": 0.81,
+                "k": 1.09,
+                "rbi": 0.49,
+                "tb": 0.8,
                 "hit_prob": 0.11,
-                "hr_prob": 0.014
+                "hr_prob": 0.015
               }
             },
             {
@@ -5136,16 +5208,16 @@
                 }
               ],
               "simulation": {
-                "pa": 4.4,
-                "ab": 4.06,
+                "pa": 4.33,
+                "ab": 4.01,
                 "hits": 0.51,
                 "hr": 0.07,
-                "bb": 0.27,
-                "k": 0.99,
+                "bb": 0.26,
+                "k": 1.01,
                 "rbi": 0.51,
-                "tb": 0.82,
-                "hit_prob": 0.115,
-                "hr_prob": 0.015
+                "tb": 0.83,
+                "hit_prob": 0.118,
+                "hr_prob": 0.016
               }
             },
             {
@@ -5199,16 +5271,16 @@
                 }
               ],
               "simulation": {
-                "pa": 3.88,
-                "ab": 3.62,
+                "pa": 3.82,
+                "ab": 3.55,
                 "hits": 0.42,
-                "hr": 0.06,
+                "hr": 0.05,
                 "bb": 0.21,
-                "k": 0.94,
-                "rbi": 0.49,
-                "tb": 0.69,
-                "hit_prob": 0.109,
-                "hr_prob": 0.015
+                "k": 0.96,
+                "rbi": 0.47,
+                "tb": 0.68,
+                "hit_prob": 0.11,
+                "hr_prob": 0.014
               }
             },
             {
@@ -5262,15 +5334,15 @@
                 }
               ],
               "simulation": {
-                "pa": 4.3,
-                "ab": 3.99,
+                "pa": 4.23,
+                "ab": 3.94,
                 "hits": 0.49,
-                "hr": 0.07,
-                "bb": 0.24,
-                "k": 0.99,
-                "rbi": 0.51,
-                "tb": 0.8,
-                "hit_prob": 0.113,
+                "hr": 0.06,
+                "bb": 0.23,
+                "k": 1.02,
+                "rbi": 0.5,
+                "tb": 0.79,
+                "hit_prob": 0.116,
                 "hr_prob": 0.015
               }
             },
@@ -5325,16 +5397,16 @@
                 }
               ],
               "simulation": {
-                "pa": 4.2,
-                "ab": 3.87,
-                "hits": 0.46,
-                "hr": 0.06,
-                "bb": 0.26,
-                "k": 0.99,
-                "rbi": 0.49,
-                "tb": 0.73,
-                "hit_prob": 0.109,
-                "hr_prob": 0.014
+                "pa": 4.13,
+                "ab": 3.82,
+                "hits": 0.44,
+                "hr": 0.05,
+                "bb": 0.25,
+                "k": 1.02,
+                "rbi": 0.46,
+                "tb": 0.71,
+                "hit_prob": 0.107,
+                "hr_prob": 0.013
               }
             },
             {
@@ -5388,16 +5460,16 @@
                 }
               ],
               "simulation": {
-                "pa": 3.76,
-                "ab": 3.48,
-                "hits": 0.39,
+                "pa": 3.69,
+                "ab": 3.41,
+                "hits": 0.38,
                 "hr": 0.04,
-                "bb": 0.22,
-                "k": 0.92,
+                "bb": 0.23,
+                "k": 0.94,
                 "rbi": 0.44,
-                "tb": 0.61,
-                "hit_prob": 0.104,
-                "hr_prob": 0.011
+                "tb": 0.6,
+                "hit_prob": 0.103,
+                "hr_prob": 0.012
               }
             },
             {
@@ -5451,16 +5523,16 @@
                 }
               ],
               "simulation": {
-                "pa": 3.99,
-                "ab": 3.66,
-                "hits": 0.43,
+                "pa": 3.93,
+                "ab": 3.6,
+                "hits": 0.42,
                 "hr": 0.05,
                 "bb": 0.26,
-                "k": 0.92,
-                "rbi": 0.47,
-                "tb": 0.66,
+                "k": 0.94,
+                "rbi": 0.45,
+                "tb": 0.65,
                 "hit_prob": 0.107,
-                "hr_prob": 0.012
+                "hr_prob": 0.011
               }
             },
             {
@@ -5514,15 +5586,15 @@
                 }
               ],
               "simulation": {
-                "pa": 3.64,
-                "ab": 3.38,
-                "hits": 0.37,
-                "hr": 0.05,
-                "bb": 0.2,
-                "k": 0.9,
-                "rbi": 0.45,
-                "tb": 0.59,
-                "hit_prob": 0.102,
+                "pa": 3.56,
+                "ab": 3.3,
+                "hits": 0.35,
+                "hr": 0.04,
+                "bb": 0.21,
+                "k": 0.93,
+                "rbi": 0.43,
+                "tb": 0.56,
+                "hit_prob": 0.099,
                 "hr_prob": 0.012
               }
             }
@@ -5584,15 +5656,15 @@
                 }
               ],
               "simulation": {
-                "pa": 3.67,
-                "ab": 3.42,
-                "hits": 0.46,
+                "pa": 3.59,
+                "ab": 3.36,
+                "hits": 0.45,
                 "hr": 0.06,
-                "bb": 0.2,
-                "k": 0.71,
-                "rbi": 0.54,
-                "tb": 0.75,
-                "hit_prob": 0.127,
+                "bb": 0.19,
+                "k": 0.72,
+                "rbi": 0.52,
+                "tb": 0.73,
+                "hit_prob": 0.126,
                 "hr_prob": 0.016
               }
             },
@@ -5647,14 +5719,14 @@
                 }
               ],
               "simulation": {
-                "pa": 4.32,
-                "ab": 4.02,
-                "hits": 0.53,
+                "pa": 4.25,
+                "ab": 3.95,
+                "hits": 0.52,
                 "hr": 0.07,
                 "bb": 0.24,
-                "k": 0.94,
-                "rbi": 0.54,
-                "tb": 0.86,
+                "k": 0.96,
+                "rbi": 0.52,
+                "tb": 0.84,
                 "hit_prob": 0.122,
                 "hr_prob": 0.016
               }
@@ -5710,15 +5782,15 @@
                 }
               ],
               "simulation": {
-                "pa": 4.12,
-                "ab": 3.83,
+                "pa": 4.05,
+                "ab": 3.77,
                 "hits": 0.49,
                 "hr": 0.06,
                 "bb": 0.23,
-                "k": 0.93,
-                "rbi": 0.53,
+                "k": 0.96,
+                "rbi": 0.52,
                 "tb": 0.8,
-                "hit_prob": 0.12,
+                "hit_prob": 0.121,
                 "hr_prob": 0.016
               }
             },
@@ -5773,14 +5845,14 @@
                 }
               ],
               "simulation": {
-                "pa": 4.55,
-                "ab": 4.22,
-                "hits": 0.51,
+                "pa": 4.47,
+                "ab": 4.14,
+                "hits": 0.5,
                 "hr": 0.06,
-                "bb": 0.26,
+                "bb": 0.27,
                 "k": 0.94,
                 "rbi": 0.48,
-                "tb": 0.81,
+                "tb": 0.8,
                 "hit_prob": 0.111,
                 "hr_prob": 0.014
               }
@@ -5836,15 +5908,15 @@
                 }
               ],
               "simulation": {
-                "pa": 4.43,
-                "ab": 4.11,
-                "hits": 0.48,
+                "pa": 4.36,
+                "ab": 4.04,
+                "hits": 0.47,
                 "hr": 0.05,
                 "bb": 0.25,
                 "k": 0.84,
-                "rbi": 0.46,
+                "rbi": 0.45,
                 "tb": 0.74,
-                "hit_prob": 0.107,
+                "hit_prob": 0.108,
                 "hr_prob": 0.012
               }
             },
@@ -5899,14 +5971,14 @@
                 }
               ],
               "simulation": {
-                "pa": 3.91,
-                "ab": 3.61,
-                "hits": 0.43,
+                "pa": 3.83,
+                "ab": 3.54,
+                "hits": 0.42,
                 "hr": 0.05,
-                "bb": 0.24,
-                "k": 0.89,
-                "rbi": 0.49,
-                "tb": 0.69,
+                "bb": 0.23,
+                "k": 0.93,
+                "rbi": 0.47,
+                "tb": 0.68,
                 "hit_prob": 0.11,
                 "hr_prob": 0.013
               }
@@ -5962,16 +6034,16 @@
                 }
               ],
               "simulation": {
-                "pa": 4.22,
-                "ab": 3.92,
+                "pa": 4.15,
+                "ab": 3.86,
                 "hits": 0.47,
                 "hr": 0.06,
-                "bb": 0.24,
-                "k": 0.99,
-                "rbi": 0.5,
-                "tb": 0.76,
-                "hit_prob": 0.112,
-                "hr_prob": 0.014
+                "bb": 0.23,
+                "k": 1.02,
+                "rbi": 0.49,
+                "tb": 0.77,
+                "hit_prob": 0.114,
+                "hr_prob": 0.015
               }
             },
             {
@@ -6025,16 +6097,16 @@
                 }
               ],
               "simulation": {
-                "pa": 3.79,
-                "ab": 3.51,
-                "hits": 0.42,
+                "pa": 3.72,
+                "ab": 3.45,
+                "hits": 0.41,
                 "hr": 0.05,
                 "bb": 0.22,
-                "k": 0.85,
-                "rbi": 0.48,
-                "tb": 0.67,
+                "k": 0.86,
+                "rbi": 0.46,
+                "tb": 0.65,
                 "hit_prob": 0.11,
-                "hr_prob": 0.014
+                "hr_prob": 0.013
               }
             },
             {
@@ -6088,16 +6160,16 @@
                 }
               ],
               "simulation": {
-                "pa": 4.02,
-                "ab": 3.74,
-                "hits": 0.45,
-                "hr": 0.05,
+                "pa": 3.95,
+                "ab": 3.67,
+                "hits": 0.44,
+                "hr": 0.06,
                 "bb": 0.22,
-                "k": 0.95,
-                "rbi": 0.48,
-                "tb": 0.7,
-                "hit_prob": 0.111,
-                "hr_prob": 0.013
+                "k": 0.98,
+                "rbi": 0.49,
+                "tb": 0.71,
+                "hit_prob": 0.112,
+                "hr_prob": 0.014
               }
             }
           ]
@@ -6116,12 +6188,12 @@
           "humidity": 50.0,
           "weather_missing": true
         },
-        "projected_total": 8.74,
-        "simulated_total": 8.74,
-        "simulated_home_runs": 4.38,
-        "simulated_away_runs": 4.36,
-        "home_win_prob": 0.519,
-        "away_win_prob": 0.481,
+        "projected_total": 8.66,
+        "simulated_total": 8.66,
+        "simulated_home_runs": 4.34,
+        "simulated_away_runs": 4.32,
+        "home_win_prob": 0.529,
+        "away_win_prob": 0.471,
         "top_game_picks": [
           {
             "matchup": "Seattle Mariners @ Houston Astros",
@@ -6129,15 +6201,15 @@
             "pick": "Under",
             "line": 9.0,
             "american_odds": -120,
-            "model_probability": 0.5317,
+            "model_probability": 0.5322,
             "no_vig_probability": 0.5217,
-            "edge": 0.01,
+            "edge": 0.0105,
             "tier": "pass",
             "bankroll_fraction": 0.0,
             "top_features": [
               {
                 "feature": "Simulated total",
-                "value": 8.74,
+                "value": 8.66,
                 "direction": "up"
               },
               {
@@ -6163,15 +6235,15 @@
             "pick": "Over",
             "line": 9.0,
             "american_odds": 100,
-            "model_probability": 0.4683,
+            "model_probability": 0.4678,
             "no_vig_probability": 0.4783,
-            "edge": -0.01,
+            "edge": -0.0105,
             "tier": "pass",
             "bankroll_fraction": 0.0,
             "top_features": [
               {
                 "feature": "Simulated total",
-                "value": 8.74,
+                "value": 8.66,
                 "direction": "up"
               },
               {
@@ -6197,15 +6269,15 @@
             "pick": "Houston Astros",
             "line": 0.0,
             "american_odds": 119,
-            "model_probability": 0.4607,
+            "model_probability": 0.4636,
             "no_vig_probability": 0.4369,
-            "edge": 0.0238,
+            "edge": 0.0267,
             "tier": "pass",
             "bankroll_fraction": 0.0,
             "top_features": [
               {
                 "feature": "Simulated total",
-                "value": 8.74,
+                "value": 8.66,
                 "direction": "up"
               },
               {
@@ -6223,7 +6295,7 @@
             "start_time": "8:10 PM ET",
             "lineup_status": "projected",
             "simulation_trials": 10000,
-            "specific_blurb": "Peter Lambert gives Houston Astros the cleaner starter setup, and Yordan Alvarez and Zach Cole (67/50 matchup scores) carry the best hitter-vs-arsenal edges against George Kirby; the sim has it 4.4 to 4.4 with a 2.4-point edge"
+            "specific_blurb": "Peter Lambert gives Houston Astros the cleaner starter setup, and Yordan Alvarez and Zach Cole (67/50 matchup scores) carry the best hitter-vs-arsenal edges against George Kirby; the sim has it 4.3 to 4.3 with a 2.7-point edge"
           },
           {
             "matchup": "Seattle Mariners @ Houston Astros",
@@ -6231,15 +6303,15 @@
             "pick": "Seattle Mariners",
             "line": 0.0,
             "american_odds": -143,
-            "model_probability": 0.5393,
+            "model_probability": 0.5364,
             "no_vig_probability": 0.5631,
-            "edge": -0.0238,
+            "edge": -0.0267,
             "tier": "pass",
             "bankroll_fraction": 0.0,
             "top_features": [
               {
                 "feature": "Simulated total",
-                "value": 8.74,
+                "value": 8.66,
                 "direction": "up"
               },
               {
@@ -6257,7 +6329,7 @@
             "start_time": "8:10 PM ET",
             "lineup_status": "projected",
             "simulation_trials": 10000,
-            "specific_blurb": "George Kirby gives Seattle Mariners the cleaner starter setup, and Luke Raley and J.P. Crawford (54/52 matchup scores) carry the best hitter-vs-arsenal edges against Peter Lambert; the sim has it 4.4 to 4.4 with a -2.4-point edge"
+            "specific_blurb": "George Kirby gives Seattle Mariners the cleaner starter setup, and Luke Raley and J.P. Crawford (54/52 matchup scores) carry the best hitter-vs-arsenal edges against Peter Lambert; the sim has it 4.3 to 4.3 with a -2.7-point edge"
           },
           {
             "matchup": "Seattle Mariners @ Houston Astros",
@@ -6265,15 +6337,15 @@
             "pick": "Houston Astros",
             "line": 1.5,
             "american_odds": -143,
-            "model_probability": 0.47,
+            "model_probability": 0.4721,
             "no_vig_probability": 0.5631,
-            "edge": -0.0931,
+            "edge": -0.091,
             "tier": "pass",
             "bankroll_fraction": 0.0,
             "top_features": [
               {
                 "feature": "Simulated total",
-                "value": 8.74,
+                "value": 8.66,
                 "direction": "up"
               },
               {
@@ -6294,9 +6366,33 @@
             "specific_blurb": "Yordan Alvarez and Zach Cole (67/50 matchup scores) give Houston Astros the strongest matchup cluster in this game, and the sim creates about a 0.0-run gap on average"
           }
         ],
+        "home_bullpen": {
+          "bullpen_score": 53.0,
+          "fresh_high_leverage_arms": 0,
+          "depleted": true,
+          "closer_status": "fresh",
+          "lhp_available": true,
+          "fatigue_flags": [
+            "Kai-Wei Teng: high fatigue",
+            "AJ Blubaugh: high fatigue"
+          ]
+        },
+        "away_bullpen": {
+          "bullpen_score": 53.0,
+          "fresh_high_leverage_arms": 0,
+          "depleted": true,
+          "closer_status": "fresh",
+          "lhp_available": true,
+          "fatigue_flags": [
+            "Jos\u00e9 A. Ferrer: high fatigue",
+            "Eduard Bazardo: moderate fatigue"
+          ]
+        },
         "home_pitcher": {
           "team": "Houston Astros",
           "name": "Peter Lambert",
+          "is_opener": false,
+          "bulk_pitcher_name": null,
           "handedness": "R",
           "arm_angle": 45.0,
           "extension": 6.0,
@@ -6723,6 +6819,8 @@
         "away_pitcher": {
           "team": "Seattle Mariners",
           "name": "George Kirby",
+          "is_opener": false,
+          "bulk_pitcher_name": null,
           "handedness": "R",
           "arm_angle": 45.0,
           "extension": 6.0,
@@ -7203,15 +7301,15 @@
               ],
               "simulation": {
                 "pa": 4.39,
-                "ab": 4.03,
+                "ab": 4.02,
                 "hits": 0.56,
                 "hr": 0.08,
                 "bb": 0.29,
                 "k": 0.87,
-                "rbi": 0.56,
-                "tb": 0.92,
+                "rbi": 0.57,
+                "tb": 0.93,
                 "hit_prob": 0.128,
-                "hr_prob": 0.017
+                "hr_prob": 0.018
               }
             },
             {
@@ -7265,15 +7363,15 @@
                 }
               ],
               "simulation": {
-                "pa": 4.01,
-                "ab": 3.75,
-                "hits": 0.43,
+                "pa": 3.99,
+                "ab": 3.73,
+                "hits": 0.44,
                 "hr": 0.06,
                 "bb": 0.2,
                 "k": 1.0,
-                "rbi": 0.48,
+                "rbi": 0.49,
                 "tb": 0.7,
-                "hit_prob": 0.107,
+                "hit_prob": 0.109,
                 "hr_prob": 0.014
               }
             },
@@ -7328,15 +7426,15 @@
                 }
               ],
               "simulation": {
-                "pa": 4.2,
-                "ab": 3.87,
+                "pa": 4.19,
+                "ab": 3.86,
                 "hits": 0.48,
                 "hr": 0.07,
                 "bb": 0.26,
                 "k": 0.9,
                 "rbi": 0.52,
                 "tb": 0.79,
-                "hit_prob": 0.115,
+                "hit_prob": 0.114,
                 "hr_prob": 0.016
               }
             },
@@ -7391,15 +7489,15 @@
                 }
               ],
               "simulation": {
-                "pa": 4.11,
-                "ab": 3.8,
-                "hits": 0.46,
+                "pa": 4.09,
+                "ab": 3.78,
+                "hits": 0.47,
                 "hr": 0.06,
-                "bb": 0.24,
-                "k": 0.93,
-                "rbi": 0.51,
-                "tb": 0.75,
-                "hit_prob": 0.112,
+                "bb": 0.25,
+                "k": 0.94,
+                "rbi": 0.5,
+                "tb": 0.76,
+                "hit_prob": 0.114,
                 "hr_prob": 0.015
               }
             },
@@ -7454,16 +7552,16 @@
                 }
               ],
               "simulation": {
-                "pa": 4.51,
+                "pa": 4.5,
                 "ab": 4.15,
-                "hits": 0.5,
+                "hits": 0.49,
                 "hr": 0.06,
                 "bb": 0.28,
-                "k": 0.97,
-                "rbi": 0.49,
-                "tb": 0.8,
-                "hit_prob": 0.111,
-                "hr_prob": 0.014
+                "k": 0.98,
+                "rbi": 0.48,
+                "tb": 0.79,
+                "hit_prob": 0.108,
+                "hr_prob": 0.013
               }
             },
             {
@@ -7517,10 +7615,10 @@
                 }
               ],
               "simulation": {
-                "pa": 4.3,
-                "ab": 3.96,
+                "pa": 4.29,
+                "ab": 3.95,
                 "hits": 0.44,
-                "hr": 0.05,
+                "hr": 0.06,
                 "bb": 0.27,
                 "k": 0.9,
                 "rbi": 0.46,
@@ -7580,15 +7678,15 @@
                 }
               ],
               "simulation": {
-                "pa": 3.89,
-                "ab": 3.6,
-                "hits": 0.41,
+                "pa": 3.88,
+                "ab": 3.59,
+                "hits": 0.4,
                 "hr": 0.05,
                 "bb": 0.23,
-                "k": 0.94,
-                "rbi": 0.47,
-                "tb": 0.66,
-                "hit_prob": 0.105,
+                "k": 0.96,
+                "rbi": 0.46,
+                "tb": 0.65,
+                "hit_prob": 0.104,
                 "hr_prob": 0.013
               }
             },
@@ -7643,16 +7741,16 @@
                 }
               ],
               "simulation": {
-                "pa": 3.78,
-                "ab": 3.52,
-                "hits": 0.38,
-                "hr": 0.05,
-                "bb": 0.21,
-                "k": 0.77,
-                "rbi": 0.45,
-                "tb": 0.62,
-                "hit_prob": 0.1,
-                "hr_prob": 0.013
+                "pa": 3.76,
+                "ab": 3.5,
+                "hits": 0.37,
+                "hr": 0.04,
+                "bb": 0.2,
+                "k": 0.79,
+                "rbi": 0.42,
+                "tb": 0.58,
+                "hit_prob": 0.097,
+                "hr_prob": 0.012
               }
             },
             {
@@ -7706,16 +7804,16 @@
                 }
               ],
               "simulation": {
-                "pa": 3.65,
-                "ab": 3.36,
+                "pa": 3.63,
+                "ab": 3.35,
                 "hits": 0.37,
-                "hr": 0.04,
+                "hr": 0.05,
                 "bb": 0.22,
-                "k": 0.79,
-                "rbi": 0.43,
-                "tb": 0.58,
-                "hit_prob": 0.1,
-                "hr_prob": 0.012
+                "k": 0.8,
+                "rbi": 0.44,
+                "tb": 0.59,
+                "hit_prob": 0.101,
+                "hr_prob": 0.013
               }
             }
           ]
@@ -7776,16 +7874,16 @@
                 }
               ],
               "simulation": {
-                "pa": 4.02,
-                "ab": 3.76,
-                "hits": 0.45,
+                "pa": 3.99,
+                "ab": 3.73,
+                "hits": 0.44,
                 "hr": 0.06,
-                "bb": 0.2,
-                "k": 0.95,
+                "bb": 0.21,
+                "k": 0.96,
                 "rbi": 0.49,
-                "tb": 0.72,
+                "tb": 0.73,
                 "hit_prob": 0.111,
-                "hr_prob": 0.014
+                "hr_prob": 0.015
               }
             },
             {
@@ -7839,16 +7937,16 @@
                 }
               ],
               "simulation": {
-                "pa": 3.91,
-                "ab": 3.57,
-                "hits": 0.43,
-                "hr": 0.06,
-                "bb": 0.27,
-                "k": 0.84,
-                "rbi": 0.51,
-                "tb": 0.7,
-                "hit_prob": 0.11,
-                "hr_prob": 0.015
+                "pa": 3.88,
+                "ab": 3.55,
+                "hits": 0.42,
+                "hr": 0.05,
+                "bb": 0.26,
+                "k": 0.85,
+                "rbi": 0.49,
+                "tb": 0.68,
+                "hit_prob": 0.109,
+                "hr_prob": 0.014
               }
             },
             {
@@ -7902,16 +8000,16 @@
                 }
               ],
               "simulation": {
-                "pa": 3.8,
-                "ab": 3.5,
+                "pa": 3.77,
+                "ab": 3.48,
                 "hits": 0.43,
                 "hr": 0.06,
-                "bb": 0.23,
-                "k": 0.84,
-                "rbi": 0.5,
-                "tb": 0.69,
-                "hit_prob": 0.113,
-                "hr_prob": 0.015
+                "bb": 0.22,
+                "k": 0.85,
+                "rbi": 0.51,
+                "tb": 0.72,
+                "hit_prob": 0.115,
+                "hr_prob": 0.016
               }
             },
             {
@@ -7965,16 +8063,16 @@
                 }
               ],
               "simulation": {
-                "pa": 4.44,
-                "ab": 4.1,
-                "hits": 0.49,
-                "hr": 0.07,
+                "pa": 4.4,
+                "ab": 4.07,
+                "hits": 0.48,
+                "hr": 0.06,
                 "bb": 0.26,
-                "k": 1.02,
-                "rbi": 0.5,
-                "tb": 0.8,
-                "hit_prob": 0.11,
-                "hr_prob": 0.015
+                "k": 1.03,
+                "rbi": 0.49,
+                "tb": 0.77,
+                "hit_prob": 0.108,
+                "hr_prob": 0.014
               }
             },
             {
@@ -8028,14 +8126,14 @@
                 }
               ],
               "simulation": {
-                "pa": 4.32,
-                "ab": 3.99,
-                "hits": 0.48,
+                "pa": 4.29,
+                "ab": 3.97,
+                "hits": 0.47,
                 "hr": 0.06,
                 "bb": 0.26,
-                "k": 0.95,
-                "rbi": 0.49,
-                "tb": 0.77,
+                "k": 0.93,
+                "rbi": 0.48,
+                "tb": 0.76,
                 "hit_prob": 0.11,
                 "hr_prob": 0.014
               }
@@ -8091,15 +8189,15 @@
                 }
               ],
               "simulation": {
-                "pa": 4.55,
-                "ab": 4.19,
+                "pa": 4.52,
+                "ab": 4.16,
                 "hits": 0.47,
                 "hr": 0.06,
                 "bb": 0.28,
-                "k": 1.0,
+                "k": 0.98,
                 "rbi": 0.47,
                 "tb": 0.76,
-                "hit_prob": 0.104,
+                "hit_prob": 0.105,
                 "hr_prob": 0.013
               }
             },
@@ -8154,15 +8252,15 @@
                 }
               ],
               "simulation": {
-                "pa": 3.67,
-                "ab": 3.39,
-                "hits": 0.4,
+                "pa": 3.64,
+                "ab": 3.37,
+                "hits": 0.39,
                 "hr": 0.05,
                 "bb": 0.22,
-                "k": 0.84,
+                "k": 0.86,
                 "rbi": 0.47,
                 "tb": 0.64,
-                "hit_prob": 0.109,
+                "hit_prob": 0.107,
                 "hr_prob": 0.014
               }
             },
@@ -8217,15 +8315,15 @@
                 }
               ],
               "simulation": {
-                "pa": 4.12,
-                "ab": 3.81,
+                "pa": 4.09,
+                "ab": 3.78,
                 "hits": 0.45,
                 "hr": 0.06,
                 "bb": 0.25,
                 "k": 0.95,
                 "rbi": 0.49,
                 "tb": 0.73,
-                "hit_prob": 0.109,
+                "hit_prob": 0.11,
                 "hr_prob": 0.014
               }
             },
@@ -8280,15 +8378,15 @@
                 }
               ],
               "simulation": {
-                "pa": 4.22,
-                "ab": 3.91,
-                "hits": 0.42,
+                "pa": 4.19,
+                "ab": 3.87,
+                "hits": 0.41,
                 "hr": 0.05,
                 "bb": 0.25,
                 "k": 1.05,
                 "rbi": 0.44,
                 "tb": 0.66,
-                "hit_prob": 0.099,
+                "hit_prob": 0.098,
                 "hr_prob": 0.012
               }
             }
@@ -8302,34 +8400,34 @@
         "lineup_status": "projected",
         "weather_stack_score": 0.0,
         "weather": {
-          "temperature_f": 72.0,
-          "wind_speed_mph": 0.0,
-          "wind_direction": "neutral",
-          "humidity": 50.0,
-          "weather_missing": true
+          "temperature_f": 12.1,
+          "wind_speed_mph": 13.2,
+          "wind_direction": 315,
+          "humidity": 23,
+          "weather_missing": false
         },
-        "projected_total": 8.39,
-        "simulated_total": 8.39,
-        "simulated_home_runs": 4.17,
-        "simulated_away_runs": 4.22,
-        "home_win_prob": 0.526,
-        "away_win_prob": 0.474,
+        "projected_total": 8.36,
+        "simulated_total": 8.36,
+        "simulated_home_runs": 4.24,
+        "simulated_away_runs": 4.12,
+        "home_win_prob": 0.515,
+        "away_win_prob": 0.485,
         "top_game_picks": [
           {
             "matchup": "Tampa Bay Rays @ Toronto Blue Jays",
             "market_type": "game_total",
             "pick": "Over",
-            "line": 7.5,
-            "american_odds": 102,
-            "model_probability": 0.4872,
-            "no_vig_probability": 0.4739,
-            "edge": 0.0133,
+            "line": 7.0,
+            "american_odds": -115,
+            "model_probability": 0.5349,
+            "no_vig_probability": 0.5108,
+            "edge": 0.0241,
             "tier": "pass",
             "bankroll_fraction": 0.0,
             "top_features": [
               {
                 "feature": "Simulated total",
-                "value": 8.39,
+                "value": 8.36,
                 "direction": "up"
               },
               {
@@ -8347,23 +8445,23 @@
             "start_time": "7:07 PM ET",
             "lineup_status": "projected",
             "simulation_trials": 10000,
-            "specific_blurb": "Junior Caminero and Yandy D\u00edaz (52/50 matchup scores) profile best into Kevin Gausman's pitch mix for Tampa Bay Rays, and Kevin Gausman is carrying a .243 xBA allowed and 37% hard-hit rate; the sim lands at 8.4 runs versus 7.5"
+            "specific_blurb": "Junior Caminero and Yandy D\u00edaz (52/50 matchup scores) profile best into Kevin Gausman's pitch mix for Tampa Bay Rays, and Kevin Gausman is carrying a .243 xBA allowed and 37% hard-hit rate; the sim lands at 8.4 runs versus 7, with weather adding another push (13 mph wind)"
           },
           {
             "matchup": "Tampa Bay Rays @ Toronto Blue Jays",
             "market_type": "game_total",
             "pick": "Under",
-            "line": 7.5,
-            "american_odds": -122,
-            "model_probability": 0.5128,
-            "no_vig_probability": 0.5261,
-            "edge": -0.0133,
+            "line": 7.0,
+            "american_odds": -105,
+            "model_probability": 0.4651,
+            "no_vig_probability": 0.4892,
+            "edge": -0.0241,
             "tier": "pass",
             "bankroll_fraction": 0.0,
             "top_features": [
               {
                 "feature": "Simulated total",
-                "value": 8.39,
+                "value": 8.36,
                 "direction": "up"
               },
               {
@@ -8381,7 +8479,7 @@
             "start_time": "7:07 PM ET",
             "lineup_status": "projected",
             "simulation_trials": 10000,
-            "specific_blurb": "Drew Rasmussen and Kevin Gausman project to keep quality contact down early, and the softest batter matchups on the board are Tyler Heineman and Andr\u00e9s Gim\u00e9nez (32/38 matchup scores) / Cedric Mullins and Chandler Simpson (33/39 matchup scores); the sim sits at 8.4 against 7.5"
+            "specific_blurb": "Drew Rasmussen and Kevin Gausman project to keep quality contact down early, and the softest batter matchups on the board are Tyler Heineman and Andr\u00e9s Gim\u00e9nez (32/38 matchup scores) / Cedric Mullins and Chandler Simpson (33/39 matchup scores); the sim sits at 8.4 against 7, with weather adding another push (13 mph wind)"
           },
           {
             "matchup": "Tampa Bay Rays @ Toronto Blue Jays",
@@ -8389,15 +8487,15 @@
             "pick": "Tampa Bay Rays",
             "line": 0.0,
             "american_odds": 109,
-            "model_probability": 0.4623,
+            "model_probability": 0.4705,
             "no_vig_probability": 0.4576,
-            "edge": 0.0047,
+            "edge": 0.0129,
             "tier": "pass",
             "bankroll_fraction": 0.0,
             "top_features": [
               {
                 "feature": "Simulated total",
-                "value": 8.39,
+                "value": 8.36,
                 "direction": "up"
               },
               {
@@ -8415,7 +8513,7 @@
             "start_time": "7:07 PM ET",
             "lineup_status": "projected",
             "simulation_trials": 10000,
-            "specific_blurb": "Drew Rasmussen gives Tampa Bay Rays the cleaner starter setup, and Junior Caminero and Yandy D\u00edaz (52/50 matchup scores) carry the best hitter-vs-arsenal edges against Kevin Gausman; the sim has it 4.2 to 4.2 with a 0.5-point edge"
+            "specific_blurb": "Drew Rasmussen gives Tampa Bay Rays the cleaner starter setup, and Junior Caminero and Yandy D\u00edaz (52/50 matchup scores) carry the best hitter-vs-arsenal edges against Kevin Gausman; the sim has it 4.1 to 4.2 with a 1.3-point edge"
           },
           {
             "matchup": "Tampa Bay Rays @ Toronto Blue Jays",
@@ -8423,15 +8521,15 @@
             "pick": "Toronto Blue Jays",
             "line": 0.0,
             "american_odds": -131,
-            "model_probability": 0.5377,
+            "model_probability": 0.5295,
             "no_vig_probability": 0.5424,
-            "edge": -0.0047,
+            "edge": -0.0129,
             "tier": "pass",
             "bankroll_fraction": 0.0,
             "top_features": [
               {
                 "feature": "Simulated total",
-                "value": 8.39,
+                "value": 8.36,
                 "direction": "up"
               },
               {
@@ -8449,23 +8547,23 @@
             "start_time": "7:07 PM ET",
             "lineup_status": "projected",
             "simulation_trials": 10000,
-            "specific_blurb": "Kevin Gausman gives Toronto Blue Jays the cleaner starter setup, and Vladimir Guerrero Jr. and Kazuma Okamoto (52/52 matchup scores) carry the best hitter-vs-arsenal edges against Drew Rasmussen; the sim has it 4.2 to 4.2 with a -0.5-point edge"
+            "specific_blurb": "Kevin Gausman gives Toronto Blue Jays the cleaner starter setup, and Vladimir Guerrero Jr. and Kazuma Okamoto (52/52 matchup scores) carry the best hitter-vs-arsenal edges against Drew Rasmussen; the sim has it 4.2 to 4.1 with a -1.3-point edge"
           },
           {
             "matchup": "Tampa Bay Rays @ Toronto Blue Jays",
             "market_type": "runline",
             "pick": "Toronto Blue Jays",
             "line": -1.5,
-            "american_odds": 163,
-            "model_probability": 0.3299,
-            "no_vig_probability": 0.3636,
-            "edge": -0.0337,
+            "american_odds": 169,
+            "model_probability": 0.3138,
+            "no_vig_probability": 0.3554,
+            "edge": -0.0416,
             "tier": "pass",
             "bankroll_fraction": 0.0,
             "top_features": [
               {
                 "feature": "Simulated total",
-                "value": 8.39,
+                "value": 8.36,
                 "direction": "up"
               },
               {
@@ -8483,12 +8581,36 @@
             "start_time": "7:07 PM ET",
             "lineup_status": "projected",
             "simulation_trials": 10000,
-            "specific_blurb": "Vladimir Guerrero Jr. and Kazuma Okamoto (52/52 matchup scores) give Toronto Blue Jays the strongest matchup cluster in this game, and the sim creates about a 0.0-run gap on average"
+            "specific_blurb": "Vladimir Guerrero Jr. and Kazuma Okamoto (52/52 matchup scores) give Toronto Blue Jays the strongest matchup cluster in this game, and the sim creates about a 0.1-run gap on average"
           }
         ],
+        "home_bullpen": {
+          "bullpen_score": 65.0,
+          "fresh_high_leverage_arms": 4,
+          "depleted": false,
+          "closer_status": "fresh",
+          "lhp_available": true,
+          "fatigue_flags": [
+            "Spencer Miles: high fatigue"
+          ]
+        },
+        "away_bullpen": {
+          "bullpen_score": 40.0,
+          "fresh_high_leverage_arms": 1,
+          "depleted": true,
+          "closer_status": "fatigued",
+          "lhp_available": false,
+          "fatigue_flags": [
+            "Kevin Kelly: high fatigue",
+            "Garrett Cleavinger: high fatigue",
+            "Bryan Baker: moderate fatigue"
+          ]
+        },
         "home_pitcher": {
           "team": "Toronto Blue Jays",
           "name": "Kevin Gausman",
+          "is_opener": false,
+          "bulk_pitcher_name": null,
           "handedness": "R",
           "arm_angle": 45.0,
           "extension": 6.0,
@@ -8717,6 +8839,8 @@
         "away_pitcher": {
           "team": "Tampa Bay Rays",
           "name": "Drew Rasmussen",
+          "is_opener": false,
+          "bulk_pitcher_name": null,
           "handedness": "R",
           "arm_angle": 45.0,
           "extension": 6.0,
@@ -9196,14 +9320,14 @@
                 }
               ],
               "simulation": {
-                "pa": 4.25,
-                "ab": 3.91,
+                "pa": 4.29,
+                "ab": 3.94,
                 "hits": 0.49,
                 "hr": 0.07,
                 "bb": 0.27,
-                "k": 0.9,
+                "k": 0.89,
                 "rbi": 0.51,
-                "tb": 0.8,
+                "tb": 0.81,
                 "hit_prob": 0.115,
                 "hr_prob": 0.016
               }
@@ -9259,16 +9383,16 @@
                 }
               ],
               "simulation": {
-                "pa": 4.16,
-                "ab": 3.86,
-                "hits": 0.46,
-                "hr": 0.06,
+                "pa": 4.19,
+                "ab": 3.88,
+                "hits": 0.47,
+                "hr": 0.07,
                 "bb": 0.24,
-                "k": 0.98,
-                "rbi": 0.48,
-                "tb": 0.76,
+                "k": 0.95,
+                "rbi": 0.5,
+                "tb": 0.77,
                 "hit_prob": 0.111,
-                "hr_prob": 0.015
+                "hr_prob": 0.016
               }
             },
             {
@@ -9322,16 +9446,16 @@
                 }
               ],
               "simulation": {
-                "pa": 3.72,
-                "ab": 3.42,
-                "hits": 0.41,
+                "pa": 3.76,
+                "ab": 3.46,
+                "hits": 0.4,
                 "hr": 0.05,
                 "bb": 0.23,
                 "k": 0.78,
                 "rbi": 0.47,
                 "tb": 0.65,
-                "hit_prob": 0.11,
-                "hr_prob": 0.013
+                "hit_prob": 0.107,
+                "hr_prob": 0.014
               }
             },
             {
@@ -9385,15 +9509,15 @@
                 }
               ],
               "simulation": {
-                "pa": 4.06,
-                "ab": 3.77,
+                "pa": 4.1,
+                "ab": 3.8,
                 "hits": 0.46,
                 "hr": 0.06,
-                "bb": 0.23,
-                "k": 0.95,
+                "bb": 0.24,
+                "k": 0.93,
                 "rbi": 0.49,
-                "tb": 0.74,
-                "hit_prob": 0.113,
+                "tb": 0.75,
+                "hit_prob": 0.112,
                 "hr_prob": 0.015
               }
             },
@@ -9448,13 +9572,13 @@
                 }
               ],
               "simulation": {
-                "pa": 4.36,
-                "ab": 4.02,
+                "pa": 4.39,
+                "ab": 4.05,
                 "hits": 0.48,
                 "hr": 0.06,
-                "bb": 0.26,
-                "k": 1.01,
-                "rbi": 0.48,
+                "bb": 0.27,
+                "k": 0.99,
+                "rbi": 0.49,
                 "tb": 0.78,
                 "hit_prob": 0.11,
                 "hr_prob": 0.014
@@ -9511,14 +9635,14 @@
                 }
               ],
               "simulation": {
-                "pa": 4.47,
-                "ab": 4.15,
+                "pa": 4.51,
+                "ab": 4.18,
                 "hits": 0.46,
                 "hr": 0.06,
                 "bb": 0.25,
-                "k": 0.93,
+                "k": 0.92,
                 "rbi": 0.44,
-                "tb": 0.73,
+                "tb": 0.74,
                 "hit_prob": 0.102,
                 "hr_prob": 0.013
               }
@@ -9574,15 +9698,15 @@
                 }
               ],
               "simulation": {
-                "pa": 3.96,
-                "ab": 3.69,
-                "hits": 0.41,
+                "pa": 4.0,
+                "ab": 3.72,
+                "hits": 0.43,
                 "hr": 0.06,
-                "bb": 0.21,
+                "bb": 0.22,
                 "k": 0.98,
-                "rbi": 0.46,
-                "tb": 0.67,
-                "hit_prob": 0.104,
+                "rbi": 0.48,
+                "tb": 0.69,
+                "hit_prob": 0.107,
                 "hr_prob": 0.014
               }
             },
@@ -9637,16 +9761,16 @@
                 }
               ],
               "simulation": {
-                "pa": 3.85,
-                "ab": 3.57,
-                "hits": 0.38,
+                "pa": 3.88,
+                "ab": 3.6,
+                "hits": 0.4,
                 "hr": 0.05,
                 "bb": 0.22,
-                "k": 0.88,
-                "rbi": 0.44,
-                "tb": 0.62,
-                "hit_prob": 0.1,
-                "hr_prob": 0.012
+                "k": 0.87,
+                "rbi": 0.45,
+                "tb": 0.64,
+                "hit_prob": 0.102,
+                "hr_prob": 0.013
               }
             },
             {
@@ -9700,16 +9824,16 @@
                 }
               ],
               "simulation": {
-                "pa": 3.59,
-                "ab": 3.35,
-                "hits": 0.35,
+                "pa": 3.63,
+                "ab": 3.37,
+                "hits": 0.34,
                 "hr": 0.04,
                 "bb": 0.2,
-                "k": 0.9,
-                "rbi": 0.41,
-                "tb": 0.56,
-                "hit_prob": 0.097,
-                "hr_prob": 0.012
+                "k": 0.89,
+                "rbi": 0.4,
+                "tb": 0.54,
+                "hit_prob": 0.093,
+                "hr_prob": 0.011
               }
             }
           ]
@@ -9770,14 +9894,14 @@
                 }
               ],
               "simulation": {
-                "pa": 4.36,
-                "ab": 4.0,
-                "hits": 0.51,
+                "pa": 4.29,
+                "ab": 3.95,
+                "hits": 0.5,
                 "hr": 0.07,
                 "bb": 0.28,
-                "k": 0.94,
-                "rbi": 0.52,
-                "tb": 0.83,
+                "k": 0.96,
+                "rbi": 0.5,
+                "tb": 0.82,
                 "hit_prob": 0.116,
                 "hr_prob": 0.016
               }
@@ -9833,15 +9957,15 @@
                 }
               ],
               "simulation": {
-                "pa": 4.17,
-                "ab": 3.85,
-                "hits": 0.48,
+                "pa": 4.11,
+                "ab": 3.8,
+                "hits": 0.47,
                 "hr": 0.06,
-                "bb": 0.26,
-                "k": 0.86,
-                "rbi": 0.51,
-                "tb": 0.78,
-                "hit_prob": 0.114,
+                "bb": 0.25,
+                "k": 0.87,
+                "rbi": 0.5,
+                "tb": 0.77,
+                "hit_prob": 0.115,
                 "hr_prob": 0.015
               }
             },
@@ -9896,15 +10020,15 @@
                 }
               ],
               "simulation": {
-                "pa": 4.26,
-                "ab": 3.91,
+                "pa": 4.2,
+                "ab": 3.86,
                 "hits": 0.47,
                 "hr": 0.06,
-                "bb": 0.28,
-                "k": 0.98,
-                "rbi": 0.5,
+                "bb": 0.27,
+                "k": 0.99,
+                "rbi": 0.48,
                 "tb": 0.76,
-                "hit_prob": 0.11,
+                "hit_prob": 0.113,
                 "hr_prob": 0.014
               }
             },
@@ -9959,16 +10083,16 @@
                 }
               ],
               "simulation": {
-                "pa": 3.6,
-                "ab": 3.31,
+                "pa": 3.52,
+                "ab": 3.24,
                 "hits": 0.38,
                 "hr": 0.05,
                 "bb": 0.23,
-                "k": 0.82,
-                "rbi": 0.47,
-                "tb": 0.62,
-                "hit_prob": 0.106,
-                "hr_prob": 0.013
+                "k": 0.83,
+                "rbi": 0.46,
+                "tb": 0.61,
+                "hit_prob": 0.107,
+                "hr_prob": 0.014
               }
             },
             {
@@ -10022,15 +10146,15 @@
                 }
               ],
               "simulation": {
-                "pa": 3.97,
-                "ab": 3.66,
+                "pa": 3.9,
+                "ab": 3.59,
                 "hits": 0.42,
-                "hr": 0.05,
+                "hr": 0.06,
                 "bb": 0.25,
                 "k": 0.89,
                 "rbi": 0.48,
-                "tb": 0.68,
-                "hit_prob": 0.106,
+                "tb": 0.69,
+                "hit_prob": 0.109,
                 "hr_prob": 0.014
               }
             },
@@ -10085,16 +10209,16 @@
                 }
               ],
               "simulation": {
-                "pa": 4.08,
-                "ab": 3.76,
+                "pa": 4.01,
+                "ab": 3.71,
                 "hits": 0.4,
-                "hr": 0.05,
-                "bb": 0.25,
-                "k": 0.98,
-                "rbi": 0.45,
-                "tb": 0.65,
-                "hit_prob": 0.098,
-                "hr_prob": 0.012
+                "hr": 0.04,
+                "bb": 0.24,
+                "k": 1.0,
+                "rbi": 0.42,
+                "tb": 0.62,
+                "hit_prob": 0.099,
+                "hr_prob": 0.011
               }
             },
             {
@@ -10148,14 +10272,14 @@
                 }
               ],
               "simulation": {
-                "pa": 3.73,
-                "ab": 3.43,
-                "hits": 0.37,
+                "pa": 3.65,
+                "ab": 3.36,
+                "hits": 0.36,
                 "hr": 0.04,
-                "bb": 0.24,
-                "k": 0.92,
-                "rbi": 0.44,
-                "tb": 0.58,
+                "bb": 0.23,
+                "k": 0.96,
+                "rbi": 0.42,
+                "tb": 0.57,
                 "hit_prob": 0.098,
                 "hr_prob": 0.012
               }
@@ -10211,15 +10335,15 @@
                 }
               ],
               "simulation": {
-                "pa": 4.48,
-                "ab": 4.15,
-                "hits": 0.42,
+                "pa": 4.41,
+                "ab": 4.09,
+                "hits": 0.43,
                 "hr": 0.05,
                 "bb": 0.26,
-                "k": 0.91,
+                "k": 0.93,
                 "rbi": 0.42,
-                "tb": 0.68,
-                "hit_prob": 0.095,
+                "tb": 0.69,
+                "hit_prob": 0.098,
                 "hr_prob": 0.012
               }
             },
@@ -10274,16 +10398,16 @@
                 }
               ],
               "simulation": {
-                "pa": 3.85,
-                "ab": 3.57,
-                "hits": 0.39,
+                "pa": 3.77,
+                "ab": 3.5,
+                "hits": 0.38,
                 "hr": 0.05,
                 "bb": 0.22,
-                "k": 0.89,
+                "k": 0.88,
                 "rbi": 0.44,
-                "tb": 0.62,
-                "hit_prob": 0.101,
-                "hr_prob": 0.012
+                "tb": 0.61,
+                "hit_prob": 0.1,
+                "hr_prob": 0.013
               }
             }
           ]
@@ -10319,48 +10443,108 @@
   },
   "history": [
     {
-      "date": "2026-05-02",
-      "matchup": "Houston Astros @ Boston Red Sox",
+      "date": "2026-05-10",
+      "matchup": "Seattle Mariners @ Chicago White Sox",
+      "market_type": "moneyline",
+      "pick": "Chicago White Sox",
+      "line": 0.0,
+      "american_odds": 117,
+      "edge": 0.0707,
+      "tier": "moderate",
+      "result": "win",
+      "pnl": 117.0,
+      "away_score": 1,
+      "home_score": 2,
+      "final_total": 3
+    },
+    {
+      "date": "2026-05-08",
+      "matchup": "New York Mets @ Arizona Diamondbacks",
+      "market_type": "moneyline",
+      "pick": "New York Mets",
+      "line": 0.0,
+      "american_odds": -122,
+      "edge": 0.0925,
+      "tier": "strong",
+      "result": "win",
+      "pnl": 81.97,
+      "away_score": 3,
+      "home_score": 1,
+      "final_total": 4
+    },
+    {
+      "date": "2026-05-07",
+      "matchup": "New York Mets @ Colorado Rockies",
+      "market_type": "game_total",
+      "pick": "Under",
+      "line": 11.0,
+      "american_odds": -115,
+      "edge": 0.0707,
+      "tier": "moderate",
+      "result": "win",
+      "pnl": 86.96,
+      "away_score": 2,
+      "home_score": 6,
+      "final_total": 8
+    },
+    {
+      "date": "2026-05-06",
+      "matchup": "Cincinnati Reds @ Chicago Cubs",
+      "market_type": "game_total",
+      "pick": "Over",
+      "line": 8.0,
+      "american_odds": -112,
+      "edge": 0.0698,
+      "tier": "moderate",
+      "result": "win",
+      "pnl": 89.29,
+      "away_score": 6,
+      "home_score": 7,
+      "final_total": 13
+    },
+    {
+      "date": "2026-05-05",
+      "matchup": "Los Angeles Dodgers @ Houston Astros",
       "market_type": "moneyline",
       "pick": "Houston Astros",
       "line": 0.0,
-      "american_odds": 113,
-      "edge": 0.0731,
+      "american_odds": 189,
+      "edge": 0.0831,
       "tier": "moderate",
       "result": "win",
-      "pnl": 113.0,
-      "away_score": 6,
-      "home_score": 3,
-      "final_total": 9
+      "pnl": 189.0,
+      "away_score": 1,
+      "home_score": 2,
+      "final_total": 3
     },
     {
-      "date": "2026-05-03",
-      "matchup": "Arizona Diamondbacks @ Chicago Cubs",
-      "market_type": "game_total",
-      "pick": "Under",
-      "line": 11.5,
-      "american_odds": -105,
-      "edge": 0.0746,
-      "tier": "moderate",
-      "result": "loss",
-      "pnl": -100.0,
-      "away_score": 4,
-      "home_score": 8,
-      "final_total": 12
-    },
-    {
-      "date": "2026-05-04",
+      "date": "2026-05-05",
       "matchup": "Boston Red Sox @ Detroit Tigers",
       "market_type": "moneyline",
       "pick": "Boston Red Sox",
       "line": 0.0,
-      "american_odds": 163,
-      "edge": 0.1035,
-      "tier": "strong",
+      "american_odds": 135,
+      "edge": 0.0863,
+      "tier": "moderate",
       "result": "win",
-      "pnl": 163.0,
-      "away_score": 5,
-      "home_score": 4,
+      "pnl": 135.0,
+      "away_score": 10,
+      "home_score": 3,
+      "final_total": 13
+    },
+    {
+      "date": "2026-05-04",
+      "matchup": "Cincinnati Reds @ Chicago Cubs",
+      "market_type": "game_total",
+      "pick": "Under",
+      "line": 11.5,
+      "american_odds": -118,
+      "edge": 0.071,
+      "tier": "moderate",
+      "result": "win",
+      "pnl": 84.75,
+      "away_score": 4,
+      "home_score": 5,
       "final_total": 9
     },
     {
@@ -10380,108 +10564,48 @@
     },
     {
       "date": "2026-05-04",
-      "matchup": "Cincinnati Reds @ Chicago Cubs",
-      "market_type": "game_total",
-      "pick": "Under",
-      "line": 11.5,
-      "american_odds": -118,
-      "edge": 0.071,
-      "tier": "moderate",
-      "result": "win",
-      "pnl": 84.75,
-      "away_score": 4,
-      "home_score": 5,
-      "final_total": 9
-    },
-    {
-      "date": "2026-05-05",
       "matchup": "Boston Red Sox @ Detroit Tigers",
       "market_type": "moneyline",
       "pick": "Boston Red Sox",
       "line": 0.0,
-      "american_odds": 135,
-      "edge": 0.0863,
-      "tier": "moderate",
+      "american_odds": 163,
+      "edge": 0.1035,
+      "tier": "strong",
       "result": "win",
-      "pnl": 135.0,
-      "away_score": 10,
-      "home_score": 3,
-      "final_total": 13
+      "pnl": 163.0,
+      "away_score": 5,
+      "home_score": 4,
+      "final_total": 9
     },
     {
-      "date": "2026-05-05",
-      "matchup": "Los Angeles Dodgers @ Houston Astros",
+      "date": "2026-05-03",
+      "matchup": "Arizona Diamondbacks @ Chicago Cubs",
+      "market_type": "game_total",
+      "pick": "Under",
+      "line": 11.5,
+      "american_odds": -105,
+      "edge": 0.0746,
+      "tier": "moderate",
+      "result": "loss",
+      "pnl": -100.0,
+      "away_score": 4,
+      "home_score": 8,
+      "final_total": 12
+    },
+    {
+      "date": "2026-05-02",
+      "matchup": "Houston Astros @ Boston Red Sox",
       "market_type": "moneyline",
       "pick": "Houston Astros",
       "line": 0.0,
-      "american_odds": 189,
-      "edge": 0.0831,
+      "american_odds": 113,
+      "edge": 0.0731,
       "tier": "moderate",
       "result": "win",
-      "pnl": 189.0,
-      "away_score": 1,
-      "home_score": 2,
-      "final_total": 3
-    },
-    {
-      "date": "2026-05-06",
-      "matchup": "Cincinnati Reds @ Chicago Cubs",
-      "market_type": "game_total",
-      "pick": "Over",
-      "line": 8.0,
-      "american_odds": -112,
-      "edge": 0.0698,
-      "tier": "moderate",
-      "result": "win",
-      "pnl": 89.29,
+      "pnl": 113.0,
       "away_score": 6,
-      "home_score": 7,
-      "final_total": 13
-    },
-    {
-      "date": "2026-05-07",
-      "matchup": "New York Mets @ Colorado Rockies",
-      "market_type": "game_total",
-      "pick": "Under",
-      "line": 11.0,
-      "american_odds": -115,
-      "edge": 0.0707,
-      "tier": "moderate",
-      "result": "win",
-      "pnl": 86.96,
-      "away_score": 2,
-      "home_score": 6,
-      "final_total": 8
-    },
-    {
-      "date": "2026-05-08",
-      "matchup": "New York Mets @ Arizona Diamondbacks",
-      "market_type": "moneyline",
-      "pick": "New York Mets",
-      "line": 0.0,
-      "american_odds": -122,
-      "edge": 0.0925,
-      "tier": "strong",
-      "result": "win",
-      "pnl": 81.97,
-      "away_score": 3,
-      "home_score": 1,
-      "final_total": 4
-    },
-    {
-      "date": "2026-05-10",
-      "matchup": "Seattle Mariners @ Chicago White Sox",
-      "market_type": "moneyline",
-      "pick": "Chicago White Sox",
-      "line": 0.0,
-      "american_odds": 117,
-      "edge": 0.0707,
-      "tier": "moderate",
-      "result": "win",
-      "pnl": 117.0,
-      "away_score": 1,
-      "home_score": 2,
-      "final_total": 3
+      "home_score": 3,
+      "final_total": 9
     }
   ]
 }
