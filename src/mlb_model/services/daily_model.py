@@ -747,9 +747,11 @@ class DailyPredictionService:
     def _pitch_vs_starter(
         batter_profiles: list[dict[str, Any]],
         pitcher_arsenal: list[dict[str, Any]],
+        overall_profile: dict[str, Any] | None = None,
     ) -> list[dict[str, Any]]:
         batter_by_pitch = {p["pitch_type"]: p for p in batter_profiles}
         top_pitches = sorted(pitcher_arsenal, key=lambda p: p.get("usage_pct", 0), reverse=True)[:3]
+        fallback = overall_profile or {}
         result = []
         for pitch in top_pitches:
             pt = pitch.get("pitch_type", "")
@@ -760,10 +762,10 @@ class DailyPredictionService:
                 "usage_pct": pitch.get("usage_pct"),
                 "pitcher_xba": pitch.get("xba"),
                 "pitcher_k_pct": pitch.get("k_pct"),
-                "batter_xwoba": bp.get("xwoba") if bp else None,
-                "batter_k_pct": bp.get("k_pct") if bp else None,
-                "batter_bb_pct": bp.get("bb_pct") if bp else None,
-                "has_batter_data": bool(bp),
+                "batter_xwoba": bp.get("xwoba") if bp else fallback.get("xwoba"),
+                "batter_k_pct": bp.get("k_pct") if bp else fallback.get("k_pct"),
+                "batter_bb_pct": bp.get("bb_pct") if bp else fallback.get("bb_pct"),
+                "has_batter_data": bool(bp) or fallback.get("xwoba") is not None,
             })
         return result
 
@@ -807,6 +809,7 @@ class DailyPredictionService:
                     "pitch_vs_starter": self._pitch_vs_starter(
                         report["profile"].get("pitch_profiles", []),
                         opp_arsenal,
+                        report["profile"],
                     ),
                     "simulation": player_simulations.get(report["batter_id"], {}),
                 }
