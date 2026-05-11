@@ -249,17 +249,21 @@ class DailyPredictionService:
         # their Savant profile instead of generic league-average bullpen constants.
         home_bulk_profile: dict[str, Any] | None = None
         away_bulk_profile: dict[str, Any] | None = None
+        home_bulk_name: str | None = None
+        away_bulk_name: str | None = None
         if home_is_opener:
-            bulk_id = await self.stats.fetch_bulk_reliever_id(home_team_id, slate_date)
-            if bulk_id:
+            bulk_info = await self.stats.fetch_bulk_reliever_id(home_team_id, slate_date)
+            if bulk_info:
+                home_bulk_name = bulk_info["name"]
                 home_bulk_profile = self.baseball.build_pitcher_arsenal_profile(
-                    bulk_id, start_date=sample_start, end_date=slate_date
+                    bulk_info["id"], start_date=sample_start, end_date=slate_date
                 )
         if away_is_opener:
-            bulk_id = await self.stats.fetch_bulk_reliever_id(away_team_id, slate_date)
-            if bulk_id:
+            bulk_info = await self.stats.fetch_bulk_reliever_id(away_team_id, slate_date)
+            if bulk_info:
+                away_bulk_name = bulk_info["name"]
                 away_bulk_profile = self.baseball.build_pitcher_arsenal_profile(
-                    bulk_id, start_date=sample_start, end_date=slate_date
+                    bulk_info["id"], start_date=sample_start, end_date=slate_date
                 )
 
         home_profile_for_runs = self._opener_blend(home_pitcher_profile, home_bulk_profile) if home_is_opener else home_pitcher_profile
@@ -347,8 +351,8 @@ class DailyPredictionService:
             "away_pitcher_name": away_pitcher.get("fullName") or away_pitcher.get("name", ""),
             "home_pitcher_is_opener": home_is_opener,
             "away_pitcher_is_opener": away_is_opener,
-            "home_bulk_pitcher_name": (home_bulk_profile or {}).get("pitcher_name"),
-            "away_bulk_pitcher_name": (away_bulk_profile or {}).get("pitcher_name"),
+            "home_bulk_pitcher_name": home_bulk_name,
+            "away_bulk_pitcher_name": away_bulk_name,
             "home_bullpen": home_bullpen,
             "away_bullpen": away_bullpen,
             "home_pitcher_profile": home_pitcher_profile,
@@ -747,9 +751,11 @@ class DailyPredictionService:
     def _pitch_vs_starter(
         batter_profiles: list[dict[str, Any]],
         pitcher_arsenal: list[dict[str, Any]],
+        overall_profile: dict[str, Any] | None = None,
     ) -> list[dict[str, Any]]:
         batter_by_pitch = {p["pitch_type"]: p for p in batter_profiles}
         top_pitches = sorted(pitcher_arsenal, key=lambda p: p.get("usage_pct", 0), reverse=True)[:3]
+        fallback = overall_profile or {}
         result = []
         for pitch in top_pitches:
             pt = pitch.get("pitch_type", "")
@@ -760,10 +766,10 @@ class DailyPredictionService:
                 "usage_pct": pitch.get("usage_pct"),
                 "pitcher_xba": pitch.get("xba"),
                 "pitcher_k_pct": pitch.get("k_pct"),
-                "batter_xwoba": bp.get("xwoba") if bp else None,
-                "batter_k_pct": bp.get("k_pct") if bp else None,
-                "batter_bb_pct": bp.get("bb_pct") if bp else None,
-                "has_batter_data": bool(bp),
+                "batter_xwoba": bp.get("xwoba") if bp else fallback.get("xwoba"),
+                "batter_k_pct": bp.get("k_pct") if bp else fallback.get("k_pct"),
+                "batter_bb_pct": bp.get("bb_pct") if bp else fallback.get("bb_pct"),
+                "has_batter_data": bool(bp) or fallback.get("xwoba") is not None,
             })
         return result
 
@@ -807,6 +813,7 @@ class DailyPredictionService:
                     "pitch_vs_starter": self._pitch_vs_starter(
                         report["profile"].get("pitch_profiles", []),
                         opp_arsenal,
+                        report["profile"],
                     ),
                     "simulation": player_simulations.get(report["batter_id"], {}),
                 }
