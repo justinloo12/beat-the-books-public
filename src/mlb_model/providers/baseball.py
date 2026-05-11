@@ -318,6 +318,11 @@ class BaseballSavantProvider:
         ev50 = round(self._nan_to_zero(exitvelo_item.get("ev50")), 3) if exitvelo_item else None
         sample_bbe = int(self._nan_to_zero(exitvelo_item.get("attempts"))) if exitvelo_item else int(self._nan_to_zero(expected_item.get("bip")))
         sample_pa = int(self._nan_to_zero(expected_item.get("pa")))
+
+        # Overall bb_pct from pitcher expected stats leaderboard (has bb_percent column)
+        _raw_bb = self._nan_to_zero(expected_item.get("bb_percent")) if expected_item else 0.0
+        bb_pct_lb = round(_raw_bb / 100.0, 4) if _raw_bb > 0 else (0.08 if arsenal else None)
+
         return {
             "pitcher_id": pitcher_id,
             "sample_pitches": int(sum(self._nan_to_zero(row.get("pitches")) for _, row in arsenal_rows.iterrows())) if not arsenal_rows.empty else 0,
@@ -331,17 +336,17 @@ class BaseballSavantProvider:
             "ev50": ev50,
             "weighted_run_value": round(weighted_run_value, 4),
             "weighted_k_pct": round(weighted_k, 4) if arsenal else None,
-            "weighted_bb_pct": 0.08 if arsenal else None,
+            "weighted_bb_pct": bb_pct_lb,
             "movement_score": 0.0,
             "stuff_plus": round(sum(q * u for q, u in quality_pitches) / total_quality_weight) if total_quality_weight > 0 else None,
             "k_pct": round(weighted_k, 4) if arsenal else None,
-            "bb_pct": 0.08 if arsenal else None,
+            "bb_pct": bb_pct_lb,
             "recent_xba": xba,
             "recent_hard_hit_pct": hard_hit,
             "recent_barrel_pct": barrel_pct,
             "recent_ev50": ev50,
             "recent_k_pct": round(weighted_k, 4) if arsenal else None,
-            "recent_bb_pct": 0.08 if arsenal else None,
+            "recent_bb_pct": bb_pct_lb,
             "pitch_arsenal": arsenal,
         }
 
@@ -702,6 +707,12 @@ class BaseballSavantProvider:
         est_woba = expected_item.get("est_woba")
         xwoba_val = round(self._nan_to_zero(est_woba), 4) if est_woba is not None and not (isinstance(est_woba, float) and pd.isna(est_woba)) else None
 
+        # bb_pct and k_pct from batter expected stats leaderboard (has bb_percent, k_percent columns)
+        _raw_bb_b = self._nan_to_zero(expected_item.get("bb_percent")) if expected_item else 0.0
+        bb_pct_b = round(_raw_bb_b / 100.0, 4) if _raw_bb_b > 0 else None
+        _raw_k_b = self._nan_to_zero(expected_item.get("k_percent")) if expected_item else 0.0
+        k_pct_b = round(_raw_k_b / 100.0, 4) if _raw_k_b > 0 else None
+
         pitch_profiles = self._build_pitch_profiles_for_batter(batter_id, season)
 
         return {
@@ -712,14 +723,14 @@ class BaseballSavantProvider:
             "xwoba": xwoba_val,
             "ev50": round(self._nan_to_zero(exitvelo_item.get("ev50")), 3) if exitvelo_item else None,
             "hard_hit_pct": round(self._nan_to_zero(exitvelo_item.get("ev95percent")) / 100.0, 4) if exitvelo_item else None,
-            "bb_pct": None,
-            "k_pct": None,
+            "bb_pct": bb_pct_b,
+            "k_pct": k_pct_b,
             "quality_of_contact": xwoba_val or 0.0,
             "recent_xwoba": xwoba_val,
             "recent_ev50": round(self._nan_to_zero(exitvelo_item.get("ev50")), 3) if exitvelo_item else None,
             "recent_hard_hit_pct": round(self._nan_to_zero(exitvelo_item.get("ev95percent")) / 100.0, 4) if exitvelo_item else None,
-            "recent_bb_pct": None,
-            "recent_k_pct": None,
+            "recent_bb_pct": bb_pct_b,
+            "recent_k_pct": k_pct_b,
             "recent_quality_of_contact": xwoba_val or 0.0,
             "attack_angle": 0.0,
             "swing_path_tilt": 0.0,

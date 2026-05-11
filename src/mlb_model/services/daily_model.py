@@ -464,6 +464,12 @@ class DailyPredictionService:
                 start_date=sample_start,
                 end_date=slate_date,
             )
+            # Fill missing stats from leaderboard summary when statcast data is absent or sparse
+            if not profile.get("xwoba") and not profile.get("hard_hit_pct"):
+                summary = self.baseball.build_batter_summary_profile(int(batter_id), slate_date.year)
+                for key, val in summary.items():
+                    if profile.get(key) is None:
+                        profile[key] = val
             # use handedness-specific pitcher profile for more accurate matchup scoring
             batter_hand = profile.get("handedness")
             if batter_hand == "L" and opposing_pitcher_vs_l.get("pitch_arsenal"):
