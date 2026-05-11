@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-05-11T16:07:08.653378",
+  "as_of": "2026-05-11T16:26:38.135657",
   "date": "2026-05-11",
   "summary": {
     "tracked_bets": 11,
@@ -2296,10 +2296,10 @@
             "market_type": "moneyline",
             "pick": "Baltimore Orioles",
             "line": 0.0,
-            "american_odds": 135,
-            "model_probability": 0.428,
-            "no_vig_probability": 0.4071,
-            "edge": 0.0209,
+            "american_odds": 129,
+            "model_probability": 0.433,
+            "no_vig_probability": 0.4175,
+            "edge": 0.0155,
             "tier": "pass",
             "bankroll_fraction": 0.0,
             "top_features": [
@@ -2323,7 +2323,7 @@
             "start_time": "6:35 PM ET",
             "lineup_status": "projected",
             "simulation_trials": 10000,
-            "specific_blurb": "Brandon Young gives Baltimore Orioles the cleaner starter setup, and Weston Wilson and Taylor Ward (52/52 matchup scores) carry the best hitter-vs-arsenal edges against Ryan Weathers; the sim has it 4.4 to 4.8 with a 2.1-point edge"
+            "specific_blurb": "Brandon Young gives Baltimore Orioles the cleaner starter setup, and Weston Wilson and Taylor Ward (52/52 matchup scores) carry the best hitter-vs-arsenal edges against Ryan Weathers; the sim has it 4.4 to 4.8 with a 1.6-point edge"
           },
           {
             "matchup": "New York Yankees @ Baltimore Orioles",
@@ -4313,11 +4313,11 @@
             "matchup": "San Francisco Giants @ Los Angeles Dodgers",
             "market_type": "game_total",
             "pick": "Under",
-            "line": 9.5,
-            "american_odds": -122,
-            "model_probability": 0.5506,
-            "no_vig_probability": 0.5261,
-            "edge": 0.0245,
+            "line": 9.0,
+            "american_odds": -110,
+            "model_probability": 0.5183,
+            "no_vig_probability": 0.5,
+            "edge": 0.0183,
             "tier": "pass",
             "bankroll_fraction": 0.0,
             "top_features": [
@@ -4341,17 +4341,17 @@
             "start_time": "10:10 PM ET",
             "lineup_status": "projected",
             "simulation_trials": 10000,
-            "specific_blurb": "Trevor McDonald and Roki Sasaki project to keep quality contact down early, and the softest batter matchups on the board are Alex Freeland and Alex Call (42/45 matchup scores) / Willy Adames and Drew Gilbert (38/39 matchup scores); the sim sits at 8.6 against 9.5, with weather adding another push (11 mph wind)"
+            "specific_blurb": "Trevor McDonald and Roki Sasaki project to keep quality contact down early, and the softest batter matchups on the board are Alex Freeland and Alex Call (42/45 matchup scores) / Willy Adames and Drew Gilbert (38/39 matchup scores); the sim sits at 8.6 against 9, with weather adding another push (11 mph wind)"
           },
           {
             "matchup": "San Francisco Giants @ Los Angeles Dodgers",
             "market_type": "game_total",
             "pick": "Over",
-            "line": 9.5,
-            "american_odds": 102,
-            "model_probability": 0.4494,
-            "no_vig_probability": 0.4739,
-            "edge": -0.0245,
+            "line": 9.0,
+            "american_odds": -110,
+            "model_probability": 0.4817,
+            "no_vig_probability": 0.5,
+            "edge": -0.0183,
             "tier": "pass",
             "bankroll_fraction": 0.0,
             "top_features": [
@@ -4375,7 +4375,7 @@
             "start_time": "10:10 PM ET",
             "lineup_status": "projected",
             "simulation_trials": 10000,
-            "specific_blurb": "Max Muncy and Shohei Ohtani (58/53 matchup scores) profile best into Trevor McDonald's pitch mix for Los Angeles Dodgers, and Trevor McDonald is carrying a .212 xBA allowed and 47% hard-hit rate; the sim lands at 8.6 runs versus 9.5, with weather adding another push (11 mph wind)"
+            "specific_blurb": "Max Muncy and Shohei Ohtani (58/53 matchup scores) profile best into Trevor McDonald's pitch mix for Los Angeles Dodgers, and Trevor McDonald is carrying a .212 xBA allowed and 47% hard-hit rate; the sim lands at 8.6 runs versus 9, with weather adding another push (11 mph wind)"
           },
           {
             "matchup": "San Francisco Giants @ Los Angeles Dodgers",
@@ -6200,10 +6200,10 @@
             "market_type": "game_total",
             "pick": "Under",
             "line": 9.0,
-            "american_odds": -120,
-            "model_probability": 0.5322,
-            "no_vig_probability": 0.5217,
-            "edge": 0.0105,
+            "american_odds": -119,
+            "model_probability": 0.5305,
+            "no_vig_probability": 0.5195,
+            "edge": 0.011,
             "tier": "pass",
             "bankroll_fraction": 0.0,
             "top_features": [
@@ -6234,10 +6234,10 @@
             "market_type": "game_total",
             "pick": "Over",
             "line": 9.0,
-            "american_odds": 100,
-            "model_probability": 0.4678,
-            "no_vig_probability": 0.4783,
-            "edge": -0.0105,
+            "american_odds": -101,
+            "model_probability": 0.4695,
+            "no_vig_probability": 0.4805,
+            "edge": -0.011,
             "tier": "pass",
             "bankroll_fraction": 0.0,
             "top_features": [
