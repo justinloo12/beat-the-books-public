@@ -569,40 +569,105 @@ body {
   line-height: 1.6;
 }
 
-/* ── Game Tabs ── */
+/* ── Game Board Layout ── */
 
-.game-tabs-wrap {
-  overflow-x: auto;
-  padding-bottom: 4px;
-  margin-bottom: 12px;
+.gameboard-layout {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 14px;
+  align-items: start;
 }
 
-.game-tabs {
+/* ── Game List (left sidebar) ── */
+
+.game-list {
   display: flex;
-  gap: 6px;
-  min-width: max-content;
+  flex-direction: column;
+  gap: 3px;
+  position: sticky;
+  top: 110px;
+  max-height: calc(100vh - 130px);
+  overflow-y: auto;
 }
 
-.game-tab-btn {
-  padding: 9px 16px;
-  border-radius: var(--r2);
+.game-list-item {
+  width: 100%;
+  text-align: left;
   background: var(--surface-1);
   border: 1px solid var(--border);
-  color: var(--text-2);
+  border-left: 3px solid transparent;
+  border-radius: var(--r2);
+  padding: 10px 12px;
   cursor: pointer;
-  font-size: 0.73rem;
-  font-weight: 600;
-  white-space: nowrap;
   transition: all 0.12s;
-  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
 }
 
-.game-tab-btn:hover { background: var(--surface-2); color: var(--text); border-color: rgba(255,255,255,0.12); }
-.game-tab-btn.active { background: var(--green-dim); border-color: rgba(63,185,80,0.30); color: var(--white); }
+.game-list-item:hover {
+  background: var(--surface-2);
+  border-color: rgba(255,255,255,0.10);
+}
 
-.game-tab-label { display: block; font-size: 0.8rem; font-weight: 700; }
-.game-tab-sub   { display: block; font-size: 0.65rem; margin-top: 2px; color: var(--text-3); }
-.game-tab-btn.active .game-tab-sub { color: rgba(255,255,255,0.5); }
+.game-list-item.active {
+  background: var(--surface-2);
+  border-left-color: var(--green-bright);
+  border-color: rgba(63,185,80,0.20);
+}
+
+.gli-time {
+  font-size: 0.63rem;
+  font-weight: 700;
+  color: var(--text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.gli-matchup {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.3;
+}
+
+.game-list-item.active .gli-matchup { color: var(--white); }
+
+.gli-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 1px;
+}
+
+.gli-total {
+  font-size: 0.63rem;
+  color: var(--text-3);
+}
+
+.gli-confirmed {
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: var(--green);
+}
+
+.game-list-pick-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--green-bright);
+  flex-shrink: 0;
+}
+
+/* ── Game Detail Panel ── */
+
+.game-detail-panel {
+  min-width: 0;
+}
 
 /* ── Game Detail ── */
 
@@ -1232,6 +1297,9 @@ tr:hover td { background: rgba(255,255,255,0.025); }
   .archive-layout    { grid-template-columns: 1fr; }
   .archive-dates     { position: static; max-height: none; flex-direction: row; flex-wrap: nowrap; overflow-x: auto; }
   .archive-date-btn  { flex-shrink: 0; }
+  .gameboard-layout  { grid-template-columns: 1fr; }
+  .game-list         { position: static; max-height: none; flex-direction: row; flex-wrap: nowrap; overflow-x: auto; }
+  .game-list-item    { flex-shrink: 0; width: 160px; }
 }
 
 @media (max-width: 860px) {

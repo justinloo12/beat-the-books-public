@@ -1,9 +1,27 @@
 {
   "dates": [
     {
+      "date": "2026-05-11",
+      "picks": 0,
+      "strong": 0,
+      "games": 5
+    },
+    {
+      "date": "2026-05-10",
+      "picks": 1,
+      "strong": 0,
+      "games": 14
+    },
+    {
+      "date": "2026-05-09",
+      "picks": 1,
+      "strong": 0,
+      "games": 15
+    },
+    {
       "date": "2026-05-08",
-      "picks": 10,
-      "strong": 6,
+      "picks": 1,
+      "strong": 1,
       "games": 15
     },
     {

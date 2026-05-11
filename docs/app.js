@@ -8,7 +8,6 @@ const $summaryGrid = document.getElementById("summary-grid");
 const $dailyPicks  = document.getElementById("daily-picks");
 const $dailyMeta   = document.getElementById("daily-meta");
 const $historyTbl  = document.getElementById("history-table");
-const $gameTabs    = document.getElementById("game-tabs");
 const $gameDetail  = document.getElementById("game-detail");
 const $skippedList = document.getElementById("skipped-list");
 const $heroPills   = document.getElementById("hero-pills");
@@ -20,7 +19,7 @@ const fmt = {
   pctS: (v, d=1) => `${+(v||0)>=0?"+":""}${(+(v||0)*100).toFixed(d)}%`,
   num:  (v, d=2) => v == null ? "—" : `${(+v).toFixed(d)}`,
   sign: (v, d=2) => `${+(v||0)>=0?"+":""}${(+(v||0)).toFixed(d)}`,
-  money: (v, d=2) => v == null ? "—" : `${+(v||0)>=0?"+":""}$${Math.abs(+(v||0)).toFixed(d)}`,
+  money: (v, d=2) => v == null ? "—" : `${+(v||0)>=0?"+":"-"}$${Math.abs(+(v||0)).toFixed(d)}`,
   odds: (v) => `${+(v||0)>0?"+":""}${+(v||0)}`,
   date: (v) => new Intl.DateTimeFormat("en-US",{weekday:"long",month:"long",day:"numeric",year:"numeric"}).format(new Date(`${v}T12:00:00`)),
   time: (v) => new Intl.DateTimeFormat("en-US",{hour:"numeric",minute:"2-digit",timeZone:"America/New_York"}).format(new Date(v)),
@@ -247,55 +246,91 @@ function joinPlayers(players) {
   return `${players[0].name} and ${players[1].name} (${fmt.num(players[0].matchup_score,0)}/${fmt.num(players[1].matchup_score,0)})`;
 }
 
-/* ── Render Game Tabs ── */
+/* ── Start-time parser for sorting ── */
+function parseStartMinutes(timeStr) {
+  if (!timeStr) return 9999;
+  const m = timeStr.match(/(\d+):(\d+)\s*(AM|PM)/i);
+  if (!m) return 9999;
+  let h = +m[1], min = +m[2], ampm = m[3].toUpperCase();
+  if (ampm === "PM" && h !== 12) h += 12;
+  if (ampm === "AM" && h === 12) h = 0;
+  return h * 60 + min;
+}
+
+/* ── Render Game List (left sidebar) ── */
 function renderGames(cards) {
+  const $gameList = document.getElementById("game-list");
   currentCards = cards;
+
   if (!cards.length) {
-    $gameTabs.innerHTML = `<div class="empty-state">No games on the board yet.</div>`;
+    if ($gameList) $gameList.innerHTML = `<div class="empty-state">No games on the board yet.</div>`;
     $gameDetail.innerHTML = "";
     return;
   }
-  if (!cards.find(c=>c.matchup===activeMatchup)) activeMatchup = cards[0].matchup;
 
-  $gameTabs.innerHTML = cards.map(c => {
-    const total = +(c.simulated_total||c.projected_total||0);
-    return `
-    <button class="game-tab-btn ${c.matchup===activeMatchup?"active":""}" data-matchup="${c.matchup}">
-      <span class="game-tab-label">${c.matchup}</span>
-      <span class="game-tab-sub">${c.start_time??"TBD"} · ${total.toFixed(1)} sim total</span>
-    </button>
-    `;
-  }).join("");
+  // Sort by start time
+  const sorted = cards.slice().sort((a, b) => parseStartMinutes(a.start_time) - parseStartMinutes(b.start_time));
 
-  $gameDetail.innerHTML = renderGameCard(cards.find(c=>c.matchup===activeMatchup));
+  if (!sorted.find(c => c.matchup === activeMatchup)) activeMatchup = sorted[0].matchup;
 
-  document.querySelectorAll(".game-tab-btn").forEach(btn => {
-    btn.addEventListener("click", () => {
-      activeMatchup = btn.dataset.matchup;
-      renderGames(currentCards);
+  if ($gameList) {
+    $gameList.innerHTML = sorted.map(c => {
+      const total = +(c.simulated_total || c.projected_total || 0);
+      const hasPick = (c.top_game_picks || []).some(p => p.tier === "strong" || p.tier === "moderate");
+      const pickBadge = hasPick ? `<span class="game-list-pick-dot"></span>` : "";
+      const confirmed = c.lineup_status === "confirmed";
+      return `
+      <button class="game-list-item ${c.matchup === activeMatchup ? "active" : ""}" data-matchup="${c.matchup}">
+        <div class="gli-time">${c.start_time ?? "TBD"}${pickBadge}</div>
+        <div class="gli-matchup">${c.matchup}</div>
+        <div class="gli-meta">
+          <span class="gli-total">${total.toFixed(1)} total</span>
+          ${confirmed ? `<span class="gli-confirmed">✓ confirmed</span>` : ""}
+        </div>
+      </button>`;
+    }).join("");
+
+    $gameList.querySelectorAll(".game-list-item").forEach(btn => {
+      btn.addEventListener("click", () => {
+        activeMatchup = btn.dataset.matchup;
+        $gameList.querySelectorAll(".game-list-item").forEach(b => b.classList.toggle("active", b === btn));
+        $gameDetail.innerHTML = renderGameCard(currentCards.find(c => c.matchup === activeMatchup));
+        wireGameDetail();
+      });
     });
-  });
+  }
 
+  $gameDetail.innerHTML = renderGameCard(sorted.find(c => c.matchup === activeMatchup));
+  wireGameDetail();
+}
+
+function wireGameDetail() {
   // wire arsenal tab buttons
   document.querySelectorAll(".arsenal-tab-btn").forEach(btn => {
-    btn.addEventListener("click", e => {
+    btn.addEventListener("click", () => {
       const panel = btn.closest("[data-pitcher-panel]");
       const split = btn.dataset.split;
       const key = panel?.dataset.pitcherPanel || "home";
       if (!activeArsenalSplit[activeMatchup]) activeArsenalSplit[activeMatchup] = {};
       activeArsenalSplit[activeMatchup][key] = split;
-      // re-render just this panel's table
       const tableWrap = panel?.querySelector(".arsenal-table-wrap");
       if (tableWrap) {
-        const pitcher = split==="vs_l"
-          ? (panel._pitcher.arsenal_vs_l||[])
-          : split==="vs_r"
-            ? (panel._pitcher.arsenal_vs_r||[])
-            : (panel._pitcher.arsenal||[]);
+        const pitcher = split === "vs_l"
+          ? (panel._pitcher.arsenal_vs_l || [])
+          : split === "vs_r"
+            ? (panel._pitcher.arsenal_vs_r || [])
+            : (panel._pitcher.arsenal || []);
         tableWrap.innerHTML = arsenalTable(pitcher);
       }
-      panel?.querySelectorAll(".arsenal-tab-btn").forEach(b => b.classList.toggle("active", b===btn));
+      panel?.querySelectorAll(".arsenal-tab-btn").forEach(b => b.classList.toggle("active", b === btn));
     });
+  });
+
+  // store pitcher refs for arsenal tabs
+  document.querySelectorAll("[data-pitcher-panel]").forEach(panel => {
+    const side = panel.dataset.pitcherPanel;
+    const card = currentCards.find(c => c.matchup === activeMatchup);
+    if (card) panel._pitcher = side === "home" ? card.home_pitcher : card.away_pitcher;
   });
 }
 
@@ -706,13 +741,6 @@ async function loadBoard() {
     renderPicks(payload.daily.picks || []);
     if ($historyTbl) renderHistory(payload.history || []);
     renderGames(currentCards);
-
-    // after DOM is built, store pitcher references for arsenal tab switching
-    document.querySelectorAll("[data-pitcher-panel]").forEach(panel => {
-      const side = panel.dataset.pitcherPanel;
-      const card = currentCards.find(c=>c.matchup===activeMatchup);
-      if (card) panel._pitcher = side==="home" ? card.home_pitcher : card.away_pitcher;
-    });
   } catch (err) {
     console.error("loadBoard failed:", err);
     $dailyPicks.innerHTML = `<div class="empty-state">Could not load today's board. Check back after 10 AM ET.</div>`;

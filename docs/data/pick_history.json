@@ -133,5 +133,35 @@
     "away_score": 2,
     "home_score": 6,
     "final_total": 8
+  },
+  {
+    "date": "2026-05-08",
+    "matchup": "New York Mets @ Arizona Diamondbacks",
+    "market_type": "moneyline",
+    "pick": "New York Mets",
+    "line": 0.0,
+    "american_odds": -122,
+    "edge": 0.0925,
+    "tier": "strong",
+    "result": "win",
+    "pnl": 81.97,
+    "away_score": 3,
+    "home_score": 1,
+    "final_total": 4
+  },
+  {
+    "date": "2026-05-10",
+    "matchup": "Seattle Mariners @ Chicago White Sox",
+    "market_type": "moneyline",
+    "pick": "Chicago White Sox",
+    "line": 0.0,
+    "american_odds": 117,
+    "edge": 0.0707,
+    "tier": "moderate",
+    "result": "win",
+    "pnl": 117.0,
+    "away_score": 1,
+    "home_score": 2,
+    "final_total": 3
   }
 ]
