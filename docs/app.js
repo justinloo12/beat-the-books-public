@@ -335,6 +335,23 @@ function wireGameDetail() {
 }
 
 /* ── Game Card ── */
+function renderBullpenHealth(teamName, bullpen) {
+  if (!bullpen || bullpen.bullpen_score == null) return "";
+  const score = +(bullpen.bullpen_score || 65);
+  const cls = score >= 70 ? "val-good" : score >= 52 ? "val-warn" : "val-bad";
+  const flags = (bullpen.fatigue_flags || []).slice(0, 2);
+  const tip = [
+    `Score: ${score}`,
+    bullpen.depleted ? "DEPLETED" : "",
+    bullpen.closer_status !== "fresh" ? `Closer: ${bullpen.closer_status}` : "",
+    ...flags,
+  ].filter(Boolean).join(" · ");
+  return `<div class="weather-item" title="${tip}">
+    <span class="wlabel">${teamName??""} Pen</span>
+    <span class="wval ${cls}">${score.toFixed(0)}${bullpen.depleted?" ⚠":""}</span>
+  </div>`;
+}
+
 function renderGameCard(card) {
   if (!card) return "";
   const weather = card.weather || {};
@@ -383,6 +400,8 @@ function renderGameCard(card) {
         <span class="wlabel">Humidity</span>
         <span class="wval">${fmt.num(weather.humidity,0)}%</span>
       </div>
+      ${renderBullpenHealth(card.home_pitcher?.team, card.home_bullpen)}
+      ${renderBullpenHealth(card.away_pitcher?.team, card.away_bullpen)}
     </div>
 
     ${topPicks.length ? `
@@ -430,6 +449,8 @@ function renderPitcherPanel(pitcher, side) {
       </div>
       <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
         <span class="badge ${hand==="L"?"badge-lhb":"badge-rhb"}">${hand}HP</span>
+        ${pitcher.is_opener?`<span class="badge badge-opener" title="Opener — projected ~1 IP; model blends bulk reliever stats for remaining innings">OPENER</span>`:""}
+        ${pitcher.is_opener && pitcher.bulk_pitcher_name?`<span class="badge badge-neutral" title="Identified bulk reliever following the opener">Bulk: ${pitcher.bulk_pitcher_name}</span>`:""}
         <span class="badge ${flagBadge}">${flag||"—"}</span>
         <span class="badge badge-neutral">Qlty ${fmt.num(pitcher.quality_score,1)}</span>
         ${pitcher.stuff_plus!=null?`<span class="badge ${stuffBadgeClass(pitcher.stuff_plus)}">Stuff+ ${pitcher.stuff_plus}</span>`:""}
@@ -442,7 +463,6 @@ function renderPitcherPanel(pitcher, side) {
       <div class="pitcher-stat"><div class="label">Barrel%</div><div class="val ${valClass(pitcher.barrel_pct,false,0.07,0.12)}">${fmt.pct(pitcher.barrel_pct)}</div></div>
       <div class="pitcher-stat"><div class="label">EV50</div><div class="val">${fmt.num(pitcher.ev50,1)}</div></div>
       <div class="pitcher-stat"><div class="label">K%</div><div class="val ${valClass(pitcher.weighted_k_pct,true,0.22,0.18)}">${fmt.pct(pitcher.weighted_k_pct)}</div></div>
-      <div class="pitcher-stat"><div class="label">BB%</div><div class="val ${valClass(pitcher.weighted_bb_pct,false,0.08,0.12)}">${fmt.pct(pitcher.weighted_bb_pct)}</div></div>
       <div class="pitcher-stat"><div class="label">Ext</div><div class="val">${fmt.num(pitcher.extension,1)} ft</div></div>
       <div class="pitcher-stat"><div class="label">Run Val</div><div class="val">${fmt.sign(pitcher.weighted_run_value,3)}</div></div>
     </div>
@@ -562,7 +582,6 @@ function renderPitchVsStarter(player) {
       ${p.has_batter_data ? `
         <span class="pitch-vs-stat"><span class="pv-label">xwOBA</span> <span class="pv-val ${xwobaCls}">${fmt.num(p.batter_xwoba, 3)}</span></span>
         <span class="pitch-vs-stat"><span class="pv-label">K%</span> <span class="pv-val ${kCls}">${fmt.pct(p.batter_k_pct)}</span></span>
-        <span class="pitch-vs-stat"><span class="pv-label">BB%</span> <span class="pv-val">${fmt.pct(p.batter_bb_pct)}</span></span>
       ` : `
         <span class="pv-no-data">no batter data · P xBA ${fmt.num(p.pitcher_xba, 3)} · P K% ${fmt.pct(p.pitcher_k_pct)}</span>
       `}
@@ -624,10 +643,6 @@ function renderPlayerRow(player) {
         <div class="ps-label">K%</div>
         <div class="ps-val ${kCls}">${fmt.pct(player.k_pct)}</div>
       </div>
-      <div class="player-stat">
-        <div class="ps-label">BB%</div>
-        <div class="ps-val ${bbCls}">${fmt.pct(player.bb_pct)}</div>
-      </div>
     </div>
 
     ${renderPitchVsStarter(player)}
@@ -637,7 +652,6 @@ function renderPlayerRow(player) {
     ${hasSim ? `
     <div class="sim-row">
       <div class="sim-divider"></div>
-      <div class="sim-stat sim-featured"><div class="sim-lbl">R</div><div class="sim-val">${fmt.num(sim.runs,2)}</div></div>
       <div class="sim-stat sim-featured"><div class="sim-lbl">RBI</div><div class="sim-val">${fmt.num(sim.rbi,2)}</div></div>
       <div class="sim-stat sim-featured"><div class="sim-lbl">H</div><div class="sim-val">${fmt.num(sim.hits,2)}</div></div>
       <div class="sim-divider"></div>

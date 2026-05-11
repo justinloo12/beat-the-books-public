@@ -97,6 +97,8 @@ class DailyPredictionService:
                     continue
                 home_pitcher_hand = await self.stats.fetch_pitcher_hand(int(probable_home["id"]))
                 away_pitcher_hand = await self.stats.fetch_pitcher_hand(int(probable_away["id"]))
+                home_pitcher_role = await self.stats.fetch_pitcher_season_role(int(probable_home["id"]), slate_date.year)
+                away_pitcher_role = await self.stats.fetch_pitcher_season_role(int(probable_away["id"]), slate_date.year)
                 home_lineup = game["teams"]["home"].get("lineup") or await self.stats.fetch_recent_lineup_by_opposing_hand(
                     home_team_id,
                     away_pitcher_hand,
@@ -113,8 +115,12 @@ class DailyPredictionService:
                     slate_date=slate_date,
                     home_team=home_team,
                     away_team=away_team,
+                    home_team_id=home_team_id,
+                    away_team_id=away_team_id,
                     home_pitcher=probable_home,
                     away_pitcher=probable_away,
+                    home_pitcher_role=home_pitcher_role,
+                    away_pitcher_role=away_pitcher_role,
                     home_lineup=home_lineup,
                     away_lineup=away_lineup,
                     home_lineup_confirmed=home_confirmed,
@@ -150,13 +156,48 @@ class DailyPredictionService:
         lineup_cards = sorted(lineup_cards, key=lambda item: item["matchup"])
         return {"date": slate_date.isoformat(), "picks": picks, "lineup_cards": lineup_cards, "skipped": skipped}
 
+    # League-average bullpen profile used when an opener is detected.
+    # The bulk reliever/bullpen who follows the opener is unknown at pick time,
+    # so we substitute these conservative averages for the ~8 innings they cover.
+    _BULLPEN_AVG: dict[str, float] = {
+        "xba": 0.248,
+        "hard_hit_pct": 0.375,
+        "barrel_pct": 0.082,
+        "weighted_k_pct": 0.230,
+        "weighted_bb_pct": 0.092,
+    }
+
+    @staticmethod
+    def _opener_blend(
+        profile: dict[str, Any],
+        bulk_profile: dict[str, Any] | None = None,
+        opener_ip: float = 1.0,
+        game_ip: float = 9.0,
+    ) -> dict[str, Any]:
+        """Return a copy of profile with key pitching stats blended between the
+        opener (opener_ip innings) and the bulk/bullpen (remaining innings).
+        Uses bulk_profile's actual Savant stats when available; falls back to
+        league-average bullpen constants otherwise."""
+        w_opener = opener_ip / game_ip
+        w_bulk = 1.0 - w_opener
+        blended = dict(profile)
+        for field, league_avg in DailyPredictionService._BULLPEN_AVG.items():
+            raw = float(profile.get(field) or league_avg)
+            bulk_val = float((bulk_profile or {}).get(field) or league_avg)
+            blended[field] = round(w_opener * raw + w_bulk * bulk_val, 4)
+        return blended
+
     async def _build_game_projection(
         self,
         slate_date: date,
         home_team: str,
         away_team: str,
+        home_team_id: int,
+        away_team_id: int,
         home_pitcher: dict[str, Any],
         away_pitcher: dict[str, Any],
+        home_pitcher_role: dict[str, Any] | None = None,
+        away_pitcher_role: dict[str, Any] | None = None,
         home_lineup: list[dict[str, Any]],
         away_lineup: list[dict[str, Any]],
         home_lineup_confirmed: bool,
@@ -188,6 +229,42 @@ class DailyPredictionService:
         home_pitcher_matchup = self.matchups.score_pitcher_profile(home_pitcher_profile)
         away_pitcher_matchup = self.matchups.score_pitcher_profile(away_pitcher_profile)
 
+        # Opener detection: cap IP projection at 1.0 and blend profile stats with
+        # the actual bulk reliever's Savant profile (or league-average bullpen as
+        # fallback) so run expectation reflects the full game, not just the opener.
+        home_is_opener = bool((home_pitcher_role or {}).get("is_opener"))
+        away_is_opener = bool((away_pitcher_role or {}).get("is_opener"))
+        if home_is_opener:
+            home_pitcher_score = {**home_pitcher_score, "starter_ip_projection": 1.0}
+        if away_is_opener:
+            away_pitcher_score = {**away_pitcher_score, "starter_ip_projection": 1.0}
+
+        # Fetch real bullpen availability (pitch counts / fatigue over last 3 days)
+        home_reliever_logs = await self.stats.fetch_reliever_appearance_logs(home_team_id, slate_date)
+        away_reliever_logs = await self.stats.fetch_reliever_appearance_logs(away_team_id, slate_date)
+        home_bullpen = self.bullpens.score_bullpen(home_reliever_logs)
+        away_bullpen = self.bullpens.score_bullpen(away_reliever_logs)
+
+        # For opener games, try to identify the actual bulk reliever so we can blend
+        # their Savant profile instead of generic league-average bullpen constants.
+        home_bulk_profile: dict[str, Any] | None = None
+        away_bulk_profile: dict[str, Any] | None = None
+        if home_is_opener:
+            bulk_id = await self.stats.fetch_bulk_reliever_id(home_team_id, slate_date)
+            if bulk_id:
+                home_bulk_profile = self.baseball.build_pitcher_arsenal_profile(
+                    bulk_id, start_date=sample_start, end_date=slate_date
+                )
+        if away_is_opener:
+            bulk_id = await self.stats.fetch_bulk_reliever_id(away_team_id, slate_date)
+            if bulk_id:
+                away_bulk_profile = self.baseball.build_pitcher_arsenal_profile(
+                    bulk_id, start_date=sample_start, end_date=slate_date
+                )
+
+        home_profile_for_runs = self._opener_blend(home_pitcher_profile, home_bulk_profile) if home_is_opener else home_pitcher_profile
+        away_profile_for_runs = self._opener_blend(away_pitcher_profile, away_bulk_profile) if away_is_opener else away_pitcher_profile
+
         home_matchups = self._lineup_matchups(
             home_lineup,
             away_pitcher_profile,
@@ -214,16 +291,13 @@ class DailyPredictionService:
         weather = self.weather.score_weather({"ballpark": venue, "is_indoor": False}, weather_projection)
         park_factor = PARK_FACTORS.get(venue or "", 1.0)
 
-        home_bullpen = self.bullpens.score_bullpen([])
-        away_bullpen = self.bullpens.score_bullpen([])
-
         home_runs = self.runs.expected_runs(
             team=home_team,
-            pitcher_xba=float(away_pitcher_profile.get("xba") or 0.255),
-            pitcher_k_pct=float(away_pitcher_profile.get("weighted_k_pct") or 0.228),
-            pitcher_bb_pct=float(away_pitcher_profile.get("weighted_bb_pct") or 0.076),
-            pitcher_hard_hit_pct=float(away_pitcher_profile.get("hard_hit_pct") or 0.375),
-            pitcher_barrel_pct=float(away_pitcher_profile.get("barrel_pct") or 0.080),
+            pitcher_xba=float(away_profile_for_runs.get("xba") or 0.255),
+            pitcher_k_pct=float(away_profile_for_runs.get("weighted_k_pct") or 0.228),
+            pitcher_bb_pct=float(away_profile_for_runs.get("weighted_bb_pct") or 0.076),
+            pitcher_hard_hit_pct=float(away_profile_for_runs.get("hard_hit_pct") or 0.375),
+            pitcher_barrel_pct=float(away_profile_for_runs.get("barrel_pct") or 0.080),
             lineup_xwoba=home_lineup_avgs["xwoba"],
             lineup_k_pct=home_lineup_avgs["k_pct"],
             lineup_bb_pct=home_lineup_avgs["bb_pct"],
@@ -233,8 +307,8 @@ class DailyPredictionService:
             bullpen_score=float(away_bullpen.get("bullpen_score", 65.0)),
             starter_ip_projection=away_pitcher_score["starter_ip_projection"],
             top_features=self._top_run_features_direct(
-                pitcher_xba=float(away_pitcher_profile.get("xba") or 0.255),
-                pitcher_k_pct=float(away_pitcher_profile.get("weighted_k_pct") or 0.228),
+                pitcher_xba=float(away_profile_for_runs.get("xba") or 0.255),
+                pitcher_k_pct=float(away_profile_for_runs.get("weighted_k_pct") or 0.228),
                 lineup_xwoba=home_lineup_avgs["xwoba"],
                 weather_multiplier=float(weather.get("weather_multiplier", 1.0)),
                 bullpen_score=float(away_bullpen.get("bullpen_score", 65.0)),
@@ -242,11 +316,11 @@ class DailyPredictionService:
         )
         away_runs = self.runs.expected_runs(
             team=away_team,
-            pitcher_xba=float(home_pitcher_profile.get("xba") or 0.255),
-            pitcher_k_pct=float(home_pitcher_profile.get("weighted_k_pct") or 0.228),
-            pitcher_bb_pct=float(home_pitcher_profile.get("weighted_bb_pct") or 0.076),
-            pitcher_hard_hit_pct=float(home_pitcher_profile.get("hard_hit_pct") or 0.375),
-            pitcher_barrel_pct=float(home_pitcher_profile.get("barrel_pct") or 0.080),
+            pitcher_xba=float(home_profile_for_runs.get("xba") or 0.255),
+            pitcher_k_pct=float(home_profile_for_runs.get("weighted_k_pct") or 0.228),
+            pitcher_bb_pct=float(home_profile_for_runs.get("weighted_bb_pct") or 0.076),
+            pitcher_hard_hit_pct=float(home_profile_for_runs.get("hard_hit_pct") or 0.375),
+            pitcher_barrel_pct=float(home_profile_for_runs.get("barrel_pct") or 0.080),
             lineup_xwoba=away_lineup_avgs["xwoba"],
             lineup_k_pct=away_lineup_avgs["k_pct"],
             lineup_bb_pct=away_lineup_avgs["bb_pct"],
@@ -256,8 +330,8 @@ class DailyPredictionService:
             bullpen_score=float(home_bullpen.get("bullpen_score", 65.0)),
             starter_ip_projection=home_pitcher_score["starter_ip_projection"],
             top_features=self._top_run_features_direct(
-                pitcher_xba=float(home_pitcher_profile.get("xba") or 0.255),
-                pitcher_k_pct=float(home_pitcher_profile.get("weighted_k_pct") or 0.228),
+                pitcher_xba=float(home_profile_for_runs.get("xba") or 0.255),
+                pitcher_k_pct=float(home_profile_for_runs.get("weighted_k_pct") or 0.228),
                 lineup_xwoba=away_lineup_avgs["xwoba"],
                 weather_multiplier=float(weather.get("weather_multiplier", 1.0)),
                 bullpen_score=float(home_bullpen.get("bullpen_score", 65.0)),
@@ -271,6 +345,12 @@ class DailyPredictionService:
             "start_time": self._format_start_time(start_time),
             "home_pitcher_name": home_pitcher.get("fullName") or home_pitcher.get("name", ""),
             "away_pitcher_name": away_pitcher.get("fullName") or away_pitcher.get("name", ""),
+            "home_pitcher_is_opener": home_is_opener,
+            "away_pitcher_is_opener": away_is_opener,
+            "home_bulk_pitcher_name": (home_bulk_profile or {}).get("pitcher_name"),
+            "away_bulk_pitcher_name": (away_bulk_profile or {}).get("pitcher_name"),
+            "home_bullpen": home_bullpen,
+            "away_bullpen": away_bullpen,
             "home_pitcher_profile": home_pitcher_profile,
             "away_pitcher_profile": away_pitcher_profile,
             "home_pitcher_vs_l": home_pitcher_vs_l,
@@ -303,8 +383,6 @@ class DailyPredictionService:
                 "runline_away_cover_prob": 0.5,
             },
             "weather": {**weather_projection, **weather},
-            "home_bullpen": home_bullpen,
-            "away_bullpen": away_bullpen,
         }
 
     def _top_run_features_direct(
@@ -597,8 +675,10 @@ class DailyPredictionService:
             "home_win_prob": round(context["simulation"]["home_win_prob"], 3),
             "away_win_prob": round(context["simulation"]["away_win_prob"], 3),
             "top_game_picks": context.get("top_game_picks", []),
-            "home_pitcher": self._pitcher_card(context["home_team"], context.get("home_pitcher_name", ""), context["home_pitcher_profile"], context["home_pitcher_score"], context.get("home_pitcher_vs_l"), context.get("home_pitcher_vs_r")),
-            "away_pitcher": self._pitcher_card(context["away_team"], context.get("away_pitcher_name", ""), context["away_pitcher_profile"], context["away_pitcher_score"], context.get("away_pitcher_vs_l"), context.get("away_pitcher_vs_r")),
+            "home_bullpen": context.get("home_bullpen", {}),
+            "away_bullpen": context.get("away_bullpen", {}),
+            "home_pitcher": self._pitcher_card(context["home_team"], context.get("home_pitcher_name", ""), context["home_pitcher_profile"], context["home_pitcher_score"], context.get("home_pitcher_vs_l"), context.get("home_pitcher_vs_r"), context.get("home_pitcher_is_opener", False), context.get("home_bulk_pitcher_name")),
+            "away_pitcher": self._pitcher_card(context["away_team"], context.get("away_pitcher_name", ""), context["away_pitcher_profile"], context["away_pitcher_score"], context.get("away_pitcher_vs_l"), context.get("away_pitcher_vs_r"), context.get("away_pitcher_is_opener", False), context.get("away_bulk_pitcher_name")),
             "home_lineup": self._lineup_card(
                 context["home_team"],
                 context["home_lineup_matchups"],
@@ -623,11 +703,15 @@ class DailyPredictionService:
         score: dict[str, Any],
         vs_l: dict[str, Any] | None = None,
         vs_r: dict[str, Any] | None = None,
+        is_opener: bool = False,
+        bulk_pitcher_name: str | None = None,
     ) -> dict[str, Any]:
         arsenal = profile.get("pitch_arsenal", [])[:6]
         return {
             "team": team,
             "name": name,
+            "is_opener": is_opener,
+            "bulk_pitcher_name": bulk_pitcher_name,
             "handedness": profile.get("handedness"),
             "arm_angle": profile.get("arm_angle"),
             "extension": profile.get("extension"),
