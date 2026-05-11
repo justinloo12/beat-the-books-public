@@ -629,6 +629,43 @@ class BaseballSavantProvider:
             "covered_pitch_weight": round(covered, 3),
         }
 
+    def _build_pitch_profiles_for_batter(self, batter_id: int, season: int) -> list[dict[str, Any]]:
+        """Build per-pitch-type profiles for a batter using full-season Statcast data."""
+        from datetime import date as _date
+        frame = self.load_statcast(
+            start_date=_date(season, 1, 1),
+            end_date=_date(season, 12, 31),
+        )
+        if frame.empty:
+            return []
+        batter_frame = frame[pd.to_numeric(frame["batter"], errors="coerce") == batter_id].copy()
+        if batter_frame.empty:
+            return []
+        bbe_frame = batter_frame[batter_frame["description"].isin(STATCAST_BATTED_BALL_DESCRIPTIONS)].copy()
+        terminal_frame = batter_frame[batter_frame["events"].fillna("").isin(PLATE_ENDING_EVENTS)].copy()
+        profiles: list[dict[str, Any]] = []
+        for pitch_type, pitch_frame in batter_frame.groupby("pitch_type", dropna=True):
+            if pd.isna(pitch_type):
+                continue
+            pitch_bbe = bbe_frame[bbe_frame["pitch_type"] == pitch_type]
+            pitch_terminal = terminal_frame[terminal_frame["pitch_type"] == pitch_type]
+            hard_hit = (pd.to_numeric(pitch_bbe.get("launch_speed"), errors="coerce") >= 95).mean()
+            bb_rate = pitch_terminal["events"].fillna("").isin({"walk", "intent_walk"}).mean()
+            k_rate = pitch_terminal["events"].fillna("").isin({"strikeout", "strikeout_double_play"}).mean()
+            xwoba = pd.to_numeric(pitch_bbe.get("estimated_woba_using_speedangle"), errors="coerce").mean()
+            run_value = pd.to_numeric(pitch_frame.get("delta_run_exp"), errors="coerce").mean()
+            profiles.append({
+                "pitch_type": str(pitch_type),
+                "xwoba": round(float(0.0 if pd.isna(xwoba) else xwoba), 4),
+                "ev50": round(self._ev50(pitch_bbe), 3),
+                "hard_hit_pct": round(float(0.0 if pd.isna(hard_hit) else hard_hit), 4),
+                "bb_pct": round(float(0.0 if pd.isna(bb_rate) else bb_rate), 4),
+                "k_pct": round(float(0.0 if pd.isna(k_rate) else k_rate), 4),
+                "run_value": round(float(0.0 if pd.isna(run_value) else run_value), 4),
+                "quality_of_contact": round(self._quality_of_contact(pitch_bbe), 4),
+            })
+        return profiles
+
     def build_batter_summary_profile(self, batter_id: int, season: int) -> dict[str, Any]:
         expected = self._load_batter_expected_stats(season)
         percentiles = self._load_batter_percentiles(season)
@@ -664,6 +701,9 @@ class BaseballSavantProvider:
         exitvelo_item = exitvelo_row.iloc[0].to_dict() if not exitvelo_row.empty else {}
         est_woba = expected_item.get("est_woba")
         xwoba_val = round(self._nan_to_zero(est_woba), 4) if est_woba is not None and not (isinstance(est_woba, float) and pd.isna(est_woba)) else None
+
+        pitch_profiles = self._build_pitch_profiles_for_batter(batter_id, season)
+
         return {
             "batter_id": batter_id,
             "sample_pa": int(self._nan_to_zero(expected_item.get("pa"))),
@@ -683,5 +723,5 @@ class BaseballSavantProvider:
             "recent_quality_of_contact": xwoba_val or 0.0,
             "attack_angle": 0.0,
             "swing_path_tilt": 0.0,
-            "pitch_profiles": [],
+            "pitch_profiles": pitch_profiles,
         }
