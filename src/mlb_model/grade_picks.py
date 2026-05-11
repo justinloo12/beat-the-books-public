@@ -138,7 +138,14 @@ def _load_history() -> list[dict]:
     return []
 
 
-def _save_history(entries: list[dict]) -> None:
+def _save_history(entries: list[dict], prior_count: int) -> None:
+    if len(entries) < prior_count:
+        print(
+            f"SAFETY ABORT: refusing to save {len(entries)} entries when "
+            f"{prior_count} were loaded — this would delete history. "
+            "Run git pull and retry."
+        )
+        return
     DOCS_DATA.mkdir(parents=True, exist_ok=True)
     PICK_HISTORY_PATH.write_text(json.dumps(entries, indent=2), encoding="utf-8")
 
@@ -164,6 +171,7 @@ def grade_date(game_date: date) -> int:
     print(f"  {len(games)} finished game(s) found")
 
     history = _load_history()
+    prior_count = len(history)
     # Build a set of already-graded (date, matchup, market, pick) tuples to avoid duplicates
     existing_keys: set[tuple] = {
         (e["date"], e["matchup"], e["market_type"], e["pick"])
@@ -205,7 +213,7 @@ def grade_date(game_date: date) -> int:
         label = "✓" if result == "win" else ("✗" if result == "loss" else "~")
         print(f"  {label} {pk['matchup']} | {pk['market_type']} {pk['pick']} → {result} ({pnl_val:+.2f})")
 
-    _save_history(history)
+    _save_history(history, prior_count)
     print(f"Saved {new_count} new grade(s) to {PICK_HISTORY_PATH}")
     return new_count
 

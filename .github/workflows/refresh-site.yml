@@ -123,4 +123,7 @@ jobs:
           git add docs/data/pick_history.json || true
           git diff --cached --quiet && exit 0
           git commit -m "Refresh site snapshot for ${{ steps.slate.outputs.slate_date }}"
+          # Pull latest remote changes (rebase) before pushing so concurrent
+          # workflow runs don't overwrite each other's pick_history updates.
+          git pull --rebase origin main
           git push
