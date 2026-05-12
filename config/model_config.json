@@ -75,13 +75,13 @@
     }
   },
   "edge_thresholds": {
-    "pass_below": 0.04,
-    "watch_min": 0.04,
+    "pass_below": 0.05,
+    "watch_min": 0.05,
     "watch_max": 0.06,
     "strong_min": 0.06,
     "strong_max": 0.09,
     "max_bet_min": 0.09,
-    "moneyline_min": 0.065
+    "moneyline_min": 0.05
   },
   "kelly_caps": {
     "strong": 0.03,
