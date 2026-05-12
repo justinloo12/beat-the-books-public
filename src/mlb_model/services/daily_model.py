@@ -654,8 +654,10 @@ class DailyPredictionService:
             selected = min(hourly, key=_distance)
 
         values = selected.get("values", {})
+        temp_c = values.get("temperature")
+        temp_f = round(temp_c * 9 / 5 + 32, 1) if temp_c is not None else 72.0
         return {
-            "temperature_f": values.get("temperature", 72.0),
+            "temperature_f": temp_f,
             "wind_speed_mph": values.get("windSpeed", 0.0),
             "wind_direction": values.get("windDirection", "neutral"),
             "humidity": values.get("humidity", 50.0),
@@ -755,7 +757,6 @@ class DailyPredictionService:
     ) -> list[dict[str, Any]]:
         batter_by_pitch = {p["pitch_type"]: p for p in batter_profiles}
         top_pitches = sorted(pitcher_arsenal, key=lambda p: p.get("usage_pct", 0), reverse=True)[:3]
-        fallback = overall_profile or {}
         result = []
         for pitch in top_pitches:
             pt = pitch.get("pitch_type", "")
@@ -766,10 +767,10 @@ class DailyPredictionService:
                 "usage_pct": pitch.get("usage_pct"),
                 "pitcher_xba": pitch.get("xba"),
                 "pitcher_k_pct": pitch.get("k_pct"),
-                "batter_xwoba": bp.get("xwoba") if bp else fallback.get("xwoba"),
-                "batter_k_pct": bp.get("k_pct") if bp else fallback.get("k_pct"),
-                "batter_bb_pct": bp.get("bb_pct") if bp else fallback.get("bb_pct"),
-                "has_batter_data": bool(bp) or fallback.get("xwoba") is not None,
+                "batter_xwoba": bp.get("xwoba") if bp else None,
+                "batter_k_pct": bp.get("k_pct") if bp else None,
+                "batter_bb_pct": bp.get("bb_pct") if bp else None,
+                "has_batter_data": bool(bp),
             })
         return result
 

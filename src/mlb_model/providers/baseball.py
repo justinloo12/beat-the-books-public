@@ -323,12 +323,6 @@ class BaseballSavantProvider:
         _raw_bb = self._nan_to_zero(expected_item.get("bb_percent")) if expected_item else 0.0
         bb_pct_lb = round(_raw_bb / 100.0, 4) if _raw_bb > 0 else (0.08 if arsenal else None)
 
-        # Backfill per-pitch bb_pct with overall pitcher bb_pct (arsenal stats don't have per-pitch BB%)
-        if bb_pct_lb is not None:
-            for pitch in arsenal:
-                if pitch.get("bb_pct") is None:
-                    pitch["bb_pct"] = bb_pct_lb
-
         return {
             "pitcher_id": pitcher_id,
             "sample_pitches": int(sum(self._nan_to_zero(row.get("pitches")) for _, row in arsenal_rows.iterrows())) if not arsenal_rows.empty else 0,
