@@ -457,13 +457,13 @@ function renderPitcherPanel(pitcher, side) {
     </div>
 
     <div class="pitcher-overall">
-      <div class="pitcher-stat"><div class="label">xBA</div><div class="val ${valClass(pitcher.xba,false,0.240,0.270)}">${fmt.num(pitcher.xba,3)}</div></div>
-      <div class="pitcher-stat"><div class="label">HH%</div><div class="val ${valClass(pitcher.hard_hit_pct,false,0.35,0.42)}">${fmt.pct(pitcher.hard_hit_pct)}</div></div>
-      <div class="pitcher-stat"><div class="label">Barrel%</div><div class="val ${valClass(pitcher.barrel_pct,false,0.07,0.12)}">${fmt.pct(pitcher.barrel_pct)}</div></div>
-      <div class="pitcher-stat"><div class="label">EV50</div><div class="val">${fmt.num(pitcher.ev50,1)}</div></div>
-      <div class="pitcher-stat"><div class="label">K%</div><div class="val ${valClass(pitcher.weighted_k_pct,true,0.22,0.18)}">${fmt.pct(pitcher.weighted_k_pct)}</div></div>
-      <div class="pitcher-stat"><div class="label">Ext</div><div class="val">${fmt.num(pitcher.extension,1)} ft</div></div>
-      <div class="pitcher-stat"><div class="label">Run Val</div><div class="val">${fmt.sign(pitcher.weighted_run_value,3)}</div></div>
+      ${pitcher.xba != null ? `<div class="pitcher-stat"><div class="label">xBA</div><div class="val ${valClass(pitcher.xba,false,0.240,0.270)}">${fmt.num(pitcher.xba,3)}</div></div>` : ""}
+      ${pitcher.hard_hit_pct != null ? `<div class="pitcher-stat"><div class="label">HH%</div><div class="val ${valClass(pitcher.hard_hit_pct,false,0.35,0.42)}">${fmt.pct(pitcher.hard_hit_pct)}</div></div>` : ""}
+      ${pitcher.barrel_pct != null ? `<div class="pitcher-stat"><div class="label">Barrel%</div><div class="val ${valClass(pitcher.barrel_pct,false,0.07,0.12)}">${fmt.pct(pitcher.barrel_pct)}</div></div>` : ""}
+      ${pitcher.ev50 != null ? `<div class="pitcher-stat"><div class="label">EV50</div><div class="val">${fmt.num(pitcher.ev50,1)}</div></div>` : ""}
+      ${pitcher.weighted_k_pct != null ? `<div class="pitcher-stat"><div class="label">K%</div><div class="val ${valClass(pitcher.weighted_k_pct,true,0.22,0.18)}">${fmt.pct(pitcher.weighted_k_pct)}</div></div>` : ""}
+      ${pitcher.extension != null ? `<div class="pitcher-stat"><div class="label">Ext</div><div class="val">${fmt.num(pitcher.extension,1)} ft</div></div>` : ""}
+      ${pitcher.weighted_run_value != null ? `<div class="pitcher-stat"><div class="label">Run Val</div><div class="val">${fmt.sign(pitcher.weighted_run_value,3)}</div></div>` : ""}
     </div>
 
     <div class="arsenal-tabs">
@@ -479,6 +479,8 @@ function renderPitcherPanel(pitcher, side) {
 function arsenalTable(arsenal) {
   if (!arsenal.length) return `<div class="muted" style="padding:8px;font-size:0.8rem;">No pitch data available.</div>`;
   const hasStuff = arsenal.some(p => p.pitch_quality != null);
+  const hasBB    = arsenal.some(p => p.bb_pct != null);
+  const hasXba   = arsenal.some(p => p.xba != null);
   return `
   <table class="arsenal-table">
     <thead>
@@ -486,9 +488,9 @@ function arsenalTable(arsenal) {
         <th>Pitch</th>
         <th>Use%</th>
         ${hasStuff ? "<th>Stuff+</th><th>Whiff%</th>" : ""}
-        <th>xBA</th>
+        ${hasXba ? "<th>xBA</th>" : ""}
         <th>K%</th>
-        <th>BB%</th>
+        ${hasBB ? "<th>BB%</th>" : ""}
         <th>RV/100</th>
       </tr>
     </thead>
@@ -501,9 +503,9 @@ function arsenalTable(arsenal) {
         <td class="${stuffCellClass(p.pitch_quality)}">${p.pitch_quality != null ? p.pitch_quality : "—"}</td>
         <td>${p.whiff_pct != null ? p.whiff_pct.toFixed(1)+"%" : "—"}</td>
         ` : ""}
-        <td class="${valClass(p.xba,false,0.240,0.270)}">${fmt.num(p.xba,3)}</td>
-        <td class="${valClass(p.k_pct,true,0.22,0.18)}">${fmt.pct(p.k_pct)}</td>
-        <td class="${valClass(p.bb_pct,false,0.08,0.13)}">${fmt.pct(p.bb_pct)}</td>
+        ${hasXba ? `<td class="${valClass(p.xba,false,0.240,0.270)}">${fmt.num(p.xba,3)}</td>` : ""}
+        <td class="${valClass(p.k_pct,true,0.22,0.18)}">${p.k_pct != null ? fmt.pct(p.k_pct) : "—"}</td>
+        ${hasBB ? `<td class="${valClass(p.bb_pct,false,0.08,0.13)}">${fmt.pct(p.bb_pct)}</td>` : ""}
         <td class="${p.run_value_per_100!=null?(+(p.run_value_per_100)<=0?"val-good":"val-bad"):(+(p.run_value||0)>=0?"val-good":"val-bad")}">${p.run_value_per_100!=null?fmt.sign(p.run_value_per_100,1):fmt.sign(p.run_value,3)}</td>
       </tr>
       `).join("")}
@@ -571,22 +573,18 @@ function renderPitchVsStarter(player) {
     }).join("");
     return tags ? `<div class="pitch-matches">${tags}</div>` : "";
   }
-  const rows = pitches.map(p => {
+  const rows = pitches.filter(p => p.has_batter_data).map(p => {
     const xwobaCls = p.batter_xwoba != null ? valClass(p.batter_xwoba, true, 0.330, 0.290) : "";
     const kCls = p.batter_k_pct != null ? (p.batter_k_pct >= 0.28 ? "val-bad" : p.batter_k_pct <= 0.18 ? "val-good" : "") : "";
     return `
     <div class="pitch-vs-row">
       <span class="pitch-type-badge">${p.pitch_type}</span>
       <span class="pitch-vs-use">${fmt.pct(p.usage_pct, 0)}</span>
-      ${p.has_batter_data ? `
-        <span class="pitch-vs-stat"><span class="pv-label">xwOBA</span> <span class="pv-val ${xwobaCls}">${fmt.num(p.batter_xwoba, 3)}</span></span>
-        <span class="pitch-vs-stat"><span class="pv-label">K%</span> <span class="pv-val ${kCls}">${fmt.pct(p.batter_k_pct)}</span></span>
-      ` : `
-        <span class="pv-no-data">no batter data · P xBA ${fmt.num(p.pitcher_xba, 3)} · P K% ${fmt.pct(p.pitcher_k_pct)}</span>
-      `}
+      ${p.batter_xwoba != null ? `<span class="pitch-vs-stat"><span class="pv-label">xwOBA</span> <span class="pv-val ${xwobaCls}">${fmt.num(p.batter_xwoba, 3)}</span></span>` : ""}
+      ${p.batter_k_pct != null ? `<span class="pitch-vs-stat"><span class="pv-label">K%</span> <span class="pv-val ${kCls}">${fmt.pct(p.batter_k_pct)}</span></span>` : ""}
     </div>`;
   }).join("");
-  return `<div class="pitch-vs-wrap"><div class="pitch-vs-header">vs starter's top pitches</div>${rows}</div>`;
+  return rows ? `<div class="pitch-vs-wrap"><div class="pitch-vs-header">vs starter's top pitches</div>${rows}</div>` : "";
 }
 
 function renderPlayerRow(player) {
@@ -630,18 +628,9 @@ function renderPlayerRow(player) {
     </div>
 
     <div class="player-stats">
-      <div class="player-stat">
-        <div class="ps-label">xwOBA</div>
-        <div class="ps-val ${valClass(player.xwoba,true,0.330,0.290)}">${fmt.num(player.xwoba,3)}</div>
-      </div>
-      <div class="player-stat">
-        <div class="ps-label">HH%</div>
-        <div class="ps-val ${hhCls}">${fmt.pct(player.hard_hit_pct)}</div>
-      </div>
-      <div class="player-stat">
-        <div class="ps-label">K%</div>
-        <div class="ps-val ${kCls}">${fmt.pct(player.k_pct)}</div>
-      </div>
+      ${player.xwoba != null ? `<div class="player-stat"><div class="ps-label">xwOBA</div><div class="ps-val ${valClass(player.xwoba,true,0.330,0.290)}">${fmt.num(player.xwoba,3)}</div></div>` : ""}
+      ${player.hard_hit_pct != null ? `<div class="player-stat"><div class="ps-label">HH%</div><div class="ps-val ${hhCls}">${fmt.pct(player.hard_hit_pct)}</div></div>` : ""}
+      ${player.k_pct != null ? `<div class="player-stat"><div class="ps-label">K%</div><div class="ps-val ${kCls}">${fmt.pct(player.k_pct)}</div></div>` : ""}
     </div>
 
     ${renderPitchVsStarter(player)}
