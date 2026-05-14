@@ -193,5 +193,20 @@
     "away_score": 10,
     "home_score": 2,
     "final_total": 12
+  },
+  {
+    "date": "2026-05-13",
+    "matchup": "Washington Nationals @ Cincinnati Reds",
+    "market_type": "moneyline",
+    "pick": "Washington Nationals",
+    "line": 0.0,
+    "american_odds": 139,
+    "edge": 0.0694,
+    "tier": "moderate",
+    "result": "win",
+    "pnl": 139.0,
+    "away_score": 8,
+    "home_score": 7,
+    "final_total": 15
   }
 ]
