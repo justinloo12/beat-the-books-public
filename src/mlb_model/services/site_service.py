@@ -42,7 +42,7 @@ class SiteService:
             )
 
         return {
-            "as_of": datetime.utcnow().isoformat(),
+            "as_of": datetime.utcnow().isoformat() + "Z",
             "date": slate_date.isoformat(),
             "summary": {
                 **performance,
