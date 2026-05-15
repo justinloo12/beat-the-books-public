@@ -71,9 +71,11 @@ async def main() -> None:
         try:
             day_data = json.loads(p.read_text(encoding="utf-8"))
             day_picks = day_data.get("daily", {}).get("picks", [])
+            day_leans = day_data.get("daily", {}).get("leans", [])
             index_entries.append({
                 "date": p.stem,
                 "picks": len(day_picks),
+                "leans": len(day_leans),
                 "strong": sum(1 for pk in day_picks if pk.get("tier") == "strong"),
                 "games": len(day_data.get("daily", {}).get("lineup_cards", [])),
             })
