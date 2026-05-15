@@ -1,5 +1,5 @@
 {
-  "fetched_at": "2026-05-15T22:31:30.272852Z",
+  "fetched_at": "2026-05-15T22:39:43.104185Z",
   "date": "2026-05-15",
   "games": [
     {
@@ -15,13 +15,13 @@
       "totals": [
         {
           "name": "Over",
-          "point": 8.0,
-          "price": -115
+          "point": 8.5,
+          "price": -103
         },
         {
           "name": "Under",
-          "point": 8.0,
-          "price": -104
+          "point": 8.5,
+          "price": -117
         }
       ]
     },
@@ -30,21 +30,21 @@
       "home_team": "Washington Nationals",
       "commence_time": "2026-05-15T22:46:00Z",
       "moneyline": {
-        "away_odds": -137,
-        "home_odds": 114,
-        "away_no_vig": 0.553,
-        "home_no_vig": 0.447
+        "away_odds": -143,
+        "home_odds": 119,
+        "away_no_vig": 0.5631,
+        "home_no_vig": 0.4369
       },
       "totals": [
         {
           "name": "Over",
           "point": 9.5,
-          "price": -109
+          "price": -112
         },
         {
           "name": "Under",
           "point": 9.5,
-          "price": -111
+          "price": -107
         }
       ]
     },
@@ -154,12 +154,12 @@
         {
           "name": "Over",
           "point": 7.5,
-          "price": -114
+          "price": -109
         },
         {
           "name": "Under",
           "point": 7.5,
-          "price": -105
+          "price": -110
         }
       ]
     },
@@ -260,10 +260,10 @@
       "home_team": "Colorado Rockies",
       "commence_time": "2026-05-16T00:41:00Z",
       "moneyline": {
-        "away_odds": -123,
-        "home_odds": 102,
-        "away_no_vig": 0.527,
-        "home_no_vig": 0.473
+        "away_odds": -119,
+        "home_odds": -102,
+        "away_no_vig": 0.5183,
+        "home_no_vig": 0.4817
       },
       "totals": [
         {
@@ -315,12 +315,12 @@
         {
           "name": "Over",
           "point": 10.0,
-          "price": -102
+          "price": -103
         },
         {
           "name": "Under",
           "point": 10.0,
-          "price": -118
+          "price": -116
         }
       ]
     },
