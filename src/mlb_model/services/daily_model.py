@@ -102,15 +102,17 @@ class DailyPredictionService:
                 away_pitcher_hand = await self.stats.fetch_pitcher_hand(int(probable_away["id"]))
                 home_pitcher_role = await self.stats.fetch_pitcher_season_role(int(probable_home["id"]), slate_date.year)
                 away_pitcher_role = await self.stats.fetch_pitcher_season_role(int(probable_away["id"]), slate_date.year)
-                # Always use projected (historical) lineups for model calculations —
-                # the confirmed lineup path uses sparse per-pitch statcast profiles
-                # that haven't been validated. Confirmed players are shown on display only.
-                home_model_lineup = await self.stats.fetch_recent_lineup_by_opposing_hand(
+                # Model lineup: use confirmed players when available (more accurate — we
+                # know who's actually starting), otherwise fall back to projected.
+                # confirmed=False is passed to _build_game_projection so the leaderboard
+                # stat path (_hitter_pool_matchups) is always used — the per-pitch statcast
+                # profiles in the confirmed path are too noisy with early-season sparse data.
+                home_model_lineup = home_confirmed_players or await self.stats.fetch_recent_lineup_by_opposing_hand(
                     home_team_id,
                     away_pitcher_hand,
                     slate_date,
                 ) or await self.stats.fetch_team_hitters(home_team_id)
-                away_model_lineup = await self.stats.fetch_recent_lineup_by_opposing_hand(
+                away_model_lineup = away_confirmed_players or await self.stats.fetch_recent_lineup_by_opposing_hand(
                     away_team_id,
                     home_pitcher_hand,
                     slate_date,
