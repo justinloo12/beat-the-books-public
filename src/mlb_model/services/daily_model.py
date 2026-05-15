@@ -102,12 +102,17 @@ class DailyPredictionService:
                 away_pitcher_hand = await self.stats.fetch_pitcher_hand(int(probable_away["id"]))
                 home_pitcher_role = await self.stats.fetch_pitcher_season_role(int(probable_home["id"]), slate_date.year)
                 away_pitcher_role = await self.stats.fetch_pitcher_season_role(int(probable_away["id"]), slate_date.year)
-                home_lineup = home_confirmed_players or await self.stats.fetch_recent_lineup_by_opposing_hand(
+                # Model lineup: use confirmed players when available (more accurate — we
+                # know who's actually starting), otherwise fall back to projected.
+                # confirmed=False is passed to _build_game_projection so the leaderboard
+                # stat path (_hitter_pool_matchups) is always used — the per-pitch statcast
+                # profiles in the confirmed path are too noisy with early-season sparse data.
+                home_model_lineup = home_confirmed_players or await self.stats.fetch_recent_lineup_by_opposing_hand(
                     home_team_id,
                     away_pitcher_hand,
                     slate_date,
                 ) or await self.stats.fetch_team_hitters(home_team_id)
-                away_lineup = away_confirmed_players or await self.stats.fetch_recent_lineup_by_opposing_hand(
+                away_model_lineup = away_confirmed_players or await self.stats.fetch_recent_lineup_by_opposing_hand(
                     away_team_id,
                     home_pitcher_hand,
                     slate_date,
@@ -124,15 +129,30 @@ class DailyPredictionService:
                     away_pitcher=probable_away,
                     home_pitcher_role=home_pitcher_role,
                     away_pitcher_role=away_pitcher_role,
-                    home_lineup=home_lineup,
-                    away_lineup=away_lineup,
-                    home_lineup_confirmed=home_confirmed,
-                    away_lineup_confirmed=away_confirmed,
+                    home_lineup=home_model_lineup,
+                    away_lineup=away_model_lineup,
+                    home_lineup_confirmed=False,
+                    away_lineup_confirmed=False,
                     venue=game.get("venue", {}).get("name", "Unknown"),
                     start_time=game.get("gameDate"),
                 )
                 game_picks, top_game_picks, game_leans = self._score_markets(context, odds_game)
                 context["top_game_picks"] = top_game_picks
+                # After picks are scored, overwrite lineup display with confirmed players.
+                # Summary profiles are cheap (leaderboard data only) and give accurate
+                # batting order for display without affecting model outputs.
+                if home_confirmed:
+                    context["home_lineup_matchups"] = self._confirmed_display_matchups(
+                        home_confirmed_players, slate_date,
+                    )
+                    context["home_lineup_confirmed"] = True
+                    context["home_lineup_raw"] = home_confirmed_players
+                if away_confirmed:
+                    context["away_lineup_matchups"] = self._confirmed_display_matchups(
+                        away_confirmed_players, slate_date,
+                    )
+                    context["away_lineup_confirmed"] = True
+                    context["away_lineup_raw"] = away_confirmed_players
                 lineup_status = "confirmed" if home_confirmed and away_confirmed else "projected"
                 for pick in game_picks:
                     pick["lineup_status"] = lineup_status
@@ -159,8 +179,8 @@ class DailyPredictionService:
                 -item.get("edge", 0.0),
                 -item.get("model_probability", 0.0),
             ),
-        )[:10]
-        leans = sorted(leans, key=lambda item: -item.get("edge", 0.0))[:10]
+        )[:3]
+        leans = sorted(leans, key=lambda item: -item.get("edge", 0.0))[:8]
         lineup_cards = sorted(lineup_cards, key=lambda item: item["matchup"])
         return {"date": slate_date.isoformat(), "picks": picks, "leans": leans, "lineup_cards": lineup_cards, "skipped": skipped}
 
@@ -538,6 +558,39 @@ class DailyPredictionService:
                     "matchup": {"matchup_score": round(matchup_score, 2), "pitch_scores": []},
                 }
             )
+        return reports
+
+    def _confirmed_display_matchups(
+        self,
+        confirmed_players: list[dict[str, Any]],
+        slate_date: date,
+    ) -> list[dict[str, Any]]:
+        """Cheap display-only entries for confirmed lineup players.
+
+        Uses leaderboard summary profiles (not statcast matchup profiles) so
+        this is fast and doesn't affect model calculations. Sets slot from
+        battingOrder so the UI can sort 1-9.
+        """
+        reports = []
+        for batter in confirmed_players:
+            batter_id = batter.get("id") or batter.get("person", {}).get("id")
+            if not batter_id:
+                continue
+            raw_order = batter.get("battingOrder")
+            try:
+                slot = int(str(raw_order)[0]) if raw_order else None
+            except (ValueError, TypeError):
+                slot = None
+            profile = self.baseball.build_batter_summary_profile(int(batter_id), slate_date.year)
+            xwoba = float(profile.get("xwoba") or 0.315)
+            matchup_score = max(20.0, min(80.0, 45 + (xwoba - 0.315) * 120))
+            reports.append({
+                "slot": slot if slot is not None else "-",
+                "batter_id": int(batter_id),
+                "name": self._player_name(batter),
+                "profile": profile,
+                "matchup": {"matchup_score": round(matchup_score, 2), "pitch_scores": []},
+            })
         return reports
 
     def _pitcher_stats_from_arsenal(self, pitcher_profile: dict[str, Any]) -> dict[str, Any]:

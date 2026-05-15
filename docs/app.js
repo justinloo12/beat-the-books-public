@@ -2,6 +2,7 @@
 let currentCards = [];
 let activeMatchup = null;
 let activeArsenalSplit = {}; // matchup -> "overall"|"vs_l"|"vs_r"
+let _liveOddsPayload = null; // cached live odds for re-renders
 
 /* ── DOM refs ── */
 const $summaryGrid = document.getElementById("summary-grid");
@@ -149,7 +150,7 @@ function renderPicks(picks) {
           <div class="pick-matchup">${pick.matchup}</div>
           <div class="pick-meta">
             ${tierBadge(pick.tier)}
-            <span class="pick-market">${fmtMarketType(pick.market_type)} · ${pick.pick} ${pick.line??""} · ${pick.start_time??"TBD"}</span>
+            <span class="pick-market">${fmtMarketType(pick.market_type)} · ${pick.pick}${pick.line ? ` ${pick.line}` : ""} · ${pick.start_time??"TBD"}</span>
           </div>
         </div>
         <div class="pick-right">
@@ -201,7 +202,7 @@ function renderLeans(leans) {
           <div class="pick-matchup">${lean.matchup}</div>
           <div class="pick-meta">
             <span class="badge badge-neutral">lean</span>
-            <span class="pick-market">${fmtMarketType(lean.market_type)} · ${lean.pick} ${lean.line??""} · ${lean.start_time??"TBD"}</span>
+            <span class="pick-market">${fmtMarketType(lean.market_type)} · ${lean.pick}${lean.line ? ` ${lean.line}` : ""} · ${lean.start_time??"TBD"}</span>
           </div>
         </div>
         <div class="pick-right">
@@ -261,7 +262,7 @@ function pickBlurb(pick) {
   const lineup = pick.lineup_status === "confirmed" ? "confirmed lineups" : "projected lineups";
   const top = (pick.top_features || [])[0];
   const featureText = top ? `${top.feature} is a key driver` : "the simulation is pricing this side above market";
-  return `${market} ${pick.pick}${pick.line != null ? ` ${pick.line}` : ""} cleared the board with a ${fmt.pctS(pick.edge)} edge. ${featureText}, and this card is still using ${lineup}.`;
+  return `${market} ${pick.pick}${pick.line ? ` ${pick.line}` : ""} cleared the board with a ${fmt.pctS(pick.edge)} edge. ${featureText}, and this card is still using ${lineup}.`;
 }
 
 function avgMatchup(players) {
@@ -748,7 +749,7 @@ function renderHistory(history) {
     const pnlCls2 = p.pnl == null ? "" : p.pnl > 0 ? "val-good" : p.pnl < 0 ? "val-bad" : "";
     const dateStr = p.date || (p.placed_at||"").slice(0,10);
     const pickSide = p.pick || p.pick_side || "—";
-    const line = p.line != null ? ` ${p.line}` : "";
+    const line = p.line ? ` ${p.line}` : "";
     return `
     <tr class="${isLean ? "history-row-lean" : ""}">
       <td>${dateStr}</td>
@@ -774,17 +775,134 @@ function renderSkipped(skipped) {
 }
 
 /* ── Main ── */
+/* ── Live Odds Refresh ── */
+function _implied(american) {
+  return american < 0 ? (-american) / (-american + 100) : 100 / (american + 100);
+}
+function _noVig(a, b) {
+  const ra = _implied(a), rb = _implied(b), t = ra + rb;
+  return [ra / t, rb / t];
+}
+function _teamsMatch(pickName, apiName) {
+  const p = (pickName || "").toLowerCase(), a = (apiName || "").toLowerCase();
+  return p === a || p.includes(a) || a.includes(p);
+}
+function _findLiveGame(matchup, liveGames) {
+  if (!matchup || !matchup.includes(" @ ")) return null;
+  const [away, home] = matchup.split(" @ ").map(s => s.trim());
+  return liveGames.find(g => _teamsMatch(away, g.away_team) && _teamsMatch(home, g.home_team)) || null;
+}
+function _liveEdge(pick, game) {
+  if (!game) return null;
+  const mtype = pick.market_type;
+  if (mtype === "moneyline" || mtype === "h2h") {
+    const { away_odds, home_odds, away_no_vig, home_no_vig } = game.moneyline || {};
+    if (away_odds == null) return null;
+    const isAway = _teamsMatch(pick.pick, game.away_team);
+    const isHome = _teamsMatch(pick.pick, game.home_team);
+    if (!isAway && !isHome) return null;
+    const currentOdds = isHome ? home_odds : away_odds;
+    const noVigProb   = isHome ? home_no_vig : away_no_vig;
+    const newEdge = (pick.model_probability || 0) - noVigProb;
+    return { currentOdds, noVigProb, newEdge };
+  }
+  if (mtype === "game_total" || mtype === "first_five_total") {
+    const totals = game.totals || [];
+    const over  = totals.find(t => t.name === "Over"  && String(t.point) === String(pick.line));
+    const under = totals.find(t => t.name === "Under" && String(t.point) === String(pick.line));
+    if (!over || !under) return null;
+    const [overNV, underNV] = _noVig(over.price, under.price);
+    const isOver = pick.pick === "Over";
+    const currentOdds = isOver ? over.price : under.price;
+    const noVigProb   = isOver ? overNV : underNV;
+    const newEdge = (pick.model_probability || 0) - noVigProb;
+    return { currentOdds, noVigProb, newEdge };
+  }
+  return null;
+}
+function applyLiveOdds(picks, livePayload) {
+  if (!livePayload || !picks) return picks;
+  const games = livePayload.games || [];
+  return picks.map(p => {
+    const game = _findLiveGame(p.matchup, games);
+    const live = _liveEdge(p, game);
+    if (!live) return p;
+    return { ...p, american_odds: live.currentOdds, edge: live.newEdge, _live: true };
+  });
+}
+function _oddsAge(fetchedAt) {
+  if (!fetchedAt) return "";
+  const diffMs = Date.now() - new Date(fetchedAt).getTime();
+  const mins = Math.round(diffMs / 60000);
+  if (mins < 1) return "just now";
+  if (mins === 1) return "1 min ago";
+  return `${mins} mins ago`;
+}
+
 async function loadBoard() {
   $dailyPicks.innerHTML = `<div class="loading-state"><div class="loading-spinner"></div>Loading picks…</div>`;
   try {
     const payload = await fetchPayload();
     currentCards = payload.daily.lineup_cards || [];
+
+    // Try to refresh odds live — today's date only
+    try {
+      const r = await fetch(`data/live_odds.json?ts=${Date.now()}`);
+      if (r.ok) {
+        const lo = await r.json();
+        if (lo.date === payload.date) {
+          _liveOddsPayload = lo;
+          // Combine picks + leans, apply live odds, then re-split by current edge.
+          // A lean that crosses 6% becomes a pick; a pick that drops below 6% becomes
+          // a lean or disappears. Dedup by market+pick+line so no duplicates.
+          const seen = new Set();
+          const all = applyLiveOdds([
+            ...(payload.daily.picks || []),
+            ...(payload.daily.leans || []),
+          ], lo).filter(p => {
+            const key = `${p.market_type}|${p.pick}|${p.line}|${p.matchup}`;
+            if (seen.has(key)) return false;
+            seen.add(key);
+            return true;
+          });
+          payload.daily.picks = all
+            .filter(p => p.edge >= 0.06)
+            .sort((a, b) => b.edge - a.edge)
+            .slice(0, 3);
+          payload.daily.leans = all
+            .filter(p => p.edge >= 0.025 && p.edge < 0.06)
+            .sort((a, b) => b.edge - a.edge)
+            .slice(0, 8);
+        }
+      }
+    } catch (_) { /* live odds optional */ }
+
+    // Sync game card top_game_picks with live-adjusted picks/leans so both
+    // sections always show identical edges (no re-matching required).
+    const livePickMap = new Map();
+    for (const p of [...(payload.daily.picks || []), ...(payload.daily.leans || [])]) {
+      livePickMap.set(`${p.market_type}|${p.pick}|${p.line}`, p);
+    }
+    for (const card of currentCards) {
+      if (card.top_game_picks) {
+        card.top_game_picks = card.top_game_picks.map(p =>
+          livePickMap.get(`${p.market_type}|${p.pick}|${p.line}`) || p
+        );
+      }
+    }
+
     renderHero(payload);
     renderSummary(payload.summary || {});
     renderPicks(payload.daily.picks || []);
     renderLeans(payload.daily.leans || []);
     if ($historyTbl) renderHistory(payload.history || []);
     renderGames(currentCards);
+
+    if (_liveOddsPayload) {
+      const age = _oddsAge(_liveOddsPayload.fetched_at);
+      const badge = `<span style="font-size:0.72rem;color:var(--muted);margin-left:8px">⟳ odds updated ${age}</span>`;
+      if ($dailyMeta) $dailyMeta.insertAdjacentHTML("beforeend", badge);
+    }
   } catch (err) {
     console.error("loadBoard failed:", err);
     $dailyPicks.innerHTML = `<div class="empty-state">Could not load today's board. Check back after 10 AM ET.</div>`;
@@ -888,7 +1006,7 @@ async function loadArchiveDay(dateStr, $picks) {
               <div class="pick-matchup">${pick.matchup}</div>
               <div class="pick-meta">
                 ${tierBadge(pick.tier)}
-                <span class="pick-market">${fmtMarketType(pick.market_type)} · ${pick.pick} ${pick.line??""} · ${pick.start_time??"TBD"}</span>
+                <span class="pick-market">${fmtMarketType(pick.market_type)} · ${pick.pick}${pick.line ? ` ${pick.line}` : ""} · ${pick.start_time??"TBD"}</span>
               </div>
             </div>
             <div class="pick-right">

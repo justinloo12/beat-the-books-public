@@ -76,7 +76,8 @@ async def download_odds(target_date: date, markets: list[str]) -> DownloadSummar
     async with httpx.AsyncClient(timeout=60.0) as client:
         for market in markets:
             path = ODDS_DIR / f"{target_date.isoformat()}_{market}.json"
-            if path.exists():
+            if path.exists() and not use_current_endpoint:
+                # Only skip re-fetching for historical dates; always refresh today's odds
                 files_written.append(path)
                 continue
             params = {

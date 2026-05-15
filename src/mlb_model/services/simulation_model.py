@@ -267,27 +267,40 @@ class SimulationModelService:
                 -item["model_probability"],
             ),
         )
-        daily = [
-            pick
-            for pick in ranked
-            if pick["tier"] in {"strong", "moderate"}
-            and (
-                pick["market_type"] == "game_total"
-                or pick["market_type"] == "first_five_total"
-                or (pick["market_type"] == "moneyline" and pick["edge"] >= model_settings.edge_thresholds["moneyline_min"])
-            )
-            and pick["market_type"] != "runline"
-        ][:10]
+        # STRONG + MODERATE (6%+) qualify as actionable daily picks; deduplicated by side/line
+        _seen_daily: set[tuple] = set()
+        daily: list[dict] = []
+        for pick in ranked:
+            if pick["tier"] not in {"strong", "moderate"}:
+                continue
+            if pick["market_type"] not in {"game_total", "first_five_total", "moneyline"}:
+                continue
+            if pick["market_type"] == "moneyline" and pick["edge"] < model_settings.edge_thresholds["moneyline_min"]:
+                continue
+            dedup_key = (pick["market_type"], pick["pick"], pick.get("line"))
+            if dedup_key in _seen_daily:
+                continue
+            _seen_daily.add(dedup_key)
+            daily.append(pick)
+            if len(daily) == 3:
+                break
+        # Leans: 2.5%–6% edge — tracked but not actionable picks
         lean_min = model_settings.edge_thresholds.get("lean_min", 0.025)
         pass_below = model_settings.edge_thresholds["pass_below"]
-        leans = sorted(
-            [
-                pick for pick in candidates
-                if lean_min <= pick["edge"] < pass_below
-                and pick["market_type"] != "runline"
-            ],
-            key=lambda item: -item["edge"],
-        )[:5]
+        _seen_leans: set[tuple] = set()
+        leans: list[dict] = []
+        for pick in sorted(candidates, key=lambda item: -item["edge"]):
+            if not (lean_min <= pick["edge"] < pass_below):
+                continue
+            if pick["market_type"] == "runline":
+                continue
+            dedup_key = (pick["market_type"], pick["pick"], pick.get("line"))
+            if dedup_key in _seen_leans:
+                continue
+            _seen_leans.add(dedup_key)
+            leans.append(pick)
+            if len(leans) == 8:
+                break
         matchup_ranked = sorted(
             [pick for pick in candidates if pick["tier"] != "block"],
             key=lambda item: (

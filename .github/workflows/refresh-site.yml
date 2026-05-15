@@ -7,6 +7,8 @@ on:
     - cron: "*/15 14,15,16 * * *"
     # Afternoon window (3–5pm ET) catches confirmed lineups for evening games.
     - cron: "*/15 19,20,21 * * *"
+    # Pre-game window (5–7pm ET) refreshes odds close to first pitch.
+    - cron: "*/15 21,22,23 * * *"
 
 permissions:
   contents: write
@@ -42,7 +44,7 @@ jobs:
             exit 0
           fi
           hour=$(date +%H)
-          valid_hours="10 11 12 15 16 17"
+          valid_hours="10 11 12 15 16 17 18 19"
           if ! echo "$valid_hours" | grep -qw "$hour"; then
             echo "run_refresh=false" >> "$GITHUB_OUTPUT"
             exit 0
@@ -66,6 +68,11 @@ jobs:
             --end-date "${{ steps.slate.outputs.slate_date }}" \
             --seasons "$(date +%Y)" \
             --markets h2h totals spreads
+
+      - name: Build live odds snapshot for browser refresh
+        if: steps.slate.outputs.run_refresh == 'true'
+        run: |
+          python -m mlb_model.refresh_live_odds --date "${{ steps.slate.outputs.slate_date }}"
 
       - name: Export latest board snapshot
         if: steps.slate.outputs.run_refresh == 'true'
@@ -121,6 +128,7 @@ jobs:
           git add docs/data/latest.json
           git add "docs/data/${{ steps.slate.outputs.slate_date }}.json"
           git add docs/data/archive_index.json
+          git add docs/data/live_odds.json || true
           git add docs/data/pick_history.json || true
           git diff --cached --quiet && exit 0
           git commit -m "Refresh site snapshot for ${{ steps.slate.outputs.slate_date }}"
