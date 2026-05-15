@@ -42,13 +42,14 @@ class SiteService:
             )
 
         return {
-            "as_of": datetime.utcnow().isoformat(),
+            "as_of": datetime.utcnow().isoformat() + "Z",
             "date": slate_date.isoformat(),
             "summary": {
                 **performance,
                 "clv_last_50": last_50_clv,
                 "clv_last_200": last_200_clv,
                 "daily_pick_count": len(board["picks"]),
+                "daily_lean_count": len(board.get("leans", [])),
                 "lineup_card_count": len(board["lineup_cards"]),
             },
             "daily": board,

@@ -119,7 +119,7 @@ class MatchupModelService:
             + self._rate_score(batter_profile.get("ev50"), baseline=89.0, spread=12.0) * 0.5
         )
         swing_score = self._swing_fit(batter_profile, pitcher_profile, None)
-        discipline_edge = float(batter_profile.get("bb_pct", 0.08)) - float(batter_profile.get("k_pct", 0.22))
+        discipline_edge = float(batter_profile.get("bb_pct") or 0.08) - float(batter_profile.get("k_pct") or 0.22)
         discipline_score = self._rate_score(discipline_edge, baseline=-0.14, spread=0.20)
         qoc_score = self._rate_score(batter_profile.get("quality_of_contact", batter_profile.get("xwoba", 0.315)), baseline=0.315, spread=0.15)
         handedness_bonus = 2.5 if batter_profile.get("handedness") != pitcher_profile.get("handedness") else -1.0
@@ -133,11 +133,15 @@ class MatchupModelService:
             + qoc_score * (weights["quality_of_contact_profile"] / group_weight)
         )
         matchup_score = clamp((batter_score + handedness_bonus) * pa_weight, 18, 92)
+        _xwoba = float(batter_profile.get("xwoba") or 0.315)
+        _hh = float(batter_profile.get("hard_hit_pct") or 0.36)
+        _ev50 = float(batter_profile.get("ev50") or 89.0)
+        _kpct = float(batter_profile.get("k_pct") or 0.22)
         recent_delta = (
-            (float(batter_profile.get("recent_xwoba", batter_profile.get("xwoba", 0.315))) - float(batter_profile.get("xwoba", 0.315))) * 170
-            + (float(batter_profile.get("recent_hard_hit_pct", batter_profile.get("hard_hit_pct", 0.36))) - float(batter_profile.get("hard_hit_pct", 0.36))) * 55
-            + (float(batter_profile.get("recent_ev50", batter_profile.get("ev50", 89.0))) - float(batter_profile.get("ev50", 89.0))) * 1.4
-            - (float(batter_profile.get("recent_k_pct", batter_profile.get("k_pct", 0.22))) - float(batter_profile.get("k_pct", 0.22))) * 42
+            (float(batter_profile.get("recent_xwoba") or _xwoba) - _xwoba) * 170
+            + (float(batter_profile.get("recent_hard_hit_pct") or _hh) - _hh) * 55
+            + (float(batter_profile.get("recent_ev50") or _ev50) - _ev50) * 1.4
+            - (float(batter_profile.get("recent_k_pct") or _kpct) - _kpct) * 42
         )
         return {
             "batter_id": batter_profile.get("batter_id"),

@@ -181,9 +181,9 @@ class SimulationModelService:
         context: dict[str, Any],
         odds_game: dict[str, Any] | None,
         simulation: SimulationSummary,
-    ) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
+    ) -> tuple[list[dict[str, Any]], list[dict[str, Any]], list[dict[str, Any]]]:
         if not odds_game:
-            return [], []
+            return [], [], []
 
         candidates: list[dict[str, Any]] = []
         total_lines = simulation.total_over_probabilities
@@ -278,6 +278,16 @@ class SimulationModelService:
             )
             and pick["market_type"] != "runline"
         ][:10]
+        lean_min = model_settings.edge_thresholds.get("lean_min", 0.025)
+        pass_below = model_settings.edge_thresholds["pass_below"]
+        leans = sorted(
+            [
+                pick for pick in candidates
+                if lean_min <= pick["edge"] < pass_below
+                and pick["market_type"] != "runline"
+            ],
+            key=lambda item: -item["edge"],
+        )[:5]
         matchup_ranked = sorted(
             [pick for pick in candidates if pick["tier"] != "block"],
             key=lambda item: (
@@ -289,7 +299,7 @@ class SimulationModelService:
                 -item["edge"],
             ),
         )
-        return daily, matchup_ranked[:5]
+        return daily, matchup_ranked[:5], leans
 
     def _simulate_team_game(
         self,

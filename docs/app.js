@@ -7,6 +7,8 @@ let activeArsenalSplit = {}; // matchup -> "overall"|"vs_l"|"vs_r"
 const $summaryGrid = document.getElementById("summary-grid");
 const $dailyPicks  = document.getElementById("daily-picks");
 const $dailyMeta   = document.getElementById("daily-meta");
+const $dailyLeans  = document.getElementById("daily-leans");
+const $leansMeta   = document.getElementById("leans-meta");
 const $historyTbl  = document.getElementById("history-table");
 const $gameDetail  = document.getElementById("game-detail");
 const $skippedList = document.getElementById("skipped-list");
@@ -90,12 +92,14 @@ async function fetchPayload() {
 function renderHero(payload) {
   const cards = payload.daily.lineup_cards || [];
   const picks = payload.daily.picks || [];
+  const leans = payload.daily.leans || [];
   const strongWind = cards.slice().sort((a,b)=>+(b.weather?.wind_speed_mph||0)-+(a.weather?.wind_speed_mph||0))[0];
   const strongCount = picks.filter(p=>p.tier==="strong").length;
 
   $heroPills.innerHTML = [
     `<span class="pill accent">${cards.length} games on board</span>`,
-    `<span class="pill">${picks.length} picks posted</span>`,
+    picks.length ? `<span class="pill">${picks.length} pick${picks.length!==1?"s":""} posted</span>` : "",
+    leans.length ? `<span class="pill">${leans.length} lean${leans.length!==1?"s":""}</span>` : "",
     strongCount ? `<span class="pill">${strongCount} strong edge${strongCount>1?"s":""}</span>` : "",
     strongWind ? `<span class="pill">${strongWind.matchup}: ${windLabel(strongWind.weather)}</span>` : "",
   ].filter(Boolean).join("");
@@ -115,7 +119,6 @@ function renderSummary(s) {
     ["ROI",         fmt.pct(s.roi),                   `${fmt.sign(s.units_profit)} units`],
     ["Tracked",     s.tracked_bets,                   `${s.wins}-${s.losses}-${s.pushes} W-L-P`],
     ["Hit Rate",    fmt.pct(s.hit_rate),               "graded picks"],
-    ["CLV 50",      s.clv_last_50==null?"n/a":fmt.sign(s.clv_last_50,3), "last 50"],
     ["Today",       s.lineup_card_count,               `${s.daily_pick_count} pick${s.daily_pick_count!==1?"s":""}`],
   ];
   $summaryGrid.innerHTML = cards.map(([l,v,d])=>`
@@ -180,6 +183,40 @@ function renderPicks(picks) {
     </article>
     `;
   }).join("");
+}
+
+/* ── Render Leans ── */
+function renderLeans(leans) {
+  if (!$dailyLeans) return;
+  if (!leans || !leans.length) {
+    $dailyLeans.innerHTML = `<div class="empty-state">No leans today — model saw no edges between 2.5% and 5%.</div>`;
+    if ($leansMeta) $leansMeta.textContent = "";
+    return;
+  }
+  if ($leansMeta) $leansMeta.textContent = `${leans.length} low-confidence lean${leans.length!==1?"s":""} — not picks, for tracking only`;
+  $dailyLeans.innerHTML = leans.map(lean => `
+    <article class="pick-card tier-lean">
+      <div class="pick-header">
+        <div class="pick-main">
+          <div class="pick-matchup">${lean.matchup}</div>
+          <div class="pick-meta">
+            <span class="badge badge-neutral">lean</span>
+            <span class="pick-market">${fmtMarketType(lean.market_type)} · ${lean.pick} ${lean.line??""} · ${lean.start_time??"TBD"}</span>
+          </div>
+        </div>
+        <div class="pick-right">
+          <div class="edge-value" style="color:var(--muted)">${fmt.pctS(lean.edge)}</div>
+          <div class="pick-odds-line">${fmt.odds(lean.american_odds)}</div>
+        </div>
+      </div>
+      <div class="pick-body">
+        <div class="pick-stat"><div class="label">Model %</div><div class="val">${fmt.pct(lean.model_probability)}</div></div>
+        <div class="pick-stat"><div class="label">No-vig %</div><div class="val">${fmt.pct(lean.no_vig_probability)}</div></div>
+        <div class="pick-stat"><div class="label">Edge</div><div class="val">${fmt.pctS(lean.edge)}</div></div>
+        <div class="pick-stat"><div class="label">Lineup</div><div class="val">${lean.lineup_status??"—"}</div></div>
+      </div>
+    </article>
+  `).join("");
 }
 
 function fmtMarketType(t) {
@@ -458,13 +495,13 @@ function renderPitcherPanel(pitcher, side) {
     </div>
 
     <div class="pitcher-overall">
-      <div class="pitcher-stat"><div class="label">xBA</div><div class="val ${valClass(pitcher.xba,false,0.240,0.270)}">${fmt.num(pitcher.xba,3)}</div></div>
-      <div class="pitcher-stat"><div class="label">HH%</div><div class="val ${valClass(pitcher.hard_hit_pct,false,0.35,0.42)}">${fmt.pct(pitcher.hard_hit_pct)}</div></div>
-      <div class="pitcher-stat"><div class="label">Barrel%</div><div class="val ${valClass(pitcher.barrel_pct,false,0.07,0.12)}">${fmt.pct(pitcher.barrel_pct)}</div></div>
-      <div class="pitcher-stat"><div class="label">EV50</div><div class="val">${fmt.num(pitcher.ev50,1)}</div></div>
-      <div class="pitcher-stat"><div class="label">K%</div><div class="val ${valClass(pitcher.weighted_k_pct,true,0.22,0.18)}">${fmt.pct(pitcher.weighted_k_pct)}</div></div>
-      <div class="pitcher-stat"><div class="label">Ext</div><div class="val">${fmt.num(pitcher.extension,1)} ft</div></div>
-      <div class="pitcher-stat"><div class="label">Run Val</div><div class="val">${fmt.sign(pitcher.weighted_run_value,3)}</div></div>
+      ${pitcher.xba != null ? `<div class="pitcher-stat"><div class="label">xBA</div><div class="val ${valClass(pitcher.xba,false,0.240,0.270)}">${fmt.num(pitcher.xba,3)}</div></div>` : ""}
+      ${pitcher.hard_hit_pct != null ? `<div class="pitcher-stat"><div class="label">HH%</div><div class="val ${valClass(pitcher.hard_hit_pct,false,0.35,0.42)}">${fmt.pct(pitcher.hard_hit_pct)}</div></div>` : ""}
+      ${pitcher.barrel_pct != null ? `<div class="pitcher-stat"><div class="label">Barrel%</div><div class="val ${valClass(pitcher.barrel_pct,false,0.07,0.12)}">${fmt.pct(pitcher.barrel_pct)}</div></div>` : ""}
+      ${pitcher.ev50 != null ? `<div class="pitcher-stat"><div class="label">EV50</div><div class="val">${fmt.num(pitcher.ev50,1)}</div></div>` : ""}
+      ${pitcher.weighted_k_pct != null ? `<div class="pitcher-stat"><div class="label">K%</div><div class="val ${valClass(pitcher.weighted_k_pct,true,0.22,0.18)}">${fmt.pct(pitcher.weighted_k_pct)}</div></div>` : ""}
+      ${pitcher.extension != null ? `<div class="pitcher-stat"><div class="label">Ext</div><div class="val">${fmt.num(pitcher.extension,1)} ft</div></div>` : ""}
+      ${pitcher.weighted_run_value != null ? `<div class="pitcher-stat"><div class="label">Run Val</div><div class="val">${fmt.sign(pitcher.weighted_run_value,3)}</div></div>` : ""}
     </div>
 
     <div class="arsenal-tabs">
@@ -480,6 +517,8 @@ function renderPitcherPanel(pitcher, side) {
 function arsenalTable(arsenal) {
   if (!arsenal.length) return `<div class="muted" style="padding:8px;font-size:0.8rem;">No pitch data available.</div>`;
   const hasStuff = arsenal.some(p => p.pitch_quality != null);
+  const hasBB    = arsenal.some(p => p.bb_pct != null);
+  const hasXba   = arsenal.some(p => p.xba != null);
   return `
   <table class="arsenal-table">
     <thead>
@@ -487,9 +526,9 @@ function arsenalTable(arsenal) {
         <th>Pitch</th>
         <th>Use%</th>
         ${hasStuff ? "<th>Stuff+</th><th>Whiff%</th>" : ""}
-        <th>xBA</th>
+        ${hasXba ? "<th>xBA</th>" : ""}
         <th>K%</th>
-        <th>BB%</th>
+        ${hasBB ? "<th>BB%</th>" : ""}
         <th>RV/100</th>
       </tr>
     </thead>
@@ -502,9 +541,9 @@ function arsenalTable(arsenal) {
         <td class="${stuffCellClass(p.pitch_quality)}">${p.pitch_quality != null ? p.pitch_quality : "—"}</td>
         <td>${p.whiff_pct != null ? p.whiff_pct.toFixed(1)+"%" : "—"}</td>
         ` : ""}
-        <td class="${valClass(p.xba,false,0.240,0.270)}">${fmt.num(p.xba,3)}</td>
-        <td class="${valClass(p.k_pct,true,0.22,0.18)}">${fmt.pct(p.k_pct)}</td>
-        <td class="${valClass(p.bb_pct,false,0.08,0.13)}">${fmt.pct(p.bb_pct)}</td>
+        ${hasXba ? `<td class="${valClass(p.xba,false,0.240,0.270)}">${fmt.num(p.xba,3)}</td>` : ""}
+        <td class="${valClass(p.k_pct,true,0.22,0.18)}">${p.k_pct != null ? fmt.pct(p.k_pct) : "—"}</td>
+        ${hasBB ? `<td class="${valClass(p.bb_pct,false,0.08,0.13)}">${fmt.pct(p.bb_pct)}</td>` : ""}
         <td class="${p.run_value_per_100!=null?(+(p.run_value_per_100)<=0?"val-good":"val-bad"):(+(p.run_value||0)>=0?"val-good":"val-bad")}">${p.run_value_per_100!=null?fmt.sign(p.run_value_per_100,1):fmt.sign(p.run_value,3)}</td>
       </tr>
       `).join("")}
@@ -516,7 +555,15 @@ function arsenalTable(arsenal) {
 /* ── Team / Batter Section ── */
 function renderTeamSection(lineupCard) {
   if (!lineupCard) return "";
-  const players = (lineupCard.players || []).slice().sort((a, b) => (b.matchup_score || 0) - (a.matchup_score || 0));
+  const confirmed = lineupCard.confirmed;
+  const players = (lineupCard.players || []).slice().sort((a, b) => {
+    if (confirmed) {
+      const aSlot = typeof a.slot === "number" ? a.slot : 999;
+      const bSlot = typeof b.slot === "number" ? b.slot : 999;
+      return aSlot - bSlot;
+    }
+    return (b.matchup_score || 0) - (a.matchup_score || 0);
+  });
   return `
   <div class="team-section">
     <div class="team-head">
@@ -524,10 +571,10 @@ function renderTeamSection(lineupCard) {
         <div class="team-name">${lineupCard.team}</div>
         <div class="team-label">${lineupCard.label}</div>
       </div>
-      ${!lineupCard.confirmed ? `<span class="badge badge-pass">Projected</span>` : `<span class="badge badge-strong">Confirmed</span>`}
+      ${!confirmed ? `<span class="badge badge-pass">Projected</span>` : `<span class="badge badge-strong badge-confirmed-lineup">✓ Confirmed Lineup</span>`}
     </div>
     <div class="player-list">
-      ${players.map(renderPlayerRow).join("")}
+      ${players.map(p => renderPlayerRow(p, confirmed)).join("")}
     </div>
   </div>
   `;
@@ -572,25 +619,21 @@ function renderPitchVsStarter(player) {
     }).join("");
     return tags ? `<div class="pitch-matches">${tags}</div>` : "";
   }
-  const rows = pitches.map(p => {
+  const rows = pitches.filter(p => p.has_batter_data).map(p => {
     const xwobaCls = p.batter_xwoba != null ? valClass(p.batter_xwoba, true, 0.330, 0.290) : "";
     const kCls = p.batter_k_pct != null ? (p.batter_k_pct >= 0.28 ? "val-bad" : p.batter_k_pct <= 0.18 ? "val-good" : "") : "";
     return `
     <div class="pitch-vs-row">
       <span class="pitch-type-badge">${p.pitch_type}</span>
       <span class="pitch-vs-use">${fmt.pct(p.usage_pct, 0)}</span>
-      ${p.has_batter_data ? `
-        <span class="pitch-vs-stat"><span class="pv-label">xwOBA</span> <span class="pv-val ${xwobaCls}">${fmt.num(p.batter_xwoba, 3)}</span></span>
-        <span class="pitch-vs-stat"><span class="pv-label">K%</span> <span class="pv-val ${kCls}">${fmt.pct(p.batter_k_pct)}</span></span>
-      ` : `
-        <span class="pv-no-data">no batter data · P xBA ${fmt.num(p.pitcher_xba, 3)} · P K% ${fmt.pct(p.pitcher_k_pct)}</span>
-      `}
+      ${p.batter_xwoba != null ? `<span class="pitch-vs-stat"><span class="pv-label">xwOBA</span> <span class="pv-val ${xwobaCls}">${fmt.num(p.batter_xwoba, 3)}</span></span>` : ""}
+      ${p.batter_k_pct != null ? `<span class="pitch-vs-stat"><span class="pv-label">K%</span> <span class="pv-val ${kCls}">${fmt.pct(p.batter_k_pct)}</span></span>` : ""}
     </div>`;
   }).join("");
-  return `<div class="pitch-vs-wrap"><div class="pitch-vs-header">vs starter's top pitches</div>${rows}</div>`;
+  return rows ? `<div class="pitch-vs-wrap"><div class="pitch-vs-header">vs starter's top pitches</div>${rows}</div>` : "";
 }
 
-function renderPlayerRow(player) {
+function renderPlayerRow(player, confirmed = false) {
   const sim = player.simulation || {};
   const pitchScores = player.pitch_scores || player.best_pitch_matches || [];
   const hand = player.handedness || "?";
@@ -621,7 +664,9 @@ function renderPlayerRow(player) {
   <article class="player-row">
     <div class="player-header">
       <div class="player-name-block">
-        <span class="player-slot">${player.slot}</span>
+        ${confirmed && typeof player.slot === "number"
+          ? `<span class="player-batting-order">${player.slot}</span>`
+          : `<span class="player-slot">${player.slot}</span>`}
         <span class="player-name">${player.name}</span>
         <span class="badge ${hand==="L"?"badge-lhb":"badge-rhb"}">${hand}</span>
         ${platoonBadge}
@@ -631,18 +676,9 @@ function renderPlayerRow(player) {
     </div>
 
     <div class="player-stats">
-      <div class="player-stat">
-        <div class="ps-label">xwOBA</div>
-        <div class="ps-val ${valClass(player.xwoba,true,0.330,0.290)}">${fmt.num(player.xwoba,3)}</div>
-      </div>
-      <div class="player-stat">
-        <div class="ps-label">HH%</div>
-        <div class="ps-val ${hhCls}">${fmt.pct(player.hard_hit_pct)}</div>
-      </div>
-      <div class="player-stat">
-        <div class="ps-label">K%</div>
-        <div class="ps-val ${kCls}">${fmt.pct(player.k_pct)}</div>
-      </div>
+      ${player.xwoba != null ? `<div class="player-stat"><div class="ps-label">xwOBA</div><div class="ps-val ${valClass(player.xwoba,true,0.330,0.290)}">${fmt.num(player.xwoba,3)}</div></div>` : ""}
+      ${player.hard_hit_pct != null ? `<div class="player-stat"><div class="ps-label">HH%</div><div class="ps-val ${hhCls}">${fmt.pct(player.hard_hit_pct)}</div></div>` : ""}
+      ${player.k_pct != null ? `<div class="player-stat"><div class="ps-label">K%</div><div class="ps-val ${kCls}">${fmt.pct(player.k_pct)}</div></div>` : ""}
     </div>
 
     ${renderPitchVsStarter(player)}
@@ -678,8 +714,9 @@ function renderHistory(history) {
     return;
   }
 
-  // Summary strip
-  const graded = history.filter(p => p.result && p.result !== "pending" && p.result !== "no_result");
+  // Summary strip — picks only for headline stats
+  const picks  = history.filter(p => !p.is_lean);
+  const graded = picks.filter(p => p.result && p.result !== "pending" && p.result !== "no_result");
   const wins   = graded.filter(p => p.result === "win").length;
   const losses = graded.filter(p => p.result === "loss").length;
   const pushes = graded.filter(p => p.result === "push").length;
@@ -687,18 +724,24 @@ function renderHistory(history) {
   const roi = graded.length ? totalPnl / (graded.length * 100) : 0;
   const pnlCls = totalPnl >= 0 ? "val-good" : "val-bad";
 
+  const leanGraded = history.filter(p => p.is_lean && p.result && p.result !== "pending" && p.result !== "no_result");
+  const leanWins   = leanGraded.filter(p => p.result === "win").length;
+  const leanLosses = leanGraded.filter(p => p.result === "loss").length;
+
   if ($summary) {
     $summary.innerHTML = `
-      <div class="history-stat"><span class="hs-val">${graded.length}</span><span class="hs-lbl">Graded</span></div>
+      <div class="history-stat"><span class="hs-val">${graded.length}</span><span class="hs-lbl">Graded Picks</span></div>
       <div class="history-stat"><span class="hs-val val-good">${wins}</span><span class="hs-lbl">Wins</span></div>
       <div class="history-stat"><span class="hs-val val-bad">${losses}</span><span class="hs-lbl">Losses</span></div>
       <div class="history-stat"><span class="hs-val">${pushes}</span><span class="hs-lbl">Pushes</span></div>
-      <div class="history-stat"><span class="hs-val ${pnlCls}">${totalPnl>=0?"+":""}$${totalPnl.toFixed(2)}</span><span class="hs-lbl">Total P&L</span></div>
+      <div class="history-stat"><span class="hs-val ${pnlCls}">${totalPnl>=0?"+":""}$${totalPnl.toFixed(2)}</span><span class="hs-lbl">P&L</span></div>
       <div class="history-stat"><span class="hs-val ${pnlCls}">${roi>=0?"+":""}${(roi*100).toFixed(1)}%</span><span class="hs-lbl">ROI</span></div>
+      ${leanGraded.length ? `<div class="history-stat history-stat-lean"><span class="hs-val">${leanWins}-${leanLosses}</span><span class="hs-lbl">Leans W-L</span></div>` : ""}
     `;
   }
 
   $historyTbl.innerHTML = history.map(p => {
+    const isLean = p.is_lean;
     const result = p.result || "pending";
     const resultCls = result==="win"?"result-win": result==="loss"?"result-loss": result==="push"?"result-push":"result-open";
     const pnlStr = p.pnl == null ? "—" : `${p.pnl>=0?"+":""}$${(+p.pnl).toFixed(2)}`;
@@ -707,9 +750,9 @@ function renderHistory(history) {
     const pickSide = p.pick || p.pick_side || "—";
     const line = p.line != null ? ` ${p.line}` : "";
     return `
-    <tr>
+    <tr class="${isLean ? "history-row-lean" : ""}">
       <td>${dateStr}</td>
-      <td>${p.matchup||"—"}</td>
+      <td>${p.matchup||"—"}${isLean ? ' <span class="badge badge-neutral" style="font-size:0.65rem">lean</span>' : ""}</td>
       <td>${fmtMarketType(p.market_type)}</td>
       <td>${pickSide}${line}</td>
       <td>${fmt.odds(p.american_odds)}</td>
@@ -739,6 +782,7 @@ async function loadBoard() {
     renderHero(payload);
     renderSummary(payload.summary || {});
     renderPicks(payload.daily.picks || []);
+    renderLeans(payload.daily.leans || []);
     if ($historyTbl) renderHistory(payload.history || []);
     renderGames(currentCards);
   } catch (err) {
@@ -785,7 +829,7 @@ async function loadArchive() {
   try {
     const r = await fetch(`data/archive_index.json?ts=${Date.now()}`);
     const idx = await r.json();
-    const dates = (idx.dates || []).filter(d => d.picks > 0);
+    const dates = (idx.dates || []).filter(d => d.picks > 0 || d.leans > 0);
 
     if (!dates.length) {
       $dates.innerHTML = `<div class="empty-state">No archived days yet.</div>`;
@@ -796,8 +840,9 @@ async function loadArchive() {
       <button class="archive-date-btn" data-date="${d.date}">
         <div class="archive-date-label">${fmt.date(d.date)}</div>
         <div class="archive-date-meta">
-          <span class="archive-picks-count">${d.picks} pick${d.picks!==1?"s":""}</span>
+          ${d.picks ? `<span class="archive-picks-count">${d.picks} pick${d.picks!==1?"s":""}</span>` : ""}
           ${d.strong ? `<span class="badge badge-strong">${d.strong} strong</span>` : ""}
+          ${d.leans ? `<span class="archive-picks-count" style="opacity:0.6">${d.leans} lean${d.leans!==1?"s":""}</span>` : ""}
           <span class="archive-games-count">${d.games} games</span>
         </div>
       </button>

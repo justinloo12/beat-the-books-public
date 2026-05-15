@@ -159,8 +159,10 @@ def grade_date(game_date: date) -> int:
 
     day_data = json.loads(picks_path.read_text(encoding="utf-8"))
     picks = day_data.get("daily", {}).get("picks", [])
-    if not picks:
-        print(f"No picks found in {picks_path}")
+    leans = day_data.get("daily", {}).get("leans", [])
+    all_entries = [(pk, False) for pk in picks] + [(ln, True) for ln in leans]
+    if not all_entries:
+        print(f"No picks or leans found in {picks_path}")
         return 0
 
     print(f"Fetching results for {game_date}…")
@@ -179,7 +181,7 @@ def grade_date(game_date: date) -> int:
     }
 
     new_count = 0
-    for pk in picks:
+    for pk, is_lean in all_entries:
         key = (game_date.isoformat(), pk["matchup"], pk["market_type"], pk["pick"])
         if key in existing_keys:
             continue
@@ -199,6 +201,7 @@ def grade_date(game_date: date) -> int:
             "american_odds": pk.get("american_odds"),
             "edge": pk.get("edge"),
             "tier": pk.get("tier"),
+            "is_lean": is_lean,
             "result": result,
             "pnl": pnl_val,
         }
@@ -211,7 +214,8 @@ def grade_date(game_date: date) -> int:
         existing_keys.add(key)
         new_count += 1
         label = "✓" if result == "win" else ("✗" if result == "loss" else "~")
-        print(f"  {label} {pk['matchup']} | {pk['market_type']} {pk['pick']} → {result} ({pnl_val:+.2f})")
+        kind = "lean" if is_lean else "pick"
+        print(f"  {label} [{kind}] {pk['matchup']} | {pk['market_type']} {pk['pick']} → {result} ({pnl_val:+.2f})")
 
     _save_history(history, prior_count)
     print(f"Saved {new_count} new grade(s) to {PICK_HISTORY_PATH}")

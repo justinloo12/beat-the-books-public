@@ -66,6 +66,7 @@ class DailyPredictionService:
             for game in odds_bundle
         }
         picks: list[dict[str, Any]] = []
+        leans: list[dict[str, Any]] = []
         lineup_cards: list[dict[str, Any]] = []
         skipped: list[dict[str, Any]] = []
         now_et = datetime.now(ZoneInfo("America/New_York"))
@@ -90,8 +91,10 @@ class DailyPredictionService:
                 home_team_id = game["teams"]["home"]["team"]["id"]
                 probable_home = game["teams"]["home"].get("probablePitcher") or {}
                 probable_away = game["teams"]["away"].get("probablePitcher") or {}
-                home_confirmed = bool(game["teams"]["home"].get("lineup"))
-                away_confirmed = bool(game["teams"]["away"].get("lineup"))
+                home_confirmed_players = (game.get("lineups") or {}).get("homePlayers") or []
+                away_confirmed_players = (game.get("lineups") or {}).get("awayPlayers") or []
+                home_confirmed = len(home_confirmed_players) >= 7
+                away_confirmed = len(away_confirmed_players) >= 7
                 if not probable_home.get("id") or not probable_away.get("id"):
                     skipped.append({"matchup": matchup_label, "reason": "missing probable starters"})
                     continue
@@ -99,12 +102,12 @@ class DailyPredictionService:
                 away_pitcher_hand = await self.stats.fetch_pitcher_hand(int(probable_away["id"]))
                 home_pitcher_role = await self.stats.fetch_pitcher_season_role(int(probable_home["id"]), slate_date.year)
                 away_pitcher_role = await self.stats.fetch_pitcher_season_role(int(probable_away["id"]), slate_date.year)
-                home_lineup = game["teams"]["home"].get("lineup") or await self.stats.fetch_recent_lineup_by_opposing_hand(
+                home_lineup = home_confirmed_players or await self.stats.fetch_recent_lineup_by_opposing_hand(
                     home_team_id,
                     away_pitcher_hand,
                     slate_date,
                 ) or await self.stats.fetch_team_hitters(home_team_id)
-                away_lineup = game["teams"]["away"].get("lineup") or await self.stats.fetch_recent_lineup_by_opposing_hand(
+                away_lineup = away_confirmed_players or await self.stats.fetch_recent_lineup_by_opposing_hand(
                     away_team_id,
                     home_pitcher_hand,
                     slate_date,
@@ -128,12 +131,16 @@ class DailyPredictionService:
                     venue=game.get("venue", {}).get("name", "Unknown"),
                     start_time=game.get("gameDate"),
                 )
-                game_picks, top_game_picks = self._score_markets(context, odds_game)
+                game_picks, top_game_picks, game_leans = self._score_markets(context, odds_game)
                 context["top_game_picks"] = top_game_picks
+                lineup_status = "confirmed" if home_confirmed and away_confirmed else "projected"
                 for pick in game_picks:
-                    pick["lineup_status"] = "confirmed" if home_confirmed and away_confirmed else "projected"
+                    pick["lineup_status"] = lineup_status
+                for lean in game_leans:
+                    lean["lineup_status"] = lineup_status
                 lineup_cards.append(self._build_lineup_card(context))
                 picks.extend(game_picks)
+                leans.extend(game_leans)
                 if not home_confirmed or not away_confirmed:
                     skipped.append({"matchup": matchup_label, "reason": "lineups not confirmed"})
                     continue
@@ -153,8 +160,9 @@ class DailyPredictionService:
                 -item.get("model_probability", 0.0),
             ),
         )[:10]
+        leans = sorted(leans, key=lambda item: -item.get("edge", 0.0))[:10]
         lineup_cards = sorted(lineup_cards, key=lambda item: item["matchup"])
-        return {"date": slate_date.isoformat(), "picks": picks, "lineup_cards": lineup_cards, "skipped": skipped}
+        return {"date": slate_date.isoformat(), "picks": picks, "leans": leans, "lineup_cards": lineup_cards, "skipped": skipped}
 
     # League-average bullpen profile used when an opener is detected.
     # The bulk reliever/bullpen who follows the opener is unknown at pick time,
@@ -579,7 +587,7 @@ class DailyPredictionService:
             "Last5FBv": [93.0] * 5,
         }
 
-    def _score_markets(self, context: dict[str, Any], odds_game: dict[str, Any] | None) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
+    def _score_markets(self, context: dict[str, Any], odds_game: dict[str, Any] | None) -> tuple[list[dict[str, Any]], list[dict[str, Any]], list[dict[str, Any]]]:
         home_lineup = [self._with_weather(entry, context["weather"]) for entry in context["home_lineup_matchups"]]
         away_lineup = [self._with_weather(entry, context["weather"]) for entry in context["away_lineup_matchups"]]
         simulation_summary = self.simulation.simulate_game(
@@ -654,8 +662,10 @@ class DailyPredictionService:
             selected = min(hourly, key=_distance)
 
         values = selected.get("values", {})
+        temp_c = values.get("temperature")
+        temp_f = round(temp_c * 9 / 5 + 32, 1) if temp_c is not None else 72.0
         return {
-            "temperature_f": values.get("temperature", 72.0),
+            "temperature_f": temp_f,
             "wind_speed_mph": values.get("windSpeed", 0.0),
             "wind_direction": values.get("windDirection", "neutral"),
             "humidity": values.get("humidity", 50.0),
@@ -755,7 +765,6 @@ class DailyPredictionService:
     ) -> list[dict[str, Any]]:
         batter_by_pitch = {p["pitch_type"]: p for p in batter_profiles}
         top_pitches = sorted(pitcher_arsenal, key=lambda p: p.get("usage_pct", 0), reverse=True)[:3]
-        fallback = overall_profile or {}
         result = []
         for pitch in top_pitches:
             pt = pitch.get("pitch_type", "")
@@ -766,10 +775,10 @@ class DailyPredictionService:
                 "usage_pct": pitch.get("usage_pct"),
                 "pitcher_xba": pitch.get("xba"),
                 "pitcher_k_pct": pitch.get("k_pct"),
-                "batter_xwoba": bp.get("xwoba") if bp else fallback.get("xwoba"),
-                "batter_k_pct": bp.get("k_pct") if bp else fallback.get("k_pct"),
-                "batter_bb_pct": bp.get("bb_pct") if bp else fallback.get("bb_pct"),
-                "has_batter_data": bool(bp) or fallback.get("xwoba") is not None,
+                "batter_xwoba": bp.get("xwoba") if bp else None,
+                "batter_k_pct": bp.get("k_pct") if bp else None,
+                "batter_bb_pct": bp.get("bb_pct") if bp else None,
+                "has_batter_data": bool(bp),
             })
         return result
 

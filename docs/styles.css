@@ -982,6 +982,21 @@ body {
   font-family: var(--mono);
 }
 
+.player-batting-order {
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: var(--gold);
+  width: 18px;
+  flex-shrink: 0;
+  font-family: var(--mono);
+  text-align: center;
+}
+
+.badge-confirmed-lineup {
+  font-size: 0.72rem;
+  padding: 3px 8px;
+}
+
 .player-name {
   font-size: 0.83rem;
   font-weight: 700;
@@ -1208,6 +1223,8 @@ td {
 td:first-child { font-family: inherit; color: var(--text-2); }
 tr:last-child td { border-bottom: none; }
 tr:hover td { background: rgba(255,255,255,0.025); }
+.history-row-lean td { opacity: 0.55; font-style: italic; }
+.history-row-lean:hover td { opacity: 0.75; }
 
 .result-win  { color: var(--green-bright); font-weight: 700; }
 .result-loss { color: var(--red);          font-weight: 700; }
@@ -1233,6 +1250,7 @@ tr:hover td { background: rgba(255,255,255,0.025); }
   gap: 2px;
   min-width: 80px;
 }
+.history-stat-lean { opacity: 0.55; }
 
 .hs-val {
   font-size: 1.15rem;

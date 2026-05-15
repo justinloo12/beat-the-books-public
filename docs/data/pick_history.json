@@ -163,5 +163,50 @@
     "away_score": 1,
     "home_score": 2,
     "final_total": 3
+  },
+  {
+    "date": "2026-05-12",
+    "matchup": "San Francisco Giants @ Los Angeles Dodgers",
+    "market_type": "moneyline",
+    "pick": "San Francisco Giants",
+    "line": 0.0,
+    "american_odds": 258,
+    "edge": 0.066,
+    "tier": "moderate",
+    "result": "win",
+    "pnl": 258.0,
+    "away_score": 6,
+    "home_score": 2,
+    "final_total": 8
+  },
+  {
+    "date": "2026-05-12",
+    "matchup": "Seattle Mariners @ Houston Astros",
+    "market_type": "moneyline",
+    "pick": "Houston Astros",
+    "line": 0.0,
+    "american_odds": 141,
+    "edge": 0.0605,
+    "tier": "moderate",
+    "result": "loss",
+    "pnl": -100.0,
+    "away_score": 10,
+    "home_score": 2,
+    "final_total": 12
+  },
+  {
+    "date": "2026-05-13",
+    "matchup": "Washington Nationals @ Cincinnati Reds",
+    "market_type": "moneyline",
+    "pick": "Washington Nationals",
+    "line": 0.0,
+    "american_odds": 139,
+    "edge": 0.0694,
+    "tier": "moderate",
+    "result": "win",
+    "pnl": 139.0,
+    "away_score": 8,
+    "home_score": 7,
+    "final_total": 15
   }
 ]
