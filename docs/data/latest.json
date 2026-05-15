@@ -1,5 +1,5 @@
 {
-  "as_of": "2026-05-15T15:20:31.995173Z",
+  "as_of": "2026-05-15T16:01:44.464781Z",
   "date": "2026-05-15",
   "summary": {
     "tracked_bets": 14,
@@ -25,20 +25,20 @@
         "venue": "Coors Field",
         "start_time": "8:40 PM ET",
         "lineup_status": "projected",
-        "weather_stack_score": 0.33,
+        "weather_stack_score": 0.01,
         "weather": {
-          "temperature_f": 82.2,
-          "wind_speed_mph": 17.1,
-          "wind_direction": 97,
-          "humidity": 9,
+          "temperature_f": 80.1,
+          "wind_speed_mph": 22.0,
+          "wind_direction": 142,
+          "humidity": 14,
           "weather_missing": false
         },
-        "projected_total": 10.09,
-        "simulated_total": 10.09,
-        "simulated_home_runs": 5.32,
-        "simulated_away_runs": 4.77,
-        "home_win_prob": 0.552,
-        "away_win_prob": 0.448,
+        "projected_total": 10.07,
+        "simulated_total": 10.07,
+        "simulated_home_runs": 5.31,
+        "simulated_away_runs": 4.76,
+        "home_win_prob": 0.551,
+        "away_win_prob": 0.449,
         "top_game_picks": [
           {
             "matchup": "Arizona Diamondbacks @ Colorado Rockies",
@@ -46,20 +46,20 @@
             "pick": "Under",
             "line": 11.5,
             "american_odds": -108,
-            "model_probability": 0.5445,
+            "model_probability": 0.5447,
             "no_vig_probability": 0.4957,
-            "edge": 0.0488,
+            "edge": 0.0491,
             "tier": "pass",
             "bankroll_fraction": 0.0,
             "top_features": [
               {
                 "feature": "Simulated total",
-                "value": 10.09,
+                "value": 10.07,
                 "direction": "up"
               },
               {
                 "feature": "Weather stack",
-                "value": 0.33,
+                "value": 0.01,
                 "direction": "up"
               },
               {
@@ -68,11 +68,11 @@
                 "direction": "up"
               }
             ],
-            "weather_stack_score": 0.33,
+            "weather_stack_score": 0.01,
             "start_time": "8:40 PM ET",
             "lineup_status": "projected",
             "simulation_trials": 10000,
-            "specific_blurb": "Merrill Kelly and Kyle Freeland project to keep quality contact down early, and the softest batter matchups on the board are Brett Sullivan and Ezequiel Tovar (37/42 matchup scores) / Lourdes Gurriel Jr. and Jose Fernandez (42/43 matchup scores); the sim sits at 10.1 against 11.5, with weather adding another push (17 mph wind)"
+            "specific_blurb": "Merrill Kelly and Kyle Freeland project to keep quality contact down early, and the softest batter matchups on the board are Brett Sullivan and Ezequiel Tovar (37/42 matchup scores) / Lourdes Gurriel Jr. and Jose Fernandez (42/43 matchup scores); the sim sits at 10.1 against 11.5, with weather adding another push (22 mph wind)"
           },
           {
             "matchup": "Arizona Diamondbacks @ Colorado Rockies",
@@ -80,20 +80,20 @@
             "pick": "Over",
             "line": 11.5,
             "american_odds": -112,
-            "model_probability": 0.4555,
+            "model_probability": 0.4553,
             "no_vig_probability": 0.5043,
-            "edge": -0.0488,
+            "edge": -0.0491,
             "tier": "pass",
             "bankroll_fraction": 0.0,
             "top_features": [
               {
                 "feature": "Simulated total",
-                "value": 10.09,
+                "value": 10.07,
                 "direction": "up"
               },
               {
                 "feature": "Weather stack",
-                "value": 0.33,
+                "value": 0.01,
                 "direction": "up"
               },
               {
@@ -102,11 +102,11 @@
                 "direction": "up"
               }
             ],
-            "weather_stack_score": 0.33,
+            "weather_stack_score": 0.01,
             "start_time": "8:40 PM ET",
             "lineup_status": "projected",
             "simulation_trials": 10000,
-            "specific_blurb": "Corbin Carroll and Ketel Marte (50/49 matchup scores) profile best into Kyle Freeland's pitch mix for Arizona Diamondbacks, and Kyle Freeland is carrying a .288 xBA allowed and 42% hard-hit rate; the sim lands at 10.1 runs versus 11.5, with weather adding another push (17 mph wind)"
+            "specific_blurb": "Corbin Carroll and Ketel Marte (50/49 matchup scores) profile best into Kyle Freeland's pitch mix for Arizona Diamondbacks, and Kyle Freeland is carrying a .288 xBA allowed and 42% hard-hit rate; the sim lands at 10.1 runs versus 11.5, with weather adding another push (22 mph wind)"
           },
           {
             "matchup": "Arizona Diamondbacks @ Colorado Rockies",
@@ -114,20 +114,20 @@
             "pick": "Colorado Rockies",
             "line": 0.0,
             "american_odds": 104,
-            "model_probability": 0.5074,
+            "model_probability": 0.5071,
             "no_vig_probability": 0.4679,
-            "edge": 0.0395,
+            "edge": 0.0393,
             "tier": "pass",
             "bankroll_fraction": 0.0,
             "top_features": [
               {
                 "feature": "Simulated total",
-                "value": 10.09,
+                "value": 10.07,
                 "direction": "up"
               },
               {
                 "feature": "Weather stack",
-                "value": 0.33,
+                "value": 0.01,
                 "direction": "up"
               },
               {
@@ -136,7 +136,7 @@
                 "direction": "up"
               }
             ],
-            "weather_stack_score": 0.33,
+            "weather_stack_score": 0.01,
             "start_time": "8:40 PM ET",
             "lineup_status": "projected",
             "simulation_trials": 10000,
@@ -148,20 +148,20 @@
             "pick": "Arizona Diamondbacks",
             "line": 0.0,
             "american_odds": -126,
-            "model_probability": 0.4926,
+            "model_probability": 0.4929,
             "no_vig_probability": 0.5321,
-            "edge": -0.0395,
+            "edge": -0.0393,
             "tier": "pass",
             "bankroll_fraction": 0.0,
             "top_features": [
               {
                 "feature": "Simulated total",
-                "value": 10.09,
+                "value": 10.07,
                 "direction": "up"
               },
               {
                 "feature": "Weather stack",
-                "value": 0.33,
+                "value": 0.01,
                 "direction": "up"
               },
               {
@@ -170,7 +170,7 @@
                 "direction": "up"
               }
             ],
-            "weather_stack_score": 0.33,
+            "weather_stack_score": 0.01,
             "start_time": "8:40 PM ET",
             "lineup_status": "projected",
             "simulation_trials": 10000,
@@ -182,20 +182,20 @@
             "pick": "Colorado Rockies",
             "line": 1.5,
             "american_odds": -137,
-            "model_probability": 0.4461,
+            "model_probability": 0.4455,
             "no_vig_probability": 0.553,
-            "edge": -0.1069,
+            "edge": -0.1075,
             "tier": "pass",
             "bankroll_fraction": 0.0,
             "top_features": [
               {
                 "feature": "Simulated total",
-                "value": 10.09,
+                "value": 10.07,
                 "direction": "up"
               },
               {
                 "feature": "Weather stack",
-                "value": 0.33,
+                "value": 0.01,
                 "direction": "up"
               },
               {
@@ -204,11 +204,11 @@
                 "direction": "up"
               }
             ],
-            "weather_stack_score": 0.33,
+            "weather_stack_score": 0.01,
             "start_time": "8:40 PM ET",
             "lineup_status": "projected",
             "simulation_trials": 10000,
-            "specific_blurb": "TJ Rumfield and Mickey Moniak (49/48 matchup scores) give Colorado Rockies the strongest matchup cluster in this game, and the sim creates about a 0.6-run gap on average"
+            "specific_blurb": "TJ Rumfield and Mickey Moniak (49/48 matchup scores) give Colorado Rockies the strongest matchup cluster in this game, and the sim creates about a 0.5-run gap on average"
           }
         ],
         "home_bullpen": {
@@ -1149,13 +1149,13 @@
                 "pa": 4.29,
                 "ab": 3.97,
                 "hits": 0.58,
-                "hr": 0.08,
+                "hr": 0.07,
                 "bb": 0.26,
                 "k": 0.9,
                 "rbi": 0.61,
                 "tb": 0.94,
                 "hit_prob": 0.135,
-                "hr_prob": 0.018
+                "hr_prob": 0.017
               }
             },
             {
@@ -1216,9 +1216,9 @@
                 "bb": 0.26,
                 "k": 1.0,
                 "rbi": 0.6,
-                "tb": 0.97,
-                "hit_prob": 0.131,
-                "hr_prob": 0.019
+                "tb": 0.96,
+                "hit_prob": 0.13,
+                "hr_prob": 0.018
               }
             },
             {
@@ -1277,10 +1277,10 @@
                 "hits": 0.53,
                 "hr": 0.06,
                 "bb": 0.24,
-                "k": 0.83,
+                "k": 0.84,
                 "rbi": 0.59,
-                "tb": 0.85,
-                "hit_prob": 0.134,
+                "tb": 0.84,
+                "hit_prob": 0.133,
                 "hr_prob": 0.016
               }
             },
@@ -1335,15 +1335,15 @@
                 }
               ],
               "simulation": {
-                "pa": 4.62,
+                "pa": 4.61,
                 "ab": 4.28,
                 "hits": 0.6,
                 "hr": 0.08,
                 "bb": 0.27,
                 "k": 1.0,
                 "rbi": 0.6,
-                "tb": 0.99,
-                "hit_prob": 0.131,
+                "tb": 0.98,
+                "hit_prob": 0.13,
                 "hr_prob": 0.018
               }
             },
@@ -1531,7 +1531,7 @@
                 "bb": 0.25,
                 "k": 0.89,
                 "rbi": 0.6,
-                "tb": 0.97,
+                "tb": 0.98,
                 "hit_prob": 0.137,
                 "hr_prob": 0.018
               }
@@ -1591,12 +1591,12 @@
                 "ab": 3.6,
                 "hits": 0.5,
                 "hr": 0.06,
-                "bb": 0.21,
-                "k": 0.86,
+                "bb": 0.22,
+                "k": 0.85,
                 "rbi": 0.57,
                 "tb": 0.8,
                 "hit_prob": 0.128,
-                "hr_prob": 0.017
+                "hr_prob": 0.016
               }
             },
             {
@@ -1721,14 +1721,14 @@
               ],
               "simulation": {
                 "pa": 4.51,
-                "ab": 4.16,
-                "hits": 0.53,
+                "ab": 4.17,
+                "hits": 0.52,
                 "hr": 0.07,
                 "bb": 0.27,
                 "k": 0.98,
                 "rbi": 0.53,
                 "tb": 0.85,
-                "hit_prob": 0.117,
+                "hit_prob": 0.116,
                 "hr_prob": 0.015
               }
             },
@@ -1783,12 +1783,12 @@
                 }
               ],
               "simulation": {
-                "pa": 4.63,
-                "ab": 4.3,
+                "pa": 4.64,
+                "ab": 4.29,
                 "hits": 0.56,
                 "hr": 0.07,
                 "bb": 0.26,
-                "k": 0.98,
+                "k": 0.99,
                 "rbi": 0.55,
                 "tb": 0.91,
                 "hit_prob": 0.121,
@@ -1847,15 +1847,15 @@
               ],
               "simulation": {
                 "pa": 4.19,
-                "ab": 3.9,
-                "hits": 0.5,
-                "hr": 0.06,
-                "bb": 0.23,
-                "k": 0.86,
-                "rbi": 0.54,
-                "tb": 0.81,
-                "hit_prob": 0.12,
-                "hr_prob": 0.015
+                "ab": 3.89,
+                "hits": 0.51,
+                "hr": 0.07,
+                "bb": 0.24,
+                "k": 0.85,
+                "rbi": 0.55,
+                "tb": 0.83,
+                "hit_prob": 0.122,
+                "hr_prob": 0.016
               }
             },
             {
@@ -1911,14 +1911,14 @@
               "simulation": {
                 "pa": 3.76,
                 "ab": 3.49,
-                "hits": 0.44,
+                "hits": 0.43,
                 "hr": 0.05,
                 "bb": 0.21,
-                "k": 0.83,
-                "rbi": 0.51,
+                "k": 0.84,
+                "rbi": 0.5,
                 "tb": 0.69,
-                "hit_prob": 0.116,
-                "hr_prob": 0.013
+                "hit_prob": 0.115,
+                "hr_prob": 0.014
               }
             },
             {
@@ -1973,14 +1973,14 @@
               ],
               "simulation": {
                 "pa": 4.4,
-                "ab": 4.05,
+                "ab": 4.04,
                 "hits": 0.52,
                 "hr": 0.07,
                 "bb": 0.28,
                 "k": 0.92,
-                "rbi": 0.54,
-                "tb": 0.85,
-                "hit_prob": 0.118,
+                "rbi": 0.53,
+                "tb": 0.84,
+                "hit_prob": 0.117,
                 "hr_prob": 0.016
               }
             },
@@ -2036,13 +2036,13 @@
               ],
               "simulation": {
                 "pa": 3.98,
-                "ab": 3.69,
-                "hits": 0.46,
+                "ab": 3.7,
+                "hits": 0.47,
                 "hr": 0.06,
-                "bb": 0.23,
+                "bb": 0.22,
                 "k": 0.87,
                 "rbi": 0.53,
-                "tb": 0.75,
+                "tb": 0.76,
                 "hit_prob": 0.117,
                 "hr_prob": 0.015
               }
@@ -2099,14 +2099,14 @@
               ],
               "simulation": {
                 "pa": 4.29,
-                "ab": 3.98,
+                "ab": 3.99,
                 "hits": 0.5,
                 "hr": 0.06,
                 "bb": 0.24,
                 "k": 0.93,
                 "rbi": 0.53,
                 "tb": 0.8,
-                "hit_prob": 0.117,
+                "hit_prob": 0.118,
                 "hr_prob": 0.014
               }
             },
@@ -2162,14 +2162,14 @@
               ],
               "simulation": {
                 "pa": 3.88,
-                "ab": 3.6,
+                "ab": 3.61,
                 "hits": 0.46,
                 "hr": 0.06,
                 "bb": 0.21,
                 "k": 0.85,
                 "rbi": 0.53,
-                "tb": 0.73,
-                "hit_prob": 0.117,
+                "tb": 0.74,
+                "hit_prob": 0.118,
                 "hr_prob": 0.015
               }
             },
@@ -2226,13 +2226,13 @@
               "simulation": {
                 "pa": 4.09,
                 "ab": 3.78,
-                "hits": 0.47,
+                "hits": 0.46,
                 "hr": 0.06,
                 "bb": 0.24,
-                "k": 0.9,
-                "rbi": 0.52,
-                "tb": 0.75,
-                "hit_prob": 0.114,
+                "k": 0.89,
+                "rbi": 0.51,
+                "tb": 0.74,
+                "hit_prob": 0.113,
                 "hr_prob": 0.014
               }
             }
@@ -6378,41 +6378,41 @@
         "venue": "Rate Field",
         "start_time": "7:40 PM ET",
         "lineup_status": "projected",
-        "weather_stack_score": 0.85,
+        "weather_stack_score": 0.02,
         "weather": {
-          "temperature_f": 70.9,
-          "wind_speed_mph": 18.4,
-          "wind_direction": 181,
-          "humidity": 48,
-          "weather_missing": false
+          "temperature_f": 72.0,
+          "wind_speed_mph": 0.0,
+          "wind_direction": "neutral",
+          "humidity": 50.0,
+          "weather_missing": true
         },
-        "projected_total": 9.49,
-        "simulated_total": 9.49,
-        "simulated_home_runs": 4.91,
-        "simulated_away_runs": 4.58,
-        "home_win_prob": 0.508,
-        "away_win_prob": 0.492,
+        "projected_total": 9.55,
+        "simulated_total": 9.55,
+        "simulated_home_runs": 4.94,
+        "simulated_away_runs": 4.61,
+        "home_win_prob": 0.509,
+        "away_win_prob": 0.491,
         "top_game_picks": [
           {
             "matchup": "Chicago Cubs @ Chicago White Sox",
             "market_type": "game_total",
             "pick": "Over",
             "line": 8.5,
-            "american_odds": -109,
-            "model_probability": 0.5221,
-            "no_vig_probability": 0.4989,
-            "edge": 0.0232,
+            "american_odds": -106,
+            "model_probability": 0.5016,
+            "no_vig_probability": 0.4924,
+            "edge": 0.0092,
             "tier": "pass",
             "bankroll_fraction": 0.0,
             "top_features": [
               {
                 "feature": "Simulated total",
-                "value": 9.49,
+                "value": 9.55,
                 "direction": "up"
               },
               {
                 "feature": "Weather stack",
-                "value": 0.85,
+                "value": 0.02,
                 "direction": "up"
               },
               {
@@ -6421,32 +6421,32 @@
                 "direction": "up"
               }
             ],
-            "weather_stack_score": 0.85,
+            "weather_stack_score": 0.02,
             "start_time": "7:40 PM ET",
             "lineup_status": "projected",
             "simulation_trials": 10000,
-            "specific_blurb": "Jarred Kelenic and Sam Antonacci (57/55 matchup scores) profile best into Edward Cabrera's pitch mix for Chicago White Sox, and Edward Cabrera is carrying a .261 xBA allowed and 41% hard-hit rate; the sim lands at 9.5 runs versus 8.5, with weather adding another push (18 mph wind)"
+            "specific_blurb": "Jarred Kelenic and Sam Antonacci (57/55 matchup scores) profile best into Edward Cabrera's pitch mix for Chicago White Sox, and Edward Cabrera is carrying a .261 xBA allowed and 41% hard-hit rate; the sim lands at 9.6 runs versus 8.5"
           },
           {
             "matchup": "Chicago Cubs @ Chicago White Sox",
             "market_type": "game_total",
             "pick": "Under",
             "line": 8.5,
-            "american_odds": -110,
-            "model_probability": 0.4779,
-            "no_vig_probability": 0.5011,
-            "edge": -0.0232,
+            "american_odds": -113,
+            "model_probability": 0.4984,
+            "no_vig_probability": 0.5076,
+            "edge": -0.0092,
             "tier": "pass",
             "bankroll_fraction": 0.0,
             "top_features": [
               {
                 "feature": "Simulated total",
-                "value": 9.49,
+                "value": 9.55,
                 "direction": "up"
               },
               {
                 "feature": "Weather stack",
-                "value": 0.85,
+                "value": 0.02,
                 "direction": "up"
               },
               {
@@ -6455,11 +6455,11 @@
                 "direction": "up"
               }
             ],
-            "weather_stack_score": 0.85,
+            "weather_stack_score": 0.02,
             "start_time": "7:40 PM ET",
             "lineup_status": "projected",
             "simulation_trials": 10000,
-            "specific_blurb": "Edward Cabrera and Sean Burke project to keep quality contact down early, and the softest batter matchups on the board are Tristan Peters and Chase Meidroth (40/43 matchup scores) / Pete Crow-Armstrong and Michael Busch (44/46 matchup scores); the sim sits at 9.5 against 8.5, with weather adding another push (18 mph wind)"
+            "specific_blurb": "Edward Cabrera and Sean Burke project to keep quality contact down early, and the softest batter matchups on the board are Tristan Peters and Chase Meidroth (40/43 matchup scores) / Pete Crow-Armstrong and Michael Busch (44/46 matchup scores); the sim sits at 9.6 against 8.5"
           },
           {
             "matchup": "Chicago Cubs @ Chicago White Sox",
@@ -6467,20 +6467,20 @@
             "pick": "Chicago White Sox",
             "line": 0.0,
             "american_odds": 124,
-            "model_probability": 0.4651,
+            "model_probability": 0.4511,
             "no_vig_probability": 0.4273,
-            "edge": 0.0378,
+            "edge": 0.0238,
             "tier": "pass",
             "bankroll_fraction": 0.0,
             "top_features": [
               {
                 "feature": "Simulated total",
-                "value": 9.49,
+                "value": 9.55,
                 "direction": "up"
               },
               {
                 "feature": "Weather stack",
-                "value": 0.85,
+                "value": 0.02,
                 "direction": "up"
               },
               {
@@ -6489,11 +6489,11 @@
                 "direction": "up"
               }
             ],
-            "weather_stack_score": 0.85,
+            "weather_stack_score": 0.02,
             "start_time": "7:40 PM ET",
             "lineup_status": "projected",
             "simulation_trials": 10000,
-            "specific_blurb": "Sean Burke gives Chicago White Sox the cleaner starter setup, and Jarred Kelenic and Sam Antonacci (57/55 matchup scores) carry the best hitter-vs-arsenal edges against Edward Cabrera; the sim has it 4.9 to 4.6 with a 3.8-point edge"
+            "specific_blurb": "Sean Burke gives Chicago White Sox the cleaner starter setup, and Jarred Kelenic and Sam Antonacci (57/55 matchup scores) carry the best hitter-vs-arsenal edges against Edward Cabrera; the sim has it 4.9 to 4.6 with a 2.4-point edge"
           },
           {
             "matchup": "Chicago Cubs @ Chicago White Sox",
@@ -6501,20 +6501,20 @@
             "pick": "Chicago White Sox",
             "line": 1.5,
             "american_odds": -136,
-            "model_probability": 0.4338,
+            "model_probability": 0.4783,
             "no_vig_probability": 0.5511,
-            "edge": -0.1173,
+            "edge": -0.0727,
             "tier": "pass",
             "bankroll_fraction": 0.0,
             "top_features": [
               {
                 "feature": "Simulated total",
-                "value": 9.49,
+                "value": 9.55,
                 "direction": "up"
               },
               {
                 "feature": "Weather stack",
-                "value": 0.85,
+                "value": 0.02,
                 "direction": "up"
               },
               {
@@ -6523,7 +6523,7 @@
                 "direction": "up"
               }
             ],
-            "weather_stack_score": 0.85,
+            "weather_stack_score": 0.02,
             "start_time": "7:40 PM ET",
             "lineup_status": "projected",
             "simulation_trials": 10000,
@@ -6535,20 +6535,20 @@
             "pick": "Chicago Cubs",
             "line": 1.5,
             "american_odds": 113,
-            "model_probability": 0.345,
+            "model_probability": 0.3817,
             "no_vig_probability": 0.4489,
-            "edge": -0.1039,
+            "edge": -0.0673,
             "tier": "pass",
             "bankroll_fraction": 0.0,
             "top_features": [
               {
                 "feature": "Simulated total",
-                "value": 9.49,
+                "value": 9.55,
                 "direction": "up"
               },
               {
                 "feature": "Weather stack",
-                "value": 0.85,
+                "value": 0.02,
                 "direction": "up"
               },
               {
@@ -6557,7 +6557,7 @@
                 "direction": "up"
               }
             ],
-            "weather_stack_score": 0.85,
+            "weather_stack_score": 0.02,
             "start_time": "7:40 PM ET",
             "lineup_status": "projected",
             "simulation_trials": 10000,
@@ -7436,10 +7436,10 @@
               ],
               "simulation": {
                 "pa": 3.98,
-                "ab": 3.68,
-                "hits": 0.49,
+                "ab": 3.67,
+                "hits": 0.48,
                 "hr": 0.07,
-                "bb": 0.24,
+                "bb": 0.25,
                 "k": 0.84,
                 "rbi": 0.56,
                 "tb": 0.8,
@@ -7498,16 +7498,16 @@
                 }
               ],
               "simulation": {
-                "pa": 4.62,
+                "pa": 4.63,
                 "ab": 4.28,
                 "hits": 0.6,
-                "hr": 0.07,
+                "hr": 0.08,
                 "bb": 0.27,
-                "k": 0.94,
-                "rbi": 0.59,
-                "tb": 0.97,
-                "hit_prob": 0.13,
-                "hr_prob": 0.016
+                "k": 0.95,
+                "rbi": 0.58,
+                "tb": 0.96,
+                "hit_prob": 0.129,
+                "hr_prob": 0.017
               }
             },
             {
@@ -7561,15 +7561,15 @@
                 }
               ],
               "simulation": {
-                "pa": 4.39,
-                "ab": 4.03,
-                "hits": 0.54,
+                "pa": 4.4,
+                "ab": 4.04,
+                "hits": 0.56,
                 "hr": 0.08,
                 "bb": 0.28,
-                "k": 0.9,
-                "rbi": 0.57,
-                "tb": 0.89,
-                "hit_prob": 0.123,
+                "k": 0.88,
+                "rbi": 0.59,
+                "tb": 0.92,
+                "hit_prob": 0.127,
                 "hr_prob": 0.017
               }
             },
@@ -7624,15 +7624,15 @@
                 }
               ],
               "simulation": {
-                "pa": 4.5,
-                "ab": 4.15,
+                "pa": 4.51,
+                "ab": 4.16,
                 "hits": 0.52,
                 "hr": 0.07,
-                "bb": 0.28,
-                "k": 1.0,
-                "rbi": 0.53,
-                "tb": 0.84,
-                "hit_prob": 0.115,
+                "bb": 0.27,
+                "k": 1.01,
+                "rbi": 0.55,
+                "tb": 0.85,
+                "hit_prob": 0.116,
                 "hr_prob": 0.015
               }
             },
@@ -7688,14 +7688,14 @@
               ],
               "simulation": {
                 "pa": 3.74,
-                "ab": 3.43,
-                "hits": 0.44,
-                "hr": 0.05,
+                "ab": 3.44,
+                "hits": 0.45,
+                "hr": 0.06,
                 "bb": 0.24,
-                "k": 0.8,
-                "rbi": 0.53,
-                "tb": 0.71,
-                "hit_prob": 0.119,
+                "k": 0.78,
+                "rbi": 0.54,
+                "tb": 0.72,
+                "hit_prob": 0.12,
                 "hr_prob": 0.015
               }
             },
@@ -7750,16 +7750,16 @@
                 }
               ],
               "simulation": {
-                "pa": 4.28,
-                "ab": 3.98,
-                "hits": 0.51,
+                "pa": 4.3,
+                "ab": 4.0,
+                "hits": 0.5,
                 "hr": 0.07,
-                "bb": 0.24,
-                "k": 0.96,
-                "rbi": 0.54,
-                "tb": 0.84,
-                "hit_prob": 0.119,
-                "hr_prob": 0.017
+                "bb": 0.23,
+                "k": 0.98,
+                "rbi": 0.52,
+                "tb": 0.82,
+                "hit_prob": 0.117,
+                "hr_prob": 0.015
               }
             },
             {
@@ -7813,16 +7813,16 @@
                 }
               ],
               "simulation": {
-                "pa": 4.08,
-                "ab": 3.8,
-                "hits": 0.49,
+                "pa": 4.1,
+                "ab": 3.82,
+                "hits": 0.48,
                 "hr": 0.06,
                 "bb": 0.22,
-                "k": 0.93,
-                "rbi": 0.54,
-                "tb": 0.8,
-                "hit_prob": 0.12,
-                "hr_prob": 0.016
+                "k": 0.94,
+                "rbi": 0.53,
+                "tb": 0.79,
+                "hit_prob": 0.118,
+                "hr_prob": 0.015
               }
             },
             {
@@ -7876,16 +7876,16 @@
                 }
               ],
               "simulation": {
-                "pa": 4.18,
-                "ab": 3.88,
-                "hits": 0.5,
-                "hr": 0.06,
+                "pa": 4.2,
+                "ab": 3.89,
+                "hits": 0.51,
+                "hr": 0.07,
                 "bb": 0.24,
-                "k": 0.93,
-                "rbi": 0.54,
-                "tb": 0.8,
-                "hit_prob": 0.119,
-                "hr_prob": 0.015
+                "k": 0.92,
+                "rbi": 0.55,
+                "tb": 0.82,
+                "hit_prob": 0.122,
+                "hr_prob": 0.016
               }
             },
             {
@@ -7939,16 +7939,16 @@
                 }
               ],
               "simulation": {
-                "pa": 3.86,
-                "ab": 3.59,
-                "hits": 0.44,
+                "pa": 3.87,
+                "ab": 3.58,
+                "hits": 0.45,
                 "hr": 0.05,
                 "bb": 0.22,
-                "k": 0.89,
-                "rbi": 0.51,
+                "k": 0.87,
+                "rbi": 0.52,
                 "tb": 0.71,
-                "hit_prob": 0.115,
-                "hr_prob": 0.014
+                "hit_prob": 0.117,
+                "hr_prob": 0.013
               }
             }
           ]
@@ -8010,15 +8010,15 @@
               ],
               "simulation": {
                 "pa": 4.22,
-                "ab": 3.89,
+                "ab": 3.9,
                 "hits": 0.46,
                 "hr": 0.06,
-                "bb": 0.26,
-                "k": 0.99,
+                "bb": 0.25,
+                "k": 0.98,
                 "rbi": 0.5,
                 "tb": 0.76,
-                "hit_prob": 0.11,
-                "hr_prob": 0.014
+                "hit_prob": 0.109,
+                "hr_prob": 0.015
               }
             },
             {
@@ -8073,15 +8073,15 @@
               ],
               "simulation": {
                 "pa": 4.12,
-                "ab": 3.81,
-                "hits": 0.46,
+                "ab": 3.8,
+                "hits": 0.47,
                 "hr": 0.06,
-                "bb": 0.25,
-                "k": 0.94,
-                "rbi": 0.5,
-                "tb": 0.75,
-                "hit_prob": 0.112,
-                "hr_prob": 0.014
+                "bb": 0.26,
+                "k": 0.95,
+                "rbi": 0.51,
+                "tb": 0.76,
+                "hit_prob": 0.113,
+                "hr_prob": 0.015
               }
             },
             {
@@ -8137,13 +8137,13 @@
               "simulation": {
                 "pa": 4.55,
                 "ab": 4.21,
-                "hits": 0.51,
+                "hits": 0.5,
                 "hr": 0.06,
                 "bb": 0.27,
-                "k": 0.9,
+                "k": 0.91,
                 "rbi": 0.48,
-                "tb": 0.8,
-                "hit_prob": 0.111,
+                "tb": 0.79,
+                "hit_prob": 0.11,
                 "hr_prob": 0.013
               }
             },
@@ -8199,14 +8199,14 @@
               ],
               "simulation": {
                 "pa": 4.43,
-                "ab": 4.11,
+                "ab": 4.1,
                 "hits": 0.53,
                 "hr": 0.07,
-                "bb": 0.26,
+                "bb": 0.27,
                 "k": 0.97,
                 "rbi": 0.53,
-                "tb": 0.86,
-                "hit_prob": 0.119,
+                "tb": 0.87,
+                "hit_prob": 0.12,
                 "hr_prob": 0.016
               }
             },
@@ -8263,13 +8263,13 @@
               "simulation": {
                 "pa": 3.91,
                 "ab": 3.61,
-                "hits": 0.45,
+                "hits": 0.46,
                 "hr": 0.06,
                 "bb": 0.24,
-                "k": 0.86,
+                "k": 0.85,
                 "rbi": 0.52,
-                "tb": 0.73,
-                "hit_prob": 0.116,
+                "tb": 0.75,
+                "hit_prob": 0.117,
                 "hr_prob": 0.015
               }
             },
@@ -8329,9 +8329,9 @@
                 "hits": 0.51,
                 "hr": 0.07,
                 "bb": 0.26,
-                "k": 0.93,
-                "rbi": 0.53,
-                "tb": 0.84,
+                "k": 0.94,
+                "rbi": 0.54,
+                "tb": 0.83,
                 "hit_prob": 0.119,
                 "hr_prob": 0.016
               }
@@ -8390,13 +8390,13 @@
                 "pa": 3.67,
                 "ab": 3.39,
                 "hits": 0.43,
-                "hr": 0.05,
+                "hr": 0.06,
                 "bb": 0.22,
                 "k": 0.83,
                 "rbi": 0.52,
-                "tb": 0.69,
-                "hit_prob": 0.116,
-                "hr_prob": 0.015
+                "tb": 0.7,
+                "hit_prob": 0.117,
+                "hr_prob": 0.016
               }
             },
             {
@@ -8452,14 +8452,14 @@
               "simulation": {
                 "pa": 4.02,
                 "ab": 3.7,
-                "hits": 0.44,
+                "hits": 0.45,
                 "hr": 0.06,
                 "bb": 0.25,
-                "k": 0.92,
-                "rbi": 0.5,
-                "tb": 0.71,
-                "hit_prob": 0.11,
-                "hr_prob": 0.014
+                "k": 0.93,
+                "rbi": 0.51,
+                "tb": 0.73,
+                "hit_prob": 0.112,
+                "hr_prob": 0.015
               }
             },
             {
@@ -8514,15 +8514,15 @@
               ],
               "simulation": {
                 "pa": 3.79,
-                "ab": 3.51,
-                "hits": 0.42,
-                "hr": 0.05,
+                "ab": 3.52,
+                "hits": 0.43,
+                "hr": 0.06,
                 "bb": 0.22,
-                "k": 0.9,
-                "rbi": 0.5,
-                "tb": 0.68,
-                "hit_prob": 0.112,
-                "hr_prob": 0.014
+                "k": 0.89,
+                "rbi": 0.51,
+                "tb": 0.7,
+                "hit_prob": 0.114,
+                "hr_prob": 0.015
               }
             }
           ]
@@ -10639,7 +10639,7 @@
             "pick": "Under",
             "line": 8.5,
             "american_odds": -107,
-            "model_probability": 0.5003,
+            "model_probability": 0.5002,
             "no_vig_probability": 0.4945,
             "edge": 0.0057,
             "tier": "pass",
@@ -10673,7 +10673,7 @@
             "pick": "Over",
             "line": 8.5,
             "american_odds": -112,
-            "model_probability": 0.4997,
+            "model_probability": 0.4998,
             "no_vig_probability": 0.5055,
             "edge": -0.0057,
             "tier": "pass",
@@ -10707,9 +10707,9 @@
             "pick": "Kansas City Royals",
             "line": 0.0,
             "american_odds": -105,
-            "model_probability": 0.5085,
+            "model_probability": 0.5084,
             "no_vig_probability": 0.4902,
-            "edge": 0.0183,
+            "edge": 0.0182,
             "tier": "pass",
             "bankroll_fraction": 0.0,
             "top_features": [
@@ -10741,9 +10741,9 @@
             "pick": "St. Louis Cardinals",
             "line": 0.0,
             "american_odds": -114,
-            "model_probability": 0.4915,
+            "model_probability": 0.4916,
             "no_vig_probability": 0.5098,
-            "edge": -0.0183,
+            "edge": -0.0182,
             "tier": "pass",
             "bankroll_fraction": 0.0,
             "top_features": [
@@ -10774,10 +10774,10 @@
             "market_type": "runline",
             "pick": "Kansas City Royals",
             "line": 1.5,
-            "american_odds": 146,
-            "model_probability": 0.3711,
-            "no_vig_probability": 0.3888,
-            "edge": -0.0177,
+            "american_odds": 145,
+            "model_probability": 0.3721,
+            "no_vig_probability": 0.3903,
+            "edge": -0.0181,
             "tier": "pass",
             "bankroll_fraction": 0.0,
             "top_features": [
@@ -11749,7 +11749,7 @@
                 "rbi": 0.51,
                 "tb": 0.8,
                 "hit_prob": 0.117,
-                "hr_prob": 0.017
+                "hr_prob": 0.016
               }
             },
             {
@@ -11872,7 +11872,7 @@
                 "hr": 0.06,
                 "bb": 0.28,
                 "k": 0.93,
-                "rbi": 0.48,
+                "rbi": 0.49,
                 "tb": 0.79,
                 "hit_prob": 0.112,
                 "hr_prob": 0.015
@@ -12319,7 +12319,7 @@
                 "hits": 0.57,
                 "hr": 0.08,
                 "bb": 0.28,
-                "k": 0.92,
+                "k": 0.91,
                 "rbi": 0.58,
                 "tb": 0.93,
                 "hit_prob": 0.127,
@@ -12441,14 +12441,14 @@
               ],
               "simulation": {
                 "pa": 4.04,
-                "ab": 3.74,
+                "ab": 3.75,
                 "hits": 0.48,
                 "hr": 0.07,
                 "bb": 0.23,
                 "k": 0.93,
                 "rbi": 0.54,
                 "tb": 0.79,
-                "hit_prob": 0.119,
+                "hit_prob": 0.12,
                 "hr_prob": 0.017
               }
             },
@@ -12574,8 +12574,8 @@
                 "k": 0.97,
                 "rbi": 0.51,
                 "tb": 0.76,
-                "hit_prob": 0.114,
-                "hr_prob": 0.015
+                "hit_prob": 0.113,
+                "hr_prob": 0.014
               }
             },
             {
@@ -12693,7 +12693,7 @@
               ],
               "simulation": {
                 "pa": 3.8,
-                "ab": 3.53,
+                "ab": 3.54,
                 "hits": 0.46,
                 "hr": 0.06,
                 "bb": 0.21,
@@ -12926,10 +12926,10 @@
             "market_type": "moneyline",
             "pick": "Los Angeles Angels",
             "line": 0.0,
-            "american_odds": 188,
-            "model_probability": 0.344,
-            "no_vig_probability": 0.3319,
-            "edge": 0.0121,
+            "american_odds": 187,
+            "model_probability": 0.3449,
+            "no_vig_probability": 0.333,
+            "edge": 0.0119,
             "tier": "pass",
             "bankroll_fraction": 0.0,
             "top_features": [
@@ -12961,9 +12961,9 @@
             "pick": "Los Angeles Dodgers",
             "line": 1.5,
             "american_odds": -137,
-            "model_probability": 0.5064,
+            "model_probability": 0.5062,
             "no_vig_probability": 0.553,
-            "edge": -0.0466,
+            "edge": -0.0468,
             "tier": "pass",
             "bankroll_fraction": 0.0,
             "top_features": [
@@ -12995,9 +12995,9 @@
             "pick": "Los Angeles Angels",
             "line": 1.5,
             "american_odds": 114,
-            "model_probability": 0.3629,
+            "model_probability": 0.3612,
             "no_vig_probability": 0.447,
-            "edge": -0.0841,
+            "edge": -0.0858,
             "tier": "pass",
             "bankroll_fraction": 0.0,
             "top_features": [
@@ -13764,9 +13764,9 @@
                 "bb": 0.28,
                 "k": 0.87,
                 "rbi": 0.46,
-                "tb": 0.76,
+                "tb": 0.77,
                 "hit_prob": 0.107,
-                "hr_prob": 0.014
+                "hr_prob": 0.015
               }
             },
             {
@@ -13892,7 +13892,7 @@
                 "rbi": 0.42,
                 "tb": 0.63,
                 "hit_prob": 0.098,
-                "hr_prob": 0.013
+                "hr_prob": 0.012
               }
             },
             {
@@ -14010,7 +14010,7 @@
               ],
               "simulation": {
                 "pa": 3.88,
-                "ab": 3.58,
+                "ab": 3.59,
                 "hits": 0.38,
                 "hr": 0.05,
                 "bb": 0.24,
@@ -14077,7 +14077,7 @@
                 "hits": 0.37,
                 "hr": 0.05,
                 "bb": 0.24,
-                "k": 0.99,
+                "k": 0.98,
                 "rbi": 0.43,
                 "tb": 0.59,
                 "hit_prob": 0.097,
@@ -14136,14 +14136,14 @@
               ],
               "simulation": {
                 "pa": 3.64,
-                "ab": 3.38,
-                "hits": 0.34,
+                "ab": 3.39,
+                "hits": 0.35,
                 "hr": 0.04,
-                "bb": 0.21,
+                "bb": 0.2,
                 "k": 0.81,
                 "rbi": 0.41,
                 "tb": 0.56,
-                "hit_prob": 0.094,
+                "hit_prob": 0.095,
                 "hr_prob": 0.012
               }
             },
@@ -14269,7 +14269,7 @@
               ],
               "simulation": {
                 "pa": 4.22,
-                "ab": 3.89,
+                "ab": 3.88,
                 "hits": 0.5,
                 "hr": 0.06,
                 "bb": 0.26,
@@ -14521,7 +14521,7 @@
               ],
               "simulation": {
                 "pa": 4.32,
-                "ab": 4.01,
+                "ab": 4.0,
                 "hits": 0.54,
                 "hr": 0.07,
                 "bb": 0.25,
@@ -14654,8 +14654,8 @@
                 "k": 0.91,
                 "rbi": 0.54,
                 "tb": 0.79,
-                "hit_prob": 0.118,
-                "hr_prob": 0.015
+                "hit_prob": 0.119,
+                "hr_prob": 0.016
               }
             },
             {
@@ -14794,10 +14794,10 @@
         "lineup_status": "projected",
         "weather_stack_score": 0.0,
         "weather": {
-          "temperature_f": 84.0,
-          "wind_speed_mph": 17.5,
-          "wind_direction": 302,
-          "humidity": 32,
+          "temperature_f": 84.4,
+          "wind_speed_mph": 18.9,
+          "wind_direction": 305,
+          "humidity": 31,
           "weather_missing": false
         },
         "projected_total": 8.75,
@@ -14839,7 +14839,7 @@
             "start_time": "7:10 PM ET",
             "lineup_status": "projected",
             "simulation_trials": 10000,
-            "specific_blurb": "Leo Jim\u00e9nez and Xavier Edwards (53/50 matchup scores) profile best into Jesse Scholtens's pitch mix for Miami Marlins, and Jesse Scholtens is carrying a .253 xBA allowed and 35% hard-hit rate; the sim lands at 8.8 runs versus 8, with weather adding another push (18 mph wind)"
+            "specific_blurb": "Leo Jim\u00e9nez and Xavier Edwards (53/50 matchup scores) profile best into Jesse Scholtens's pitch mix for Miami Marlins, and Jesse Scholtens is carrying a .253 xBA allowed and 35% hard-hit rate; the sim lands at 8.8 runs versus 8, with weather adding another push (19 mph wind)"
           },
           {
             "matchup": "Miami Marlins @ Tampa Bay Rays",
@@ -14873,7 +14873,7 @@
             "start_time": "7:10 PM ET",
             "lineup_status": "projected",
             "simulation_trials": 10000,
-            "specific_blurb": "Janson Junk and Jesse Scholtens project to keep quality contact down early, and the softest batter matchups on the board are Cedric Mullins and Taylor Walls (33/37 matchup scores) / Christopher Morel and Javier Sanoja (33/38 matchup scores); the sim sits at 8.8 against 8, with weather adding another push (18 mph wind)"
+            "specific_blurb": "Janson Junk and Jesse Scholtens project to keep quality contact down early, and the softest batter matchups on the board are Cedric Mullins and Taylor Walls (33/37 matchup scores) / Christopher Morel and Javier Sanoja (33/38 matchup scores); the sim sits at 8.8 against 8, with weather adding another push (19 mph wind)"
           },
           {
             "matchup": "Miami Marlins @ Tampa Bay Rays",
@@ -16950,12 +16950,12 @@
         "venue": "Citi Field",
         "start_time": "7:15 PM ET",
         "lineup_status": "projected",
-        "weather_stack_score": 0.15,
+        "weather_stack_score": 0.16,
         "weather": {
           "temperature_f": 65.8,
-          "wind_speed_mph": 10.1,
-          "wind_direction": 325,
-          "humidity": 49,
+          "wind_speed_mph": 14.5,
+          "wind_direction": 312,
+          "humidity": 45,
           "weather_missing": false
         },
         "projected_total": 8.91,
@@ -16970,10 +16970,10 @@
             "market_type": "game_total",
             "pick": "Over",
             "line": 7.0,
-            "american_odds": -112,
-            "model_probability": 0.5346,
-            "no_vig_probability": 0.5043,
-            "edge": 0.0303,
+            "american_odds": -105,
+            "model_probability": 0.525,
+            "no_vig_probability": 0.4902,
+            "edge": 0.0348,
             "tier": "pass",
             "bankroll_fraction": 0.0,
             "top_features": [
@@ -16984,7 +16984,7 @@
               },
               {
                 "feature": "Weather stack",
-                "value": 0.15,
+                "value": 0.16,
                 "direction": "up"
               },
               {
@@ -16993,21 +16993,21 @@
                 "direction": "up"
               }
             ],
-            "weather_stack_score": 0.15,
+            "weather_stack_score": 0.16,
             "start_time": "7:15 PM ET",
             "lineup_status": "projected",
             "simulation_trials": 10000,
-            "specific_blurb": "A.J. Ewing and Juan Soto (79/53 matchup scores) profile best into Cam Schlittler's pitch mix for New York Mets, and Cam Schlittler is carrying a .214 xBA allowed and 40% hard-hit rate; the sim lands at 8.9 runs versus 7"
+            "specific_blurb": "A.J. Ewing and Juan Soto (79/53 matchup scores) profile best into Cam Schlittler's pitch mix for New York Mets, and Cam Schlittler is carrying a .214 xBA allowed and 40% hard-hit rate; the sim lands at 8.9 runs versus 7, with weather adding another push (14 mph wind)"
           },
           {
             "matchup": "New York Yankees @ New York Mets",
             "market_type": "game_total",
             "pick": "Under",
             "line": 7.0,
-            "american_odds": -108,
-            "model_probability": 0.4654,
-            "no_vig_probability": 0.4957,
-            "edge": -0.0303,
+            "american_odds": -114,
+            "model_probability": 0.475,
+            "no_vig_probability": 0.5098,
+            "edge": -0.0348,
             "tier": "pass",
             "bankroll_fraction": 0.0,
             "top_features": [
@@ -17018,7 +17018,7 @@
               },
               {
                 "feature": "Weather stack",
-                "value": 0.15,
+                "value": 0.16,
                 "direction": "up"
               },
               {
@@ -17027,11 +17027,11 @@
                 "direction": "up"
               }
             ],
-            "weather_stack_score": 0.15,
+            "weather_stack_score": 0.16,
             "start_time": "7:15 PM ET",
             "lineup_status": "projected",
             "simulation_trials": 10000,
-            "specific_blurb": "Cam Schlittler and Clay Holmes project to keep quality contact down early, and the softest batter matchups on the board are Hayden Senger and MJ Melendez (41/42 matchup scores) / Anthony Volpe and Spencer Jones (20/38 matchup scores); the sim sits at 8.9 against 7"
+            "specific_blurb": "Cam Schlittler and Clay Holmes project to keep quality contact down early, and the softest batter matchups on the board are Hayden Senger and MJ Melendez (41/42 matchup scores) / Anthony Volpe and Spencer Jones (20/38 matchup scores); the sim sits at 8.9 against 7, with weather adding another push (14 mph wind)"
           },
           {
             "matchup": "New York Yankees @ New York Mets",
@@ -17052,7 +17052,7 @@
               },
               {
                 "feature": "Weather stack",
-                "value": 0.15,
+                "value": 0.16,
                 "direction": "up"
               },
               {
@@ -17061,7 +17061,7 @@
                 "direction": "up"
               }
             ],
-            "weather_stack_score": 0.15,
+            "weather_stack_score": 0.16,
             "start_time": "7:15 PM ET",
             "lineup_status": "projected",
             "simulation_trials": 10000,
@@ -17086,7 +17086,7 @@
               },
               {
                 "feature": "Weather stack",
-                "value": 0.15,
+                "value": 0.16,
                 "direction": "up"
               },
               {
@@ -17095,7 +17095,7 @@
                 "direction": "up"
               }
             ],
-            "weather_stack_score": 0.15,
+            "weather_stack_score": 0.16,
             "start_time": "7:15 PM ET",
             "lineup_status": "projected",
             "simulation_trials": 10000,
@@ -17120,7 +17120,7 @@
               },
               {
                 "feature": "Weather stack",
-                "value": 0.15,
+                "value": 0.16,
                 "direction": "up"
               },
               {
@@ -17129,7 +17129,7 @@
                 "direction": "up"
               }
             ],
-            "weather_stack_score": 0.15,
+            "weather_stack_score": 0.16,
             "start_time": "7:15 PM ET",
             "lineup_status": "projected",
             "simulation_trials": 10000,
@@ -19103,10 +19103,10 @@
         "lineup_status": "projected",
         "weather_stack_score": 0.16,
         "weather": {
-          "temperature_f": 69.6,
-          "wind_speed_mph": 11.0,
-          "wind_direction": 259,
-          "humidity": 26,
+          "temperature_f": 69.3,
+          "wind_speed_mph": 10.2,
+          "wind_direction": 262,
+          "humidity": 27,
           "weather_missing": false
         },
         "projected_total": 8.63,
@@ -19121,10 +19121,10 @@
             "market_type": "game_total",
             "pick": "Over",
             "line": 8.0,
-            "american_odds": -110,
-            "model_probability": 0.5073,
-            "no_vig_probability": 0.5011,
-            "edge": 0.0063,
+            "american_odds": -112,
+            "model_probability": 0.5094,
+            "no_vig_probability": 0.5043,
+            "edge": 0.005,
             "tier": "pass",
             "bankroll_fraction": 0.0,
             "top_features": [
@@ -19155,10 +19155,10 @@
             "market_type": "game_total",
             "pick": "Under",
             "line": 8.0,
-            "american_odds": -109,
-            "model_probability": 0.4927,
-            "no_vig_probability": 0.4989,
-            "edge": -0.0063,
+            "american_odds": -108,
+            "model_probability": 0.4906,
+            "no_vig_probability": 0.4957,
+            "edge": -0.005,
             "tier": "pass",
             "bankroll_fraction": 0.0,
             "top_features": [
@@ -21187,41 +21187,41 @@
         "venue": "T-Mobile Park",
         "start_time": "9:40 PM ET",
         "lineup_status": "projected",
-        "weather_stack_score": 1.7,
+        "weather_stack_score": 2.18,
         "weather": {
           "temperature_f": 49.8,
-          "wind_speed_mph": 10.8,
-          "wind_direction": 201,
-          "humidity": 86,
+          "wind_speed_mph": 12.7,
+          "wind_direction": 215,
+          "humidity": 87,
           "weather_missing": false
         },
-        "projected_total": 8.9,
-        "simulated_total": 8.9,
-        "simulated_home_runs": 4.74,
-        "simulated_away_runs": 4.16,
-        "home_win_prob": 0.542,
-        "away_win_prob": 0.458,
+        "projected_total": 8.86,
+        "simulated_total": 8.86,
+        "simulated_home_runs": 4.72,
+        "simulated_away_runs": 4.14,
+        "home_win_prob": 0.541,
+        "away_win_prob": 0.459,
         "top_game_picks": [
           {
             "matchup": "San Diego Padres @ Seattle Mariners",
             "market_type": "game_total",
             "pick": "Over",
             "line": 7.0,
-            "american_odds": -114,
-            "model_probability": 0.547,
-            "no_vig_probability": 0.5098,
-            "edge": 0.0372,
+            "american_odds": -117,
+            "model_probability": 0.5603,
+            "no_vig_probability": 0.5152,
+            "edge": 0.0451,
             "tier": "pass",
             "bankroll_fraction": 0.0,
             "top_features": [
               {
                 "feature": "Simulated total",
-                "value": 8.9,
+                "value": 8.86,
                 "direction": "up"
               },
               {
                 "feature": "Weather stack",
-                "value": 1.7,
+                "value": 2.18,
                 "direction": "up"
               },
               {
@@ -21230,32 +21230,32 @@
                 "direction": "up"
               }
             ],
-            "weather_stack_score": 1.7,
+            "weather_stack_score": 2.18,
             "start_time": "9:40 PM ET",
             "lineup_status": "projected",
             "simulation_trials": 10000,
-            "specific_blurb": "Luke Raley and J.P. Crawford (57/51 matchup scores) profile best into Randy V\u00e1squez's pitch mix for Seattle Mariners, and Randy V\u00e1squez is carrying a .260 xBA allowed and 42% hard-hit rate; the sim lands at 8.9 runs versus 7"
+            "specific_blurb": "Luke Raley and J.P. Crawford (57/51 matchup scores) profile best into Randy V\u00e1squez's pitch mix for Seattle Mariners, and Randy V\u00e1squez is carrying a .260 xBA allowed and 42% hard-hit rate; the sim lands at 8.9 runs versus 7, with weather adding another push (13 mph wind)"
           },
           {
             "matchup": "San Diego Padres @ Seattle Mariners",
             "market_type": "game_total",
             "pick": "Under",
             "line": 7.0,
-            "american_odds": -105,
-            "model_probability": 0.453,
-            "no_vig_probability": 0.4902,
-            "edge": -0.0372,
+            "american_odds": -103,
+            "model_probability": 0.4397,
+            "no_vig_probability": 0.4848,
+            "edge": -0.0451,
             "tier": "pass",
             "bankroll_fraction": 0.0,
             "top_features": [
               {
                 "feature": "Simulated total",
-                "value": 8.9,
+                "value": 8.86,
                 "direction": "up"
               },
               {
                 "feature": "Weather stack",
-                "value": 1.7,
+                "value": 2.18,
                 "direction": "up"
               },
               {
@@ -21264,11 +21264,11 @@
                 "direction": "up"
               }
             ],
-            "weather_stack_score": 1.7,
+            "weather_stack_score": 2.18,
             "start_time": "9:40 PM ET",
             "lineup_status": "projected",
             "simulation_trials": 10000,
-            "specific_blurb": "Randy V\u00e1squez and Emerson Hancock project to keep quality contact down early, and the softest batter matchups on the board are Mitch Garver and Randy Arozarena (44/46 matchup scores) / Rodolfo Dur\u00e1n and Miguel Andujar (38/42 matchup scores); the sim sits at 8.9 against 7"
+            "specific_blurb": "Randy V\u00e1squez and Emerson Hancock project to keep quality contact down early, and the softest batter matchups on the board are Mitch Garver and Randy Arozarena (44/46 matchup scores) / Rodolfo Dur\u00e1n and Miguel Andujar (38/42 matchup scores); the sim sits at 8.9 against 7, with weather adding another push (13 mph wind)"
           },
           {
             "matchup": "San Diego Padres @ Seattle Mariners",
@@ -21276,20 +21276,20 @@
             "pick": "San Diego Padres",
             "line": 0.0,
             "american_odds": 113,
-            "model_probability": 0.453,
+            "model_probability": 0.4544,
             "no_vig_probability": 0.4489,
-            "edge": 0.0041,
+            "edge": 0.0054,
             "tier": "pass",
             "bankroll_fraction": 0.0,
             "top_features": [
               {
                 "feature": "Simulated total",
-                "value": 8.9,
+                "value": 8.86,
                 "direction": "up"
               },
               {
                 "feature": "Weather stack",
-                "value": 1.7,
+                "value": 2.18,
                 "direction": "up"
               },
               {
@@ -21298,11 +21298,11 @@
                 "direction": "up"
               }
             ],
-            "weather_stack_score": 1.7,
+            "weather_stack_score": 2.18,
             "start_time": "9:40 PM ET",
             "lineup_status": "projected",
             "simulation_trials": 10000,
-            "specific_blurb": "Randy V\u00e1squez gives San Diego Padres the cleaner starter setup, and Ty France and Fernando Tatis Jr. (50/48 matchup scores) carry the best hitter-vs-arsenal edges against Emerson Hancock; the sim has it 4.2 to 4.7 with a 0.4-point edge"
+            "specific_blurb": "Randy V\u00e1squez gives San Diego Padres the cleaner starter setup, and Ty France and Fernando Tatis Jr. (50/48 matchup scores) carry the best hitter-vs-arsenal edges against Emerson Hancock; the sim has it 4.1 to 4.7 with a 0.5-point edge"
           },
           {
             "matchup": "San Diego Padres @ Seattle Mariners",
@@ -21310,20 +21310,20 @@
             "pick": "Seattle Mariners",
             "line": 0.0,
             "american_odds": -136,
-            "model_probability": 0.547,
+            "model_probability": 0.5456,
             "no_vig_probability": 0.5511,
-            "edge": -0.0041,
+            "edge": -0.0054,
             "tier": "pass",
             "bankroll_fraction": 0.0,
             "top_features": [
               {
                 "feature": "Simulated total",
-                "value": 8.9,
+                "value": 8.86,
                 "direction": "up"
               },
               {
                 "feature": "Weather stack",
-                "value": 1.7,
+                "value": 2.18,
                 "direction": "up"
               },
               {
@@ -21332,32 +21332,32 @@
                 "direction": "up"
               }
             ],
-            "weather_stack_score": 1.7,
+            "weather_stack_score": 2.18,
             "start_time": "9:40 PM ET",
             "lineup_status": "projected",
             "simulation_trials": 10000,
-            "specific_blurb": "Emerson Hancock gives Seattle Mariners the cleaner starter setup, and Luke Raley and J.P. Crawford (57/51 matchup scores) carry the best hitter-vs-arsenal edges against Randy V\u00e1squez; the sim has it 4.7 to 4.2 with a -0.4-point edge"
+            "specific_blurb": "Emerson Hancock gives Seattle Mariners the cleaner starter setup, and Luke Raley and J.P. Crawford (57/51 matchup scores) carry the best hitter-vs-arsenal edges against Randy V\u00e1squez; the sim has it 4.7 to 4.1 with a -0.5-point edge"
           },
           {
             "matchup": "San Diego Padres @ Seattle Mariners",
             "market_type": "runline",
             "pick": "Seattle Mariners",
             "line": -1.5,
-            "american_odds": 153,
-            "model_probability": 0.3461,
-            "no_vig_probability": 0.3776,
-            "edge": -0.0315,
+            "american_odds": 157,
+            "model_probability": 0.3377,
+            "no_vig_probability": 0.3718,
+            "edge": -0.034,
             "tier": "pass",
             "bankroll_fraction": 0.0,
             "top_features": [
               {
                 "feature": "Simulated total",
-                "value": 8.9,
+                "value": 8.86,
                 "direction": "up"
               },
               {
                 "feature": "Weather stack",
-                "value": 1.7,
+                "value": 2.18,
                 "direction": "up"
               },
               {
@@ -21366,7 +21366,7 @@
                 "direction": "up"
               }
             ],
-            "weather_stack_score": 1.7,
+            "weather_stack_score": 2.18,
             "start_time": "9:40 PM ET",
             "lineup_status": "projected",
             "simulation_trials": 10000,
@@ -22307,15 +22307,15 @@
                 }
               ],
               "simulation": {
-                "pa": 4.11,
+                "pa": 4.1,
                 "ab": 3.83,
-                "hits": 0.49,
-                "hr": 0.07,
-                "bb": 0.23,
+                "hits": 0.48,
+                "hr": 0.06,
+                "bb": 0.22,
                 "k": 0.99,
-                "rbi": 0.53,
-                "tb": 0.8,
-                "hit_prob": 0.118,
+                "rbi": 0.52,
+                "tb": 0.78,
+                "hit_prob": 0.117,
                 "hr_prob": 0.016
               }
             },
@@ -22370,15 +22370,15 @@
                 }
               ],
               "simulation": {
-                "pa": 4.01,
+                "pa": 4.0,
                 "ab": 3.67,
-                "hits": 0.48,
+                "hits": 0.47,
                 "hr": 0.06,
                 "bb": 0.27,
-                "k": 0.87,
-                "rbi": 0.54,
-                "tb": 0.78,
-                "hit_prob": 0.12,
+                "k": 0.88,
+                "rbi": 0.53,
+                "tb": 0.76,
+                "hit_prob": 0.118,
                 "hr_prob": 0.015
               }
             },
@@ -22433,15 +22433,15 @@
                 }
               ],
               "simulation": {
-                "pa": 3.9,
-                "ab": 3.62,
+                "pa": 3.89,
+                "ab": 3.6,
                 "hits": 0.48,
                 "hr": 0.06,
-                "bb": 0.23,
+                "bb": 0.24,
                 "k": 0.88,
-                "rbi": 0.55,
+                "rbi": 0.54,
                 "tb": 0.77,
-                "hit_prob": 0.122,
+                "hit_prob": 0.123,
                 "hr_prob": 0.016
               }
             },
@@ -22496,15 +22496,15 @@
                 }
               ],
               "simulation": {
-                "pa": 4.54,
+                "pa": 4.53,
                 "ab": 4.17,
                 "hits": 0.53,
                 "hr": 0.06,
                 "bb": 0.29,
-                "k": 0.98,
+                "k": 0.99,
                 "rbi": 0.51,
-                "tb": 0.85,
-                "hit_prob": 0.117,
+                "tb": 0.84,
+                "hit_prob": 0.116,
                 "hr_prob": 0.014
               }
             },
@@ -22559,11 +22559,11 @@
                 }
               ],
               "simulation": {
-                "pa": 4.31,
-                "ab": 4.0,
+                "pa": 4.3,
+                "ab": 3.99,
                 "hits": 0.52,
                 "hr": 0.07,
-                "bb": 0.25,
+                "bb": 0.26,
                 "k": 0.96,
                 "rbi": 0.53,
                 "tb": 0.84,
@@ -22622,16 +22622,16 @@
                 }
               ],
               "simulation": {
-                "pa": 4.42,
-                "ab": 4.11,
+                "pa": 4.41,
+                "ab": 4.1,
                 "hits": 0.53,
                 "hr": 0.07,
-                "bb": 0.26,
+                "bb": 0.25,
                 "k": 1.04,
-                "rbi": 0.53,
-                "tb": 0.86,
-                "hit_prob": 0.119,
-                "hr_prob": 0.016
+                "rbi": 0.52,
+                "tb": 0.85,
+                "hit_prob": 0.12,
+                "hr_prob": 0.015
               }
             },
             {
@@ -22685,16 +22685,16 @@
                 }
               ],
               "simulation": {
-                "pa": 3.66,
-                "ab": 3.4,
+                "pa": 3.65,
+                "ab": 3.39,
                 "hits": 0.43,
-                "hr": 0.05,
+                "hr": 0.06,
                 "bb": 0.22,
-                "k": 0.87,
-                "rbi": 0.5,
-                "tb": 0.68,
-                "hit_prob": 0.116,
-                "hr_prob": 0.014
+                "k": 0.86,
+                "rbi": 0.51,
+                "tb": 0.7,
+                "hit_prob": 0.117,
+                "hr_prob": 0.015
               }
             },
             {
@@ -22748,8 +22748,8 @@
                 }
               ],
               "simulation": {
-                "pa": 4.21,
-                "ab": 3.9,
+                "pa": 4.2,
+                "ab": 3.89,
                 "hits": 0.49,
                 "hr": 0.06,
                 "bb": 0.25,
@@ -22811,15 +22811,15 @@
                 }
               ],
               "simulation": {
-                "pa": 3.78,
-                "ab": 3.48,
+                "pa": 3.77,
+                "ab": 3.47,
                 "hits": 0.44,
                 "hr": 0.06,
                 "bb": 0.24,
                 "k": 0.87,
-                "rbi": 0.53,
+                "rbi": 0.54,
                 "tb": 0.73,
-                "hit_prob": 0.116,
+                "hit_prob": 0.117,
                 "hr_prob": 0.016
               }
             }
@@ -22882,14 +22882,14 @@
               ],
               "simulation": {
                 "pa": 3.66,
-                "ab": 3.41,
-                "hits": 0.42,
+                "ab": 3.4,
+                "hits": 0.41,
                 "hr": 0.06,
-                "bb": 0.2,
-                "k": 0.89,
+                "bb": 0.21,
+                "k": 0.88,
                 "rbi": 0.48,
-                "tb": 0.68,
-                "hit_prob": 0.114,
+                "tb": 0.67,
+                "hit_prob": 0.112,
                 "hr_prob": 0.015
               }
             },
@@ -22944,15 +22944,15 @@
                 }
               ],
               "simulation": {
-                "pa": 4.3,
-                "ab": 3.98,
-                "hits": 0.49,
+                "pa": 4.29,
+                "ab": 3.97,
+                "hits": 0.48,
                 "hr": 0.07,
                 "bb": 0.26,
-                "k": 1.05,
-                "rbi": 0.48,
-                "tb": 0.8,
-                "hit_prob": 0.113,
+                "k": 1.06,
+                "rbi": 0.47,
+                "tb": 0.79,
+                "hit_prob": 0.112,
                 "hr_prob": 0.016
               }
             },
@@ -23007,15 +23007,15 @@
                 }
               ],
               "simulation": {
-                "pa": 4.01,
-                "ab": 3.69,
-                "hits": 0.42,
+                "pa": 4.02,
+                "ab": 3.7,
+                "hits": 0.43,
                 "hr": 0.05,
-                "bb": 0.26,
-                "k": 0.93,
+                "bb": 0.25,
+                "k": 0.94,
                 "rbi": 0.45,
                 "tb": 0.68,
-                "hit_prob": 0.106,
+                "hit_prob": 0.107,
                 "hr_prob": 0.013
               }
             },
@@ -23071,14 +23071,14 @@
               ],
               "simulation": {
                 "pa": 3.91,
-                "ab": 3.63,
+                "ab": 3.62,
                 "hits": 0.43,
                 "hr": 0.05,
                 "bb": 0.23,
-                "k": 0.95,
+                "k": 0.96,
                 "rbi": 0.46,
-                "tb": 0.7,
-                "hit_prob": 0.11,
+                "tb": 0.69,
+                "hit_prob": 0.109,
                 "hr_prob": 0.014
               }
             },
@@ -23133,16 +23133,16 @@
                 }
               ],
               "simulation": {
-                "pa": 4.41,
-                "ab": 4.08,
+                "pa": 4.4,
+                "ab": 4.07,
                 "hits": 0.48,
                 "hr": 0.06,
                 "bb": 0.27,
                 "k": 1.08,
-                "rbi": 0.47,
+                "rbi": 0.46,
                 "tb": 0.79,
-                "hit_prob": 0.11,
-                "hr_prob": 0.014
+                "hit_prob": 0.109,
+                "hr_prob": 0.015
               }
             },
             {
@@ -23197,14 +23197,14 @@
               ],
               "simulation": {
                 "pa": 4.2,
-                "ab": 3.88,
+                "ab": 3.87,
                 "hits": 0.45,
                 "hr": 0.06,
-                "bb": 0.26,
+                "bb": 0.27,
                 "k": 1.04,
-                "rbi": 0.45,
+                "rbi": 0.46,
                 "tb": 0.73,
-                "hit_prob": 0.107,
+                "hit_prob": 0.108,
                 "hr_prob": 0.014
               }
             },
@@ -23264,10 +23264,10 @@
                 "hits": 0.39,
                 "hr": 0.05,
                 "bb": 0.22,
-                "k": 1.0,
+                "k": 0.99,
                 "rbi": 0.44,
                 "tb": 0.63,
-                "hit_prob": 0.104,
+                "hit_prob": 0.103,
                 "hr_prob": 0.013
               }
             },
@@ -23323,14 +23323,14 @@
               ],
               "simulation": {
                 "pa": 4.11,
-                "ab": 3.82,
-                "hits": 0.45,
+                "ab": 3.83,
+                "hits": 0.44,
                 "hr": 0.06,
                 "bb": 0.23,
                 "k": 1.01,
                 "rbi": 0.46,
-                "tb": 0.73,
-                "hit_prob": 0.109,
+                "tb": 0.72,
+                "hit_prob": 0.108,
                 "hr_prob": 0.014
               }
             },
@@ -23386,14 +23386,14 @@
               ],
               "simulation": {
                 "pa": 3.53,
-                "ab": 3.31,
-                "hits": 0.39,
+                "ab": 3.32,
+                "hits": 0.38,
                 "hr": 0.06,
                 "bb": 0.17,
                 "k": 0.92,
-                "rbi": 0.46,
-                "tb": 0.66,
-                "hit_prob": 0.11,
+                "rbi": 0.47,
+                "tb": 0.65,
+                "hit_prob": 0.109,
                 "hr_prob": 0.017
               }
             }
@@ -23496,7 +23496,7 @@
             "american_odds": 113,
             "model_probability": 0.4542,
             "no_vig_probability": 0.4489,
-            "edge": 0.0053,
+            "edge": 0.0052,
             "tier": "pass",
             "bankroll_fraction": 0.0,
             "top_features": [
@@ -23530,7 +23530,7 @@
             "american_odds": -136,
             "model_probability": 0.5458,
             "no_vig_probability": 0.5511,
-            "edge": -0.0053,
+            "edge": -0.0052,
             "tier": "pass",
             "bankroll_fraction": 0.0,
             "top_features": [
@@ -23564,7 +23564,7 @@
             "american_odds": 144,
             "model_probability": 0.3717,
             "no_vig_probability": 0.3917,
-            "edge": -0.0201,
+            "edge": -0.02,
             "tier": "pass",
             "bankroll_fraction": 0.0,
             "top_features": [
@@ -24466,7 +24466,7 @@
                 "k": 1.0,
                 "rbi": 0.52,
                 "tb": 0.87,
-                "hit_prob": 0.12,
+                "hit_prob": 0.119,
                 "hr_prob": 0.016
               }
             },
@@ -25100,7 +25100,7 @@
                 "hits": 0.52,
                 "hr": 0.07,
                 "bb": 0.24,
-                "k": 0.95,
+                "k": 0.96,
                 "rbi": 0.53,
                 "tb": 0.84,
                 "hit_prob": 0.122,
@@ -25556,12 +25556,12 @@
         "venue": "Daikin Park",
         "start_time": "8:10 PM ET",
         "lineup_status": "projected",
-        "weather_stack_score": 0.16,
+        "weather_stack_score": 0.15,
         "weather": {
           "temperature_f": 77.9,
-          "wind_speed_mph": 16.9,
-          "wind_direction": 168,
-          "humidity": 65,
+          "wind_speed_mph": 15.9,
+          "wind_direction": 167,
+          "humidity": 64,
           "weather_missing": false
         },
         "projected_total": 8.99,
@@ -25577,9 +25577,9 @@
             "pick": "Over",
             "line": 8.5,
             "american_odds": -114,
-            "model_probability": 0.514,
+            "model_probability": 0.5141,
             "no_vig_probability": 0.5098,
-            "edge": 0.0042,
+            "edge": 0.0043,
             "tier": "pass",
             "bankroll_fraction": 0.0,
             "top_features": [
@@ -25590,7 +25590,7 @@
               },
               {
                 "feature": "Weather stack",
-                "value": 0.16,
+                "value": 0.15,
                 "direction": "up"
               },
               {
@@ -25599,11 +25599,11 @@
                 "direction": "up"
               }
             ],
-            "weather_stack_score": 0.16,
+            "weather_stack_score": 0.15,
             "start_time": "8:10 PM ET",
             "lineup_status": "projected",
             "simulation_trials": 10000,
-            "specific_blurb": "Yordan Alvarez and C\u00e9sar Salazar (67/61 matchup scores) profile best into Jack Leiter's pitch mix for Houston Astros, and Jack Leiter is carrying a .254 xBA allowed and 42% hard-hit rate; the sim lands at 9.0 runs versus 8.5, with weather adding another push (17 mph wind)"
+            "specific_blurb": "Yordan Alvarez and C\u00e9sar Salazar (67/61 matchup scores) profile best into Jack Leiter's pitch mix for Houston Astros, and Jack Leiter is carrying a .254 xBA allowed and 42% hard-hit rate; the sim lands at 9.0 runs versus 8.5, with weather adding another push (16 mph wind)"
           },
           {
             "matchup": "Texas Rangers @ Houston Astros",
@@ -25611,9 +25611,9 @@
             "pick": "Under",
             "line": 8.5,
             "american_odds": -105,
-            "model_probability": 0.486,
+            "model_probability": 0.4859,
             "no_vig_probability": 0.4902,
-            "edge": -0.0042,
+            "edge": -0.0043,
             "tier": "pass",
             "bankroll_fraction": 0.0,
             "top_features": [
@@ -25624,7 +25624,7 @@
               },
               {
                 "feature": "Weather stack",
-                "value": 0.16,
+                "value": 0.15,
                 "direction": "up"
               },
               {
@@ -25633,11 +25633,11 @@
                 "direction": "up"
               }
             ],
-            "weather_stack_score": 0.16,
+            "weather_stack_score": 0.15,
             "start_time": "8:10 PM ET",
             "lineup_status": "projected",
             "simulation_trials": 10000,
-            "specific_blurb": "Jack Leiter and Spencer Arrighetti project to keep quality contact down early, and the softest batter matchups on the board are Brice Matthews and Braden Shewmake (40/41 matchup scores) / Danny Jansen and Jake Burger (36/42 matchup scores); the sim sits at 9.0 against 8.5, with weather adding another push (17 mph wind)"
+            "specific_blurb": "Jack Leiter and Spencer Arrighetti project to keep quality contact down early, and the softest batter matchups on the board are Brice Matthews and Braden Shewmake (40/41 matchup scores) / Danny Jansen and Jake Burger (36/42 matchup scores); the sim sits at 9.0 against 8.5, with weather adding another push (16 mph wind)"
           },
           {
             "matchup": "Texas Rangers @ Houston Astros",
@@ -25658,7 +25658,7 @@
               },
               {
                 "feature": "Weather stack",
-                "value": 0.16,
+                "value": 0.15,
                 "direction": "up"
               },
               {
@@ -25667,7 +25667,7 @@
                 "direction": "up"
               }
             ],
-            "weather_stack_score": 0.16,
+            "weather_stack_score": 0.15,
             "start_time": "8:10 PM ET",
             "lineup_status": "projected",
             "simulation_trials": 10000,
@@ -25692,7 +25692,7 @@
               },
               {
                 "feature": "Weather stack",
-                "value": 0.16,
+                "value": 0.15,
                 "direction": "up"
               },
               {
@@ -25701,7 +25701,7 @@
                 "direction": "up"
               }
             ],
-            "weather_stack_score": 0.16,
+            "weather_stack_score": 0.15,
             "start_time": "8:10 PM ET",
             "lineup_status": "projected",
             "simulation_trials": 10000,
@@ -25713,9 +25713,9 @@
             "pick": "Texas Rangers",
             "line": 1.5,
             "american_odds": 149,
-            "model_probability": 0.3244,
+            "model_probability": 0.3242,
             "no_vig_probability": 0.384,
-            "edge": -0.0597,
+            "edge": -0.0598,
             "tier": "pass",
             "bankroll_fraction": 0.0,
             "top_features": [
@@ -25726,7 +25726,7 @@
               },
               {
                 "feature": "Weather stack",
-                "value": 0.16,
+                "value": 0.15,
                 "direction": "up"
               },
               {
@@ -25735,7 +25735,7 @@
                 "direction": "up"
               }
             ],
-            "weather_stack_score": 0.16,
+            "weather_stack_score": 0.15,
             "start_time": "8:10 PM ET",
             "lineup_status": "projected",
             "simulation_trials": 10000,
@@ -26805,7 +26805,7 @@
               "simulation": {
                 "pa": 3.8,
                 "ab": 3.52,
-                "hits": 0.43,
+                "hits": 0.42,
                 "hr": 0.06,
                 "bb": 0.22,
                 "k": 0.88,
@@ -26872,10 +26872,10 @@
                 "hr": 0.06,
                 "bb": 0.21,
                 "k": 1.16,
-                "rbi": 0.48,
+                "rbi": 0.47,
                 "tb": 0.8,
                 "hit_prob": 0.109,
-                "hr_prob": 0.014
+                "hr_prob": 0.013
               }
             },
             {
@@ -26994,9 +26994,9 @@
               "simulation": {
                 "pa": 4.44,
                 "ab": 4.1,
-                "hits": 0.52,
+                "hits": 0.51,
                 "hr": 0.07,
-                "bb": 0.27,
+                "bb": 0.26,
                 "k": 0.99,
                 "rbi": 0.51,
                 "tb": 0.83,
@@ -27059,11 +27059,11 @@
                 "ab": 3.9,
                 "hits": 0.47,
                 "hr": 0.06,
-                "bb": 0.26,
+                "bb": 0.27,
                 "k": 0.97,
                 "rbi": 0.49,
-                "tb": 0.76,
-                "hit_prob": 0.112,
+                "tb": 0.75,
+                "hit_prob": 0.111,
                 "hr_prob": 0.014
               }
             },
@@ -27120,10 +27120,10 @@
               "simulation": {
                 "pa": 4.03,
                 "ab": 3.76,
-                "hits": 0.45,
+                "hits": 0.46,
                 "hr": 0.06,
                 "bb": 0.21,
-                "k": 0.94,
+                "k": 0.93,
                 "rbi": 0.51,
                 "tb": 0.74,
                 "hit_prob": 0.113,
@@ -27189,8 +27189,8 @@
                 "k": 0.98,
                 "rbi": 0.47,
                 "tb": 0.68,
-                "hit_prob": 0.107,
-                "hr_prob": 0.014
+                "hit_prob": 0.108,
+                "hr_prob": 0.013
               }
             }
           ]
@@ -27322,7 +27322,7 @@
                 "k": 0.91,
                 "rbi": 0.52,
                 "tb": 0.81,
-                "hit_prob": 0.117,
+                "hit_prob": 0.116,
                 "hr_prob": 0.016
               }
             },
@@ -27382,11 +27382,11 @@
                 "hits": 0.41,
                 "hr": 0.05,
                 "bb": 0.25,
-                "k": 0.9,
-                "rbi": 0.47,
+                "k": 0.89,
+                "rbi": 0.46,
                 "tb": 0.65,
-                "hit_prob": 0.105,
-                "hr_prob": 0.013
+                "hit_prob": 0.104,
+                "hr_prob": 0.012
               }
             },
             {
@@ -27445,7 +27445,7 @@
                 "hits": 0.51,
                 "hr": 0.07,
                 "bb": 0.27,
-                "k": 1.01,
+                "k": 1.0,
                 "rbi": 0.51,
                 "tb": 0.83,
                 "hit_prob": 0.112,
@@ -27505,13 +27505,13 @@
               "simulation": {
                 "pa": 4.33,
                 "ab": 4.01,
-                "hits": 0.47,
+                "hits": 0.46,
                 "hr": 0.06,
                 "bb": 0.25,
                 "k": 1.02,
-                "rbi": 0.48,
+                "rbi": 0.47,
                 "tb": 0.75,
-                "hit_prob": 0.108,
+                "hit_prob": 0.107,
                 "hr_prob": 0.014
               }
             },
@@ -27568,13 +27568,13 @@
               "simulation": {
                 "pa": 4.02,
                 "ab": 3.71,
-                "hits": 0.44,
+                "hits": 0.45,
                 "hr": 0.06,
                 "bb": 0.24,
-                "k": 0.91,
-                "rbi": 0.5,
-                "tb": 0.73,
-                "hit_prob": 0.111,
+                "k": 0.9,
+                "rbi": 0.51,
+                "tb": 0.74,
+                "hit_prob": 0.112,
                 "hr_prob": 0.015
               }
             },
@@ -27637,7 +27637,7 @@
                 "k": 0.95,
                 "rbi": 0.49,
                 "tb": 0.73,
-                "hit_prob": 0.107,
+                "hit_prob": 0.108,
                 "hr_prob": 0.015
               }
             },
@@ -27693,7 +27693,7 @@
               ],
               "simulation": {
                 "pa": 3.79,
-                "ab": 3.53,
+                "ab": 3.54,
                 "hits": 0.41,
                 "hr": 0.06,
                 "bb": 0.2,
@@ -27762,7 +27762,7 @@
                 "bb": 0.2,
                 "k": 0.9,
                 "rbi": 0.44,
-                "tb": 0.59,
+                "tb": 0.6,
                 "hit_prob": 0.1,
                 "hr_prob": 0.013
               }
@@ -27777,10 +27777,10 @@
         "lineup_status": "projected",
         "weather_stack_score": 0.92,
         "weather": {
-          "temperature_f": 70.5,
-          "wind_speed_mph": 20.7,
-          "wind_direction": 220,
-          "humidity": 31,
+          "temperature_f": 70.7,
+          "wind_speed_mph": 16.7,
+          "wind_direction": 194,
+          "humidity": 29,
           "weather_missing": false
         },
         "projected_total": 7.75,
@@ -27822,7 +27822,7 @@
             "start_time": "6:45 PM ET",
             "lineup_status": "projected",
             "simulation_trials": 10000,
-            "specific_blurb": "Trey Yesavage and Brenan Hanifee project to keep quality contact down early, and the softest batter matchups on the board are Jake Rogers and Zach McKinstry (36/37 matchup scores) / Tyler Heineman and Andr\u00e9s Gim\u00e9nez (32/39 matchup scores); the sim sits at 7.8 against 8, with weather adding another push (21 mph wind)"
+            "specific_blurb": "Trey Yesavage and Brenan Hanifee project to keep quality contact down early, and the softest batter matchups on the board are Jake Rogers and Zach McKinstry (36/37 matchup scores) / Tyler Heineman and Andr\u00e9s Gim\u00e9nez (32/39 matchup scores); the sim sits at 7.8 against 8, with weather adding another push (17 mph wind)"
           },
           {
             "matchup": "Toronto Blue Jays @ Detroit Tigers",
@@ -27856,7 +27856,7 @@
             "start_time": "6:45 PM ET",
             "lineup_status": "projected",
             "simulation_trials": 10000,
-            "specific_blurb": "Gage Workman and Dillon Dingler (74/55 matchup scores) profile best into Trey Yesavage's pitch mix for Detroit Tigers, and Trey Yesavage is carrying a .173 xBA allowed and 19% hard-hit rate; the sim lands at 7.8 runs versus 8, with weather adding another push (21 mph wind)"
+            "specific_blurb": "Gage Workman and Dillon Dingler (74/55 matchup scores) profile best into Trey Yesavage's pitch mix for Detroit Tigers, and Trey Yesavage is carrying a .173 xBA allowed and 19% hard-hit rate; the sim lands at 7.8 runs versus 8, with weather adding another push (17 mph wind)"
           },
           {
             "matchup": "Toronto Blue Jays @ Detroit Tigers",
