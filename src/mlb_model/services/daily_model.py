@@ -91,8 +91,10 @@ class DailyPredictionService:
                 home_team_id = game["teams"]["home"]["team"]["id"]
                 probable_home = game["teams"]["home"].get("probablePitcher") or {}
                 probable_away = game["teams"]["away"].get("probablePitcher") or {}
-                home_confirmed = bool(game["teams"]["home"].get("lineup"))
-                away_confirmed = bool(game["teams"]["away"].get("lineup"))
+                home_confirmed_players = (game.get("lineups") or {}).get("homePlayers") or []
+                away_confirmed_players = (game.get("lineups") or {}).get("awayPlayers") or []
+                home_confirmed = len(home_confirmed_players) >= 7
+                away_confirmed = len(away_confirmed_players) >= 7
                 if not probable_home.get("id") or not probable_away.get("id"):
                     skipped.append({"matchup": matchup_label, "reason": "missing probable starters"})
                     continue
@@ -100,12 +102,12 @@ class DailyPredictionService:
                 away_pitcher_hand = await self.stats.fetch_pitcher_hand(int(probable_away["id"]))
                 home_pitcher_role = await self.stats.fetch_pitcher_season_role(int(probable_home["id"]), slate_date.year)
                 away_pitcher_role = await self.stats.fetch_pitcher_season_role(int(probable_away["id"]), slate_date.year)
-                home_lineup = game["teams"]["home"].get("lineup") or await self.stats.fetch_recent_lineup_by_opposing_hand(
+                home_lineup = home_confirmed_players or await self.stats.fetch_recent_lineup_by_opposing_hand(
                     home_team_id,
                     away_pitcher_hand,
                     slate_date,
                 ) or await self.stats.fetch_team_hitters(home_team_id)
-                away_lineup = game["teams"]["away"].get("lineup") or await self.stats.fetch_recent_lineup_by_opposing_hand(
+                away_lineup = away_confirmed_players or await self.stats.fetch_recent_lineup_by_opposing_hand(
                     away_team_id,
                     home_pitcher_hand,
                     slate_date,
