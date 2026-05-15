@@ -267,11 +267,11 @@ class SimulationModelService:
                 -item["model_probability"],
             ),
         )
-        # Only STRONG tier (9%+) qualifies as an actionable daily pick
+        # STRONG + MODERATE (6%+) qualify as actionable daily picks; deduplicated by side/line
         _seen_daily: set[tuple] = set()
         daily: list[dict] = []
         for pick in ranked:
-            if pick["tier"] != "strong":
+            if pick["tier"] not in {"strong", "moderate"}:
                 continue
             if pick["market_type"] not in {"game_total", "first_five_total", "moneyline"}:
                 continue
@@ -284,13 +284,13 @@ class SimulationModelService:
             daily.append(pick)
             if len(daily) == 3:
                 break
-        # Leans: 2.5%–9% edge (moderate + monitor + lean tiers) — tracked but not actionable picks
+        # Leans: 2.5%–6% edge — tracked but not actionable picks
         lean_min = model_settings.edge_thresholds.get("lean_min", 0.025)
-        strong_min = model_settings.edge_thresholds.get("max_bet_min", 0.09)
+        pass_below = model_settings.edge_thresholds["pass_below"]
         _seen_leans: set[tuple] = set()
         leans: list[dict] = []
         for pick in sorted(candidates, key=lambda item: -item["edge"]):
-            if not (lean_min <= pick["edge"] < strong_min):
+            if not (lean_min <= pick["edge"] < pass_below):
                 continue
             if pick["market_type"] == "runline":
                 continue
