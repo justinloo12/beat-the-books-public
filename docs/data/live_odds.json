@@ -1,5 +1,5 @@
 {
-  "fetched_at": "2026-05-15T22:48:20.552540Z",
+  "fetched_at": "2026-05-15T23:00:23.138768Z",
   "date": "2026-05-15",
   "games": [
     {
@@ -7,21 +7,21 @@
       "home_team": "Pittsburgh Pirates",
       "commence_time": "2026-05-15T22:41:00Z",
       "moneyline": {
-        "away_odds": -144,
-        "home_odds": 111,
-        "away_no_vig": 0.5546,
-        "home_no_vig": 0.4454
+        "away_odds": 109,
+        "home_odds": -142,
+        "away_no_vig": 0.4492,
+        "home_no_vig": 0.5508
       },
       "totals": [
         {
           "name": "Over",
-          "point": 9.5,
-          "price": 106
+          "point": 6.5,
+          "price": -131
         },
         {
           "name": "Under",
-          "point": 9.5,
-          "price": -138
+          "point": 6.5,
+          "price": 101
         }
       ]
     },
@@ -30,21 +30,21 @@
       "home_team": "Washington Nationals",
       "commence_time": "2026-05-15T22:46:00Z",
       "moneyline": {
-        "away_odds": -143,
-        "home_odds": 119,
-        "away_no_vig": 0.5631,
-        "home_no_vig": 0.4369
+        "away_odds": -137,
+        "home_odds": 105,
+        "away_no_vig": 0.5423,
+        "home_no_vig": 0.4577
       },
       "totals": [
         {
           "name": "Over",
-          "point": 9.5,
-          "price": -112
+          "point": 8.5,
+          "price": -108
         },
         {
           "name": "Under",
-          "point": 9.5,
-          "price": -107
+          "point": 8.5,
+          "price": -121
         }
       ]
     },
@@ -53,21 +53,21 @@
       "home_team": "Detroit Tigers",
       "commence_time": "2026-05-15T22:46:00Z",
       "moneyline": {
-        "away_odds": -126,
-        "home_odds": -103,
-        "away_no_vig": 0.5235,
-        "home_no_vig": 0.4765
+        "away_odds": -103,
+        "home_odds": -126,
+        "away_no_vig": 0.4765,
+        "home_no_vig": 0.5235
       },
       "totals": [
         {
           "name": "Over",
           "point": 7.5,
-          "price": -131
+          "price": 100
         },
         {
           "name": "Under",
           "point": 7.5,
-          "price": 101
+          "price": -130
         }
       ]
     },
@@ -154,12 +154,12 @@
         {
           "name": "Over",
           "point": 7.5,
-          "price": -109
+          "price": -107
         },
         {
           "name": "Under",
           "point": 7.5,
-          "price": -110
+          "price": -112
         }
       ]
     },
@@ -191,10 +191,10 @@
       "home_team": "Chicago White Sox",
       "commence_time": "2026-05-15T23:41:00Z",
       "moneyline": {
-        "away_odds": -132,
-        "home_odds": 109,
-        "away_no_vig": 0.5432,
-        "home_no_vig": 0.4568
+        "away_odds": -126,
+        "home_odds": 104,
+        "away_no_vig": 0.5321,
+        "home_no_vig": 0.4679
       },
       "totals": [
         {
@@ -269,12 +269,12 @@
         {
           "name": "Over",
           "point": 11.5,
-          "price": -115
+          "price": -114
         },
         {
           "name": "Under",
           "point": 11.5,
-          "price": -104
+          "price": -105
         }
       ]
     },
@@ -283,10 +283,10 @@
       "home_team": "Los Angeles Angels",
       "commence_time": "2026-05-16T01:39:00Z",
       "moneyline": {
-        "away_odds": -187,
-        "home_odds": 153,
-        "away_no_vig": 0.6224,
-        "home_no_vig": 0.3776
+        "away_odds": -193,
+        "home_odds": 158,
+        "away_no_vig": 0.6296,
+        "home_no_vig": 0.3704
       },
       "totals": [
         {
@@ -315,12 +315,12 @@
         {
           "name": "Over",
           "point": 10.0,
-          "price": -104
+          "price": -103
         },
         {
           "name": "Under",
           "point": 10.0,
-          "price": -116
+          "price": -117
         }
       ]
     },
