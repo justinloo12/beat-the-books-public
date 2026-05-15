@@ -555,7 +555,15 @@ function arsenalTable(arsenal) {
 /* ── Team / Batter Section ── */
 function renderTeamSection(lineupCard) {
   if (!lineupCard) return "";
-  const players = (lineupCard.players || []).slice().sort((a, b) => (b.matchup_score || 0) - (a.matchup_score || 0));
+  const confirmed = lineupCard.confirmed;
+  const players = (lineupCard.players || []).slice().sort((a, b) => {
+    if (confirmed) {
+      const aSlot = typeof a.slot === "number" ? a.slot : 999;
+      const bSlot = typeof b.slot === "number" ? b.slot : 999;
+      return aSlot - bSlot;
+    }
+    return (b.matchup_score || 0) - (a.matchup_score || 0);
+  });
   return `
   <div class="team-section">
     <div class="team-head">
@@ -563,10 +571,10 @@ function renderTeamSection(lineupCard) {
         <div class="team-name">${lineupCard.team}</div>
         <div class="team-label">${lineupCard.label}</div>
       </div>
-      ${!lineupCard.confirmed ? `<span class="badge badge-pass">Projected</span>` : `<span class="badge badge-strong">Confirmed</span>`}
+      ${!confirmed ? `<span class="badge badge-pass">Projected</span>` : `<span class="badge badge-strong badge-confirmed-lineup">✓ Confirmed Lineup</span>`}
     </div>
     <div class="player-list">
-      ${players.map(renderPlayerRow).join("")}
+      ${players.map(p => renderPlayerRow(p, confirmed)).join("")}
     </div>
   </div>
   `;
@@ -625,7 +633,7 @@ function renderPitchVsStarter(player) {
   return rows ? `<div class="pitch-vs-wrap"><div class="pitch-vs-header">vs starter's top pitches</div>${rows}</div>` : "";
 }
 
-function renderPlayerRow(player) {
+function renderPlayerRow(player, confirmed = false) {
   const sim = player.simulation || {};
   const pitchScores = player.pitch_scores || player.best_pitch_matches || [];
   const hand = player.handedness || "?";
@@ -656,7 +664,9 @@ function renderPlayerRow(player) {
   <article class="player-row">
     <div class="player-header">
       <div class="player-name-block">
-        <span class="player-slot">${player.slot}</span>
+        ${confirmed && typeof player.slot === "number"
+          ? `<span class="player-batting-order">${player.slot}</span>`
+          : `<span class="player-slot">${player.slot}</span>`}
         <span class="player-name">${player.name}</span>
         <span class="badge ${hand==="L"?"badge-lhb":"badge-rhb"}">${hand}</span>
         ${platoonBadge}
