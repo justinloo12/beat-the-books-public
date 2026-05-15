@@ -704,8 +704,9 @@ function renderHistory(history) {
     return;
   }
 
-  // Summary strip
-  const graded = history.filter(p => p.result && p.result !== "pending" && p.result !== "no_result");
+  // Summary strip — picks only for headline stats
+  const picks  = history.filter(p => !p.is_lean);
+  const graded = picks.filter(p => p.result && p.result !== "pending" && p.result !== "no_result");
   const wins   = graded.filter(p => p.result === "win").length;
   const losses = graded.filter(p => p.result === "loss").length;
   const pushes = graded.filter(p => p.result === "push").length;
@@ -713,18 +714,24 @@ function renderHistory(history) {
   const roi = graded.length ? totalPnl / (graded.length * 100) : 0;
   const pnlCls = totalPnl >= 0 ? "val-good" : "val-bad";
 
+  const leanGraded = history.filter(p => p.is_lean && p.result && p.result !== "pending" && p.result !== "no_result");
+  const leanWins   = leanGraded.filter(p => p.result === "win").length;
+  const leanLosses = leanGraded.filter(p => p.result === "loss").length;
+
   if ($summary) {
     $summary.innerHTML = `
-      <div class="history-stat"><span class="hs-val">${graded.length}</span><span class="hs-lbl">Graded</span></div>
+      <div class="history-stat"><span class="hs-val">${graded.length}</span><span class="hs-lbl">Graded Picks</span></div>
       <div class="history-stat"><span class="hs-val val-good">${wins}</span><span class="hs-lbl">Wins</span></div>
       <div class="history-stat"><span class="hs-val val-bad">${losses}</span><span class="hs-lbl">Losses</span></div>
       <div class="history-stat"><span class="hs-val">${pushes}</span><span class="hs-lbl">Pushes</span></div>
-      <div class="history-stat"><span class="hs-val ${pnlCls}">${totalPnl>=0?"+":""}$${totalPnl.toFixed(2)}</span><span class="hs-lbl">Total P&L</span></div>
+      <div class="history-stat"><span class="hs-val ${pnlCls}">${totalPnl>=0?"+":""}$${totalPnl.toFixed(2)}</span><span class="hs-lbl">P&L</span></div>
       <div class="history-stat"><span class="hs-val ${pnlCls}">${roi>=0?"+":""}${(roi*100).toFixed(1)}%</span><span class="hs-lbl">ROI</span></div>
+      ${leanGraded.length ? `<div class="history-stat history-stat-lean"><span class="hs-val">${leanWins}-${leanLosses}</span><span class="hs-lbl">Leans W-L</span></div>` : ""}
     `;
   }
 
   $historyTbl.innerHTML = history.map(p => {
+    const isLean = p.is_lean;
     const result = p.result || "pending";
     const resultCls = result==="win"?"result-win": result==="loss"?"result-loss": result==="push"?"result-push":"result-open";
     const pnlStr = p.pnl == null ? "—" : `${p.pnl>=0?"+":""}$${(+p.pnl).toFixed(2)}`;
@@ -733,9 +740,9 @@ function renderHistory(history) {
     const pickSide = p.pick || p.pick_side || "—";
     const line = p.line != null ? ` ${p.line}` : "";
     return `
-    <tr>
+    <tr class="${isLean ? "history-row-lean" : ""}">
       <td>${dateStr}</td>
-      <td>${p.matchup||"—"}</td>
+      <td>${p.matchup||"—"}${isLean ? ' <span class="badge badge-neutral" style="font-size:0.65rem">lean</span>' : ""}</td>
       <td>${fmtMarketType(p.market_type)}</td>
       <td>${pickSide}${line}</td>
       <td>${fmt.odds(p.american_odds)}</td>
@@ -812,7 +819,7 @@ async function loadArchive() {
   try {
     const r = await fetch(`data/archive_index.json?ts=${Date.now()}`);
     const idx = await r.json();
-    const dates = (idx.dates || []).filter(d => d.picks > 0);
+    const dates = (idx.dates || []).filter(d => d.picks > 0 || d.leans > 0);
 
     if (!dates.length) {
       $dates.innerHTML = `<div class="empty-state">No archived days yet.</div>`;
@@ -823,8 +830,9 @@ async function loadArchive() {
       <button class="archive-date-btn" data-date="${d.date}">
         <div class="archive-date-label">${fmt.date(d.date)}</div>
         <div class="archive-date-meta">
-          <span class="archive-picks-count">${d.picks} pick${d.picks!==1?"s":""}</span>
+          ${d.picks ? `<span class="archive-picks-count">${d.picks} pick${d.picks!==1?"s":""}</span>` : ""}
           ${d.strong ? `<span class="badge badge-strong">${d.strong} strong</span>` : ""}
+          ${d.leans ? `<span class="archive-picks-count" style="opacity:0.6">${d.leans} lean${d.leans!==1?"s":""}</span>` : ""}
           <span class="archive-games-count">${d.games} games</span>
         </div>
       </button>

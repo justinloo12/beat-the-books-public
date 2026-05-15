@@ -1208,6 +1208,8 @@ td {
 td:first-child { font-family: inherit; color: var(--text-2); }
 tr:last-child td { border-bottom: none; }
 tr:hover td { background: rgba(255,255,255,0.025); }
+.history-row-lean td { opacity: 0.55; font-style: italic; }
+.history-row-lean:hover td { opacity: 0.75; }
 
 .result-win  { color: var(--green-bright); font-weight: 700; }
 .result-loss { color: var(--red);          font-weight: 700; }
@@ -1233,6 +1235,7 @@ tr:hover td { background: rgba(255,255,255,0.025); }
   gap: 2px;
   min-width: 80px;
 }
+.history-stat-lean { opacity: 0.55; }
 
 .hs-val {
   font-size: 1.15rem;
