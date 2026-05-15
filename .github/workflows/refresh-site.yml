@@ -69,6 +69,11 @@ jobs:
             --seasons "$(date +%Y)" \
             --markets h2h totals spreads
 
+      - name: Build live odds snapshot for browser refresh
+        if: steps.slate.outputs.run_refresh == 'true'
+        run: |
+          python -m mlb_model.refresh_live_odds --date "${{ steps.slate.outputs.slate_date }}"
+
       - name: Export latest board snapshot
         if: steps.slate.outputs.run_refresh == 'true'
         run: |
@@ -123,6 +128,7 @@ jobs:
           git add docs/data/latest.json
           git add "docs/data/${{ steps.slate.outputs.slate_date }}.json"
           git add docs/data/archive_index.json
+          git add docs/data/live_odds.json || true
           git add docs/data/pick_history.json || true
           git diff --cached --quiet && exit 0
           git commit -m "Refresh site snapshot for ${{ steps.slate.outputs.slate_date }}"
