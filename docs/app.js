@@ -852,8 +852,27 @@ async function loadBoard() {
         const lo = await r.json();
         if (lo.date === payload.date) {
           _liveOddsPayload = lo;
-          payload.daily.picks = applyLiveOdds(payload.daily.picks || [], lo);
-          payload.daily.leans = applyLiveOdds(payload.daily.leans || [], lo);
+          // Combine picks + leans, apply live odds, then re-split by current edge.
+          // A lean that crosses 6% becomes a pick; a pick that drops below 6% becomes
+          // a lean or disappears. Dedup by market+pick+line so no duplicates.
+          const seen = new Set();
+          const all = applyLiveOdds([
+            ...(payload.daily.picks || []),
+            ...(payload.daily.leans || []),
+          ], lo).filter(p => {
+            const key = `${p.market_type}|${p.pick}|${p.line}|${p.matchup}`;
+            if (seen.has(key)) return false;
+            seen.add(key);
+            return true;
+          });
+          payload.daily.picks = all
+            .filter(p => p.edge >= 0.06)
+            .sort((a, b) => b.edge - a.edge)
+            .slice(0, 3);
+          payload.daily.leans = all
+            .filter(p => p.edge >= 0.025 && p.edge < 0.06)
+            .sort((a, b) => b.edge - a.edge)
+            .slice(0, 8);
         }
       }
     } catch (_) { /* live odds optional */ }
