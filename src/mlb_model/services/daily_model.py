@@ -155,11 +155,10 @@ class DailyPredictionService:
             picks,
             key=lambda item: (
                 item.get("tier") != "strong",
-                item.get("tier") != "moderate",
                 -item.get("edge", 0.0),
                 -item.get("model_probability", 0.0),
             ),
-        )[:10]
+        )[:3]
         leans = sorted(leans, key=lambda item: -item.get("edge", 0.0))[:10]
         lineup_cards = sorted(lineup_cards, key=lambda item: item["matchup"])
         return {"date": slate_date.isoformat(), "picks": picks, "leans": leans, "lineup_cards": lineup_cards, "skipped": skipped}
