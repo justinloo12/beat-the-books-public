@@ -393,7 +393,7 @@ function renderGameCard(card) {
   if (!card) return "";
   const weather = card.weather || {};
   const windHigh = +(weather.wind_speed_mph||0) >= 12;
-  const topPicks = card.top_game_picks || [];
+  const topPicks = (card.top_game_picks || []).filter(p => p.edge > 0);
   const hp = card.home_pitcher;
   const ap = card.away_pitcher;
 
@@ -445,7 +445,7 @@ function renderGameCard(card) {
     <div class="game-picks-bar">
       ${topPicks.map(p=>`
         <div class="inline-pick tier-${(p.tier||"").toLowerCase()}">
-          <span class="ip-pick">${fmtMarketType(p.market_type)} ${p.line??""} ${p.pick}</span>
+          <span class="ip-pick">${fmtMarketType(p.market_type)}${p.line ? ` ${p.line}` : ""} ${p.pick}</span>
           <span class="ip-meta">${fmt.odds(p.american_odds)}</span>
           ${tierBadge(p.tier)}
           <span class="ip-edge">${fmt.pctS(p.edge)}</span>
