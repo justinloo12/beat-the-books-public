@@ -149,7 +149,7 @@ function renderPicks(picks) {
           <div class="pick-matchup">${pick.matchup}</div>
           <div class="pick-meta">
             ${tierBadge(pick.tier)}
-            <span class="pick-market">${fmtMarketType(pick.market_type)} · ${pick.pick} ${pick.line??""} · ${pick.start_time??"TBD"}</span>
+            <span class="pick-market">${fmtMarketType(pick.market_type)} · ${pick.pick}${pick.line ? ` ${pick.line}` : ""} · ${pick.start_time??"TBD"}</span>
           </div>
         </div>
         <div class="pick-right">
@@ -201,7 +201,7 @@ function renderLeans(leans) {
           <div class="pick-matchup">${lean.matchup}</div>
           <div class="pick-meta">
             <span class="badge badge-neutral">lean</span>
-            <span class="pick-market">${fmtMarketType(lean.market_type)} · ${lean.pick} ${lean.line??""} · ${lean.start_time??"TBD"}</span>
+            <span class="pick-market">${fmtMarketType(lean.market_type)} · ${lean.pick}${lean.line ? ` ${lean.line}` : ""} · ${lean.start_time??"TBD"}</span>
           </div>
         </div>
         <div class="pick-right">
@@ -261,7 +261,7 @@ function pickBlurb(pick) {
   const lineup = pick.lineup_status === "confirmed" ? "confirmed lineups" : "projected lineups";
   const top = (pick.top_features || [])[0];
   const featureText = top ? `${top.feature} is a key driver` : "the simulation is pricing this side above market";
-  return `${market} ${pick.pick}${pick.line != null ? ` ${pick.line}` : ""} cleared the board with a ${fmt.pctS(pick.edge)} edge. ${featureText}, and this card is still using ${lineup}.`;
+  return `${market} ${pick.pick}${pick.line ? ` ${pick.line}` : ""} cleared the board with a ${fmt.pctS(pick.edge)} edge. ${featureText}, and this card is still using ${lineup}.`;
 }
 
 function avgMatchup(players) {
@@ -748,7 +748,7 @@ function renderHistory(history) {
     const pnlCls2 = p.pnl == null ? "" : p.pnl > 0 ? "val-good" : p.pnl < 0 ? "val-bad" : "";
     const dateStr = p.date || (p.placed_at||"").slice(0,10);
     const pickSide = p.pick || p.pick_side || "—";
-    const line = p.line != null ? ` ${p.line}` : "";
+    const line = p.line ? ` ${p.line}` : "";
     return `
     <tr class="${isLean ? "history-row-lean" : ""}">
       <td>${dateStr}</td>
@@ -888,7 +888,7 @@ async function loadArchiveDay(dateStr, $picks) {
               <div class="pick-matchup">${pick.matchup}</div>
               <div class="pick-meta">
                 ${tierBadge(pick.tier)}
-                <span class="pick-market">${fmtMarketType(pick.market_type)} · ${pick.pick} ${pick.line??""} · ${pick.start_time??"TBD"}</span>
+                <span class="pick-market">${fmtMarketType(pick.market_type)} · ${pick.pick}${pick.line ? ` ${pick.line}` : ""} · ${pick.start_time??"TBD"}</span>
               </div>
             </div>
             <div class="pick-right">
