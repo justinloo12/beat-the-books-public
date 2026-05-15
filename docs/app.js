@@ -394,9 +394,7 @@ function renderGameCard(card) {
   if (!card) return "";
   const weather = card.weather || {};
   const windHigh = +(weather.wind_speed_mph||0) >= 12;
-  const topPicks = applyLiveOdds(card.top_game_picks || [], _liveOddsPayload)
-    .filter(p => p.edge > 0)
-    .sort((a, b) => b.edge - a.edge);
+  const topPicks = (card.top_game_picks || []).filter(p => p.edge > 0);
   const hp = card.home_pitcher;
   const ap = card.away_pitcher;
 
@@ -878,6 +876,20 @@ async function loadBoard() {
         }
       }
     } catch (_) { /* live odds optional */ }
+
+    // Sync game card top_game_picks with live-adjusted picks/leans so both
+    // sections always show identical edges (no re-matching required).
+    const livePickMap = new Map();
+    for (const p of [...(payload.daily.picks || []), ...(payload.daily.leans || [])]) {
+      livePickMap.set(`${p.market_type}|${p.pick}|${p.line}`, p);
+    }
+    for (const card of currentCards) {
+      if (card.top_game_picks) {
+        card.top_game_picks = card.top_game_picks.map(p =>
+          livePickMap.get(`${p.market_type}|${p.pick}|${p.line}`) || p
+        );
+      }
+    }
 
     renderHero(payload);
     renderSummary(payload.summary || {});
