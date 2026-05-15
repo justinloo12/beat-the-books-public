@@ -66,6 +66,7 @@ class DailyPredictionService:
             for game in odds_bundle
         }
         picks: list[dict[str, Any]] = []
+        leans: list[dict[str, Any]] = []
         lineup_cards: list[dict[str, Any]] = []
         skipped: list[dict[str, Any]] = []
         now_et = datetime.now(ZoneInfo("America/New_York"))
@@ -128,12 +129,16 @@ class DailyPredictionService:
                     venue=game.get("venue", {}).get("name", "Unknown"),
                     start_time=game.get("gameDate"),
                 )
-                game_picks, top_game_picks = self._score_markets(context, odds_game)
+                game_picks, top_game_picks, game_leans = self._score_markets(context, odds_game)
                 context["top_game_picks"] = top_game_picks
+                lineup_status = "confirmed" if home_confirmed and away_confirmed else "projected"
                 for pick in game_picks:
-                    pick["lineup_status"] = "confirmed" if home_confirmed and away_confirmed else "projected"
+                    pick["lineup_status"] = lineup_status
+                for lean in game_leans:
+                    lean["lineup_status"] = lineup_status
                 lineup_cards.append(self._build_lineup_card(context))
                 picks.extend(game_picks)
+                leans.extend(game_leans)
                 if not home_confirmed or not away_confirmed:
                     skipped.append({"matchup": matchup_label, "reason": "lineups not confirmed"})
                     continue
@@ -153,8 +158,9 @@ class DailyPredictionService:
                 -item.get("model_probability", 0.0),
             ),
         )[:10]
+        leans = sorted(leans, key=lambda item: -item.get("edge", 0.0))[:10]
         lineup_cards = sorted(lineup_cards, key=lambda item: item["matchup"])
-        return {"date": slate_date.isoformat(), "picks": picks, "lineup_cards": lineup_cards, "skipped": skipped}
+        return {"date": slate_date.isoformat(), "picks": picks, "leans": leans, "lineup_cards": lineup_cards, "skipped": skipped}
 
     # League-average bullpen profile used when an opener is detected.
     # The bulk reliever/bullpen who follows the opener is unknown at pick time,
@@ -579,7 +585,7 @@ class DailyPredictionService:
             "Last5FBv": [93.0] * 5,
         }
 
-    def _score_markets(self, context: dict[str, Any], odds_game: dict[str, Any] | None) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
+    def _score_markets(self, context: dict[str, Any], odds_game: dict[str, Any] | None) -> tuple[list[dict[str, Any]], list[dict[str, Any]], list[dict[str, Any]]]:
         home_lineup = [self._with_weather(entry, context["weather"]) for entry in context["home_lineup_matchups"]]
         away_lineup = [self._with_weather(entry, context["weather"]) for entry in context["away_lineup_matchups"]]
         simulation_summary = self.simulation.simulate_game(

@@ -7,6 +7,8 @@ let activeArsenalSplit = {}; // matchup -> "overall"|"vs_l"|"vs_r"
 const $summaryGrid = document.getElementById("summary-grid");
 const $dailyPicks  = document.getElementById("daily-picks");
 const $dailyMeta   = document.getElementById("daily-meta");
+const $dailyLeans  = document.getElementById("daily-leans");
+const $leansMeta   = document.getElementById("leans-meta");
 const $historyTbl  = document.getElementById("history-table");
 const $gameDetail  = document.getElementById("game-detail");
 const $skippedList = document.getElementById("skipped-list");
@@ -90,12 +92,14 @@ async function fetchPayload() {
 function renderHero(payload) {
   const cards = payload.daily.lineup_cards || [];
   const picks = payload.daily.picks || [];
+  const leans = payload.daily.leans || [];
   const strongWind = cards.slice().sort((a,b)=>+(b.weather?.wind_speed_mph||0)-+(a.weather?.wind_speed_mph||0))[0];
   const strongCount = picks.filter(p=>p.tier==="strong").length;
 
   $heroPills.innerHTML = [
     `<span class="pill accent">${cards.length} games on board</span>`,
-    `<span class="pill">${picks.length} picks posted</span>`,
+    picks.length ? `<span class="pill">${picks.length} pick${picks.length!==1?"s":""} posted</span>` : "",
+    leans.length ? `<span class="pill">${leans.length} lean${leans.length!==1?"s":""}</span>` : "",
     strongCount ? `<span class="pill">${strongCount} strong edge${strongCount>1?"s":""}</span>` : "",
     strongWind ? `<span class="pill">${strongWind.matchup}: ${windLabel(strongWind.weather)}</span>` : "",
   ].filter(Boolean).join("");
@@ -179,6 +183,40 @@ function renderPicks(picks) {
     </article>
     `;
   }).join("");
+}
+
+/* ── Render Leans ── */
+function renderLeans(leans) {
+  if (!$dailyLeans) return;
+  if (!leans || !leans.length) {
+    $dailyLeans.innerHTML = `<div class="empty-state">No leans today — model saw no edges between 2.5% and 5%.</div>`;
+    if ($leansMeta) $leansMeta.textContent = "";
+    return;
+  }
+  if ($leansMeta) $leansMeta.textContent = `${leans.length} low-confidence lean${leans.length!==1?"s":""} — not picks, for tracking only`;
+  $dailyLeans.innerHTML = leans.map(lean => `
+    <article class="pick-card tier-lean">
+      <div class="pick-header">
+        <div class="pick-main">
+          <div class="pick-matchup">${lean.matchup}</div>
+          <div class="pick-meta">
+            <span class="badge badge-neutral">lean</span>
+            <span class="pick-market">${fmtMarketType(lean.market_type)} · ${lean.pick} ${lean.line??""} · ${lean.start_time??"TBD"}</span>
+          </div>
+        </div>
+        <div class="pick-right">
+          <div class="edge-value" style="color:var(--muted)">${fmt.pctS(lean.edge)}</div>
+          <div class="pick-odds-line">${fmt.odds(lean.american_odds)}</div>
+        </div>
+      </div>
+      <div class="pick-body">
+        <div class="pick-stat"><div class="label">Model %</div><div class="val">${fmt.pct(lean.model_probability)}</div></div>
+        <div class="pick-stat"><div class="label">No-vig %</div><div class="val">${fmt.pct(lean.no_vig_probability)}</div></div>
+        <div class="pick-stat"><div class="label">Edge</div><div class="val">${fmt.pctS(lean.edge)}</div></div>
+        <div class="pick-stat"><div class="label">Lineup</div><div class="val">${lean.lineup_status??"—"}</div></div>
+      </div>
+    </article>
+  `).join("");
 }
 
 function fmtMarketType(t) {
@@ -727,6 +765,7 @@ async function loadBoard() {
     renderHero(payload);
     renderSummary(payload.summary || {});
     renderPicks(payload.daily.picks || []);
+    renderLeans(payload.daily.leans || []);
     if ($historyTbl) renderHistory(payload.history || []);
     renderGames(currentCards);
   } catch (err) {
