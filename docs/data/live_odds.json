@@ -1,5 +1,5 @@
 {
-  "fetched_at": "2026-05-16T15:50:00.973234Z",
+  "fetched_at": "2026-05-16T16:18:07.869532Z",
   "date": "2026-05-16",
   "games": [
     {
@@ -30,10 +30,10 @@
       "home_team": "St. Louis Cardinals",
       "commence_time": "2026-05-16T18:16:00Z",
       "moneyline": {
-        "away_odds": -101,
-        "home_odds": -120,
-        "away_no_vig": 0.4795,
-        "home_no_vig": 0.5205
+        "away_odds": -106,
+        "home_odds": -114,
+        "away_no_vig": 0.4913,
+        "home_no_vig": 0.5087
       },
       "totals": [
         {
@@ -44,7 +44,7 @@
         {
           "name": "Under",
           "point": 9.0,
-          "price": -107
+          "price": -108
         }
       ]
     },
@@ -62,7 +62,7 @@
         {
           "name": "Over",
           "point": 11.0,
-          "price": -119
+          "price": -120
         },
         {
           "name": "Under",
@@ -145,10 +145,10 @@
       "home_team": "Cleveland Guardians",
       "commence_time": "2026-05-16T22:11:00Z",
       "moneyline": {
-        "away_odds": 135,
-        "home_odds": -163,
-        "away_no_vig": 0.4071,
-        "home_no_vig": 0.5929
+        "away_odds": 130,
+        "home_odds": -157,
+        "away_no_vig": 0.4158,
+        "home_no_vig": 0.5842
       },
       "totals": [
         {
@@ -237,10 +237,10 @@
       "home_team": "Atlanta Braves",
       "commence_time": "2026-05-16T23:16:00Z",
       "moneyline": {
-        "away_odds": 105,
-        "home_odds": -126,
-        "away_no_vig": 0.4667,
-        "home_no_vig": 0.5333
+        "away_odds": 104,
+        "home_odds": -125,
+        "away_no_vig": 0.4687,
+        "home_no_vig": 0.5312
       },
       "totals": [
         {
@@ -283,21 +283,21 @@
       "home_team": "Seattle Mariners",
       "commence_time": "2026-05-16T23:16:00Z",
       "moneyline": {
-        "away_odds": 141,
-        "home_odds": -171,
-        "away_no_vig": 0.3967,
-        "home_no_vig": 0.6033
+        "away_odds": 144,
+        "home_odds": -175,
+        "away_no_vig": 0.3917,
+        "home_no_vig": 0.6083
       },
       "totals": [
         {
           "name": "Over",
           "point": 7.0,
-          "price": -122
+          "price": -120
         },
         {
           "name": "Under",
           "point": 7.0,
-          "price": 101
+          "price": -101
         }
       ]
     },
@@ -329,10 +329,10 @@
       "home_team": "Athletics",
       "commence_time": "2026-05-17T01:41:00Z",
       "moneyline": {
-        "away_odds": 113,
-        "home_odds": -136,
-        "away_no_vig": 0.4489,
-        "home_no_vig": 0.5511
+        "away_odds": 118,
+        "home_odds": -142,
+        "away_no_vig": 0.4388,
+        "home_no_vig": 0.5612
       },
       "totals": [
         {
