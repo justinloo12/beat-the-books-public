@@ -277,7 +277,12 @@ class SimulationModelService:
                 continue
             if pick["market_type"] == "moneyline" and pick["edge"] < model_settings.edge_thresholds["moneyline_min"]:
                 continue
-            dedup_key = (pick["market_type"], pick["pick"], pick.get("line"))
+            # For totals: dedup by (market, direction, matchup) — same game/direction
+            # at different lines is still the same bet. For ML: include line (always 0).
+            if pick["market_type"] in {"game_total", "first_five_total"}:
+                dedup_key = (pick["market_type"], pick["pick"], pick.get("matchup", ""))
+            else:
+                dedup_key = (pick["market_type"], pick["pick"], pick.get("line"))
             if dedup_key in _seen_daily:
                 continue
             _seen_daily.add(dedup_key)
@@ -294,7 +299,10 @@ class SimulationModelService:
                 continue
             if pick["market_type"] == "runline":
                 continue
-            dedup_key = (pick["market_type"], pick["pick"], pick.get("line"))
+            if pick["market_type"] in {"game_total", "first_five_total"}:
+                dedup_key = (pick["market_type"], pick["pick"], pick.get("matchup", ""))
+            else:
+                dedup_key = (pick["market_type"], pick["pick"], pick.get("line"))
             if dedup_key in _seen_leans:
                 continue
             _seen_leans.add(dedup_key)

@@ -115,20 +115,34 @@ function renderHero(payload) {
 function renderSummary(s) {
   const dollarsWon = (+(s.units_profit || 0)) * 100;
   const dollarsRisked = (+(s.units_risked || 0)) * 100;
-  const cards = [
+  const pickCards = [
     ["Won/Lost",    fmt.money(dollarsWon),            `${fmt.money(dollarsRisked,0).replace("+","") } risked at $100 per bet`],
     ["ROI",         fmt.pct(s.roi),                   `${fmt.sign(s.units_profit)} units`],
-    ["Tracked",     s.tracked_bets,                   `${s.wins}-${s.losses}-${s.pushes} W-L-P`],
-    ["Hit Rate",    fmt.pct(s.hit_rate),               "graded picks"],
-    ["Today",       s.lineup_card_count,               `${s.daily_pick_count} pick${s.daily_pick_count!==1?"s":""}`],
+    ["Record",      `${s.wins}-${s.losses}`,          `${s.pushes ? s.pushes + " push · " : ""}graded picks`],
+    ["Hit Rate",    fmt.pct(s.hit_rate),               "picks only"],
+    ["Today",       s.lineup_card_count,               `${s.daily_pick_count ?? 0} pick${(s.daily_pick_count??0)!==1?"s":""} · ${s.daily_lean_count ?? 0} lean${(s.daily_lean_count??0)!==1?"s":""}`],
   ];
-  $summaryGrid.innerHTML = cards.map(([l,v,d])=>`
+  const mkCard = ([l,v,d]) => `
     <div class="stat-card">
       <div class="label">${l}</div>
       <div class="value">${v}</div>
       <div class="detail">${d}</div>
-    </div>
-  `).join("");
+    </div>`;
+  $summaryGrid.innerHTML = pickCards.map(mkCard).join("");
+
+  const $leanGrid = document.getElementById("lean-summary-grid");
+  if ($leanGrid) {
+    const lw = s.lean_wins ?? 0, ll = s.lean_losses ?? 0, lp = s.lean_pushes ?? 0;
+    const lDollarsWon = (+(s.lean_units_profit || 0)) * 100;
+    const lDollarsRisked = (+(s.lean_units_risked || 0)) * 100;
+    const leanCards = [
+      ["Won/Lost",    fmt.money(lDollarsWon),          `${fmt.money(lDollarsRisked,0).replace("+","") } risked at $100 per lean`],
+      ["ROI",         fmt.pct(s.lean_roi ?? 0),        `${fmt.sign(s.lean_units_profit ?? 0)} units`],
+      ["Record",      `${lw}-${ll}`,                   `${lp ? lp + " push · " : ""}graded leans`],
+      ["Hit Rate",    fmt.pct(s.lean_hit_rate ?? 0),   "leans only"],
+    ];
+    $leanGrid.innerHTML = leanCards.map(mkCard).join("");
+  }
 }
 
 /* ── Render Picks ── */
@@ -845,34 +859,17 @@ async function loadBoard() {
     const payload = await fetchPayload();
     currentCards = payload.daily.lineup_cards || [];
 
-    // Try to refresh odds live — today's date only
+    // Fetch live odds for current price display — picks/leans are locked at model-run
+    // time and are not re-filtered here; only the displayed odds price updates.
     try {
       const r = await fetch(`data/live_odds.json?ts=${Date.now()}`);
       if (r.ok) {
         const lo = await r.json();
         if (lo.date === payload.date) {
           _liveOddsPayload = lo;
-          // Combine picks + leans, apply live odds, then re-split by current edge.
-          // A lean that crosses 6% becomes a pick; a pick that drops below 6% becomes
-          // a lean or disappears. Dedup by market+pick+line so no duplicates.
-          const seen = new Set();
-          const all = applyLiveOdds([
-            ...(payload.daily.picks || []),
-            ...(payload.daily.leans || []),
-          ], lo).filter(p => {
-            const key = `${p.market_type}|${p.pick}|${p.line}|${p.matchup}`;
-            if (seen.has(key)) return false;
-            seen.add(key);
-            return true;
-          });
-          payload.daily.picks = all
-            .filter(p => p.edge >= 0.06)
-            .sort((a, b) => b.edge - a.edge)
-            .slice(0, 3);
-          payload.daily.leans = all
-            .filter(p => p.edge >= 0.025 && p.edge < 0.06)
-            .sort((a, b) => b.edge - a.edge)
-            .slice(0, 8);
+          // Update displayed price on picks and leans without changing their status.
+          payload.daily.picks = applyLiveOdds(payload.daily.picks || [], lo);
+          payload.daily.leans = applyLiveOdds(payload.daily.leans || [], lo);
         }
       }
     } catch (_) { /* live odds optional */ }

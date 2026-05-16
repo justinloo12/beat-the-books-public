@@ -20,7 +20,7 @@ def _load_pick_history() -> list[dict]:
     return []
 
 
-def _history_summary(entries: list[dict]) -> dict:
+def _stats_for(entries: list[dict]) -> dict:
     graded = [e for e in entries if e.get("result") in {"win", "loss", "push"}]
     wins = sum(1 for e in graded if e.get("result") == "win")
     losses = sum(1 for e in graded if e.get("result") == "loss")
@@ -28,11 +28,10 @@ def _history_summary(entries: list[dict]) -> dict:
     units_risked = float(len(graded))
     units_profit = round(sum(float(e.get("pnl", 0.0)) / 100.0 for e in graded), 4)
     tracked = len(graded)
-    hit_rate = (wins / tracked) if tracked else 0.0
+    hit_rate = (wins / (wins + losses)) if (wins + losses) else 0.0
     roi = (units_profit / units_risked) if units_risked else 0.0
     return {
         "tracked_bets": tracked,
-        "graded_bets": tracked,
         "wins": wins,
         "losses": losses,
         "pushes": pushes,
@@ -40,6 +39,26 @@ def _history_summary(entries: list[dict]) -> dict:
         "units_profit": units_profit,
         "roi": roi,
         "hit_rate": hit_rate,
+    }
+
+
+def _history_summary(entries: list[dict]) -> dict:
+    # is_lean=None means the entry pre-dates the field — treat as a pick
+    picks = [e for e in entries if not e.get("is_lean")]
+    leans = [e for e in entries if e.get("is_lean")]
+    pick_stats = _stats_for(picks)
+    lean_stats = _stats_for(leans)
+    return {
+        **pick_stats,
+        "graded_bets": pick_stats["tracked_bets"],
+        "lean_tracked_bets": lean_stats["tracked_bets"],
+        "lean_wins": lean_stats["wins"],
+        "lean_losses": lean_stats["losses"],
+        "lean_pushes": lean_stats["pushes"],
+        "lean_units_risked": lean_stats["units_risked"],
+        "lean_units_profit": lean_stats["units_profit"],
+        "lean_roi": lean_stats["roi"],
+        "lean_hit_rate": lean_stats["hit_rate"],
     }
 
 
