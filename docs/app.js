@@ -120,7 +120,7 @@ function renderSummary(s) {
     ["ROI",         fmt.pct(s.roi),                   `${fmt.sign(s.units_profit)} units`],
     ["Tracked",     s.tracked_bets,                   `${s.wins}-${s.losses}-${s.pushes} W-L-P`],
     ["Hit Rate",    fmt.pct(s.hit_rate),               "graded picks"],
-    ["Today",       s.lineup_card_count,               `${s.daily_pick_count} pick${s.daily_pick_count!==1?"s":""}`],
+    ["Today",       s.lineup_card_count,               `${s.daily_pick_count ?? 0} pick${(s.daily_pick_count??0)!==1?"s":""} · ${s.daily_lean_count ?? 0} lean${(s.daily_lean_count??0)!==1?"s":""}`],
   ];
   $summaryGrid.innerHTML = cards.map(([l,v,d])=>`
     <div class="stat-card">
