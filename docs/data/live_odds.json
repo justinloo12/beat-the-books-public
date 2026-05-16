@@ -1,50 +1,27 @@
 {
-  "fetched_at": "2026-05-16T22:28:30.007114Z",
+  "fetched_at": "2026-05-16T22:36:48.389262Z",
   "date": "2026-05-16",
   "games": [
-    {
-      "away_team": "Arizona Diamondbacks",
-      "home_team": "Colorado Rockies",
-      "commence_time": "2026-05-16T19:11:00Z",
-      "moneyline": {
-        "away_odds": 980,
-        "home_odds": -3400,
-        "away_no_vig": 0.087,
-        "home_no_vig": 0.913
-      },
-      "totals": [
-        {
-          "name": "Over",
-          "point": 6.5,
-          "price": 380
-        },
-        {
-          "name": "Under",
-          "point": 6.5,
-          "price": -592
-        }
-      ]
-    },
     {
       "away_team": "Miami Marlins",
       "home_team": "Tampa Bay Rays",
       "commence_time": "2026-05-16T20:11:00Z",
       "moneyline": {
-        "away_odds": 136,
-        "home_odds": -179,
-        "away_no_vig": 0.3978,
-        "home_no_vig": 0.6022
+        "away_odds": -2600,
+        "home_odds": 890,
+        "away_no_vig": 0.9051,
+        "home_no_vig": 0.0949
       },
       "totals": [
         {
           "name": "Over",
           "point": 3.5,
-          "price": -105
+          "price": 598
         },
         {
           "name": "Under",
           "point": 3.5,
-          "price": -123
+          "price": -1160
         }
       ]
     },
@@ -53,21 +30,21 @@
       "home_team": "Cleveland Guardians",
       "commence_time": "2026-05-16T22:11:00Z",
       "moneyline": {
-        "away_odds": 134,
-        "home_odds": -176,
-        "away_no_vig": 0.4013,
-        "home_no_vig": 0.5987
+        "away_odds": 122,
+        "home_odds": -159,
+        "away_no_vig": 0.4232,
+        "home_no_vig": 0.5768
       },
       "totals": [
         {
           "name": "Over",
           "point": 6.5,
-          "price": -140
+          "price": -124
         },
         {
           "name": "Under",
           "point": 6.5,
-          "price": 108
+          "price": -105
         }
       ]
     },
