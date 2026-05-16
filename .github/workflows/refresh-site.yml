@@ -3,12 +3,12 @@ name: Refresh Site
 on:
   workflow_dispatch:
   schedule:
-    # Morning window (10am–12pm ET) catches confirmed lineups for day games.
-    - cron: "*/15 14,15,16 * * *"
-    # Afternoon window (3–5pm ET) catches confirmed lineups for evening games.
-    - cron: "*/15 19,20,21 * * *"
-    # Pre-game window (5–7pm ET) refreshes odds close to first pitch.
-    - cron: "*/15 21,22,23 * * *"
+    # 11am ET — locks picks for 12–3pm games
+    - cron: "0 16 * * *"
+    # 3pm ET — locks picks for 4–6pm games
+    - cron: "0 20 * * *"
+    # 6pm ET — locks picks for 6–10pm games
+    - cron: "0 23 * * *"
 
 permissions:
   contents: write
@@ -44,7 +44,7 @@ jobs:
             exit 0
           fi
           hour=$(date +%H)
-          valid_hours="10 11 12 15 16 17 18 19"
+          valid_hours="11 15 18"
           if ! echo "$valid_hours" | grep -qw "$hour"; then
             echo "run_refresh=false" >> "$GITHUB_OUTPUT"
             exit 0
