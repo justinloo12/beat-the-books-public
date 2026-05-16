@@ -1,5 +1,5 @@
 {
-  "fetched_at": "2026-05-16T15:35:57.818534Z",
+  "fetched_at": "2026-05-16T15:50:00.973234Z",
   "date": "2026-05-16",
   "games": [
     {
@@ -39,12 +39,12 @@
         {
           "name": "Over",
           "point": 9.0,
-          "price": -114
+          "price": -112
         },
         {
           "name": "Under",
           "point": 9.0,
-          "price": -105
+          "price": -107
         }
       ]
     },
@@ -108,12 +108,12 @@
         {
           "name": "Over",
           "point": 8.5,
-          "price": -107
+          "price": -104
         },
         {
           "name": "Under",
           "point": 8.5,
-          "price": -112
+          "price": -115
         }
       ]
     },
@@ -260,21 +260,21 @@
       "home_team": "New York Mets",
       "commence_time": "2026-05-16T23:16:00Z",
       "moneyline": {
-        "away_odds": -123,
-        "home_odds": 102,
-        "away_no_vig": 0.527,
-        "home_no_vig": 0.473
+        "away_odds": -125,
+        "home_odds": 104,
+        "away_no_vig": 0.5312,
+        "home_no_vig": 0.4687
       },
       "totals": [
         {
           "name": "Over",
           "point": 8.5,
-          "price": -107
+          "price": -105
         },
         {
           "name": "Under",
           "point": 8.5,
-          "price": -112
+          "price": -114
         }
       ]
     },
@@ -306,21 +306,21 @@
       "home_team": "Los Angeles Angels",
       "commence_time": "2026-05-17T01:39:00Z",
       "moneyline": {
-        "away_odds": -136,
-        "home_odds": 113,
-        "away_no_vig": 0.5511,
-        "home_no_vig": 0.4489
+        "away_odds": -143,
+        "home_odds": 119,
+        "away_no_vig": 0.5631,
+        "home_no_vig": 0.4369
       },
       "totals": [
         {
           "name": "Over",
           "point": 8.5,
-          "price": -109
+          "price": -107
         },
         {
           "name": "Under",
           "point": 8.5,
-          "price": -110
+          "price": -112
         }
       ]
     },
@@ -338,12 +338,12 @@
         {
           "name": "Over",
           "point": 9.5,
-          "price": -117
+          "price": -105
         },
         {
           "name": "Under",
           "point": 9.5,
-          "price": -103
+          "price": -114
         }
       ]
     }
