@@ -1,5 +1,5 @@
 {
-  "fetched_at": "2026-05-16T22:36:48.389262Z",
+  "fetched_at": "2026-05-16T22:47:44.273660Z",
   "date": "2026-05-16",
   "games": [
     {
@@ -7,21 +7,21 @@
       "home_team": "Tampa Bay Rays",
       "commence_time": "2026-05-16T20:11:00Z",
       "moneyline": {
-        "away_odds": -2600,
-        "home_odds": 890,
-        "away_no_vig": 0.9051,
-        "home_no_vig": 0.0949
+        "away_odds": -117,
+        "home_odds": -111,
+        "away_no_vig": 0.5062,
+        "home_no_vig": 0.4938
       },
       "totals": [
         {
           "name": "Over",
-          "point": 3.5,
-          "price": 598
+          "point": 6.5,
+          "price": 105
         },
         {
           "name": "Under",
-          "point": 3.5,
-          "price": -1160
+          "point": 6.5,
+          "price": -136
         }
       ]
     },
@@ -30,21 +30,21 @@
       "home_team": "Cleveland Guardians",
       "commence_time": "2026-05-16T22:11:00Z",
       "moneyline": {
-        "away_odds": 122,
-        "home_odds": -159,
-        "away_no_vig": 0.4232,
-        "home_no_vig": 0.5768
+        "away_odds": 316,
+        "home_odds": -466,
+        "away_no_vig": 0.226,
+        "home_no_vig": 0.774
       },
       "totals": [
         {
           "name": "Over",
-          "point": 6.5,
-          "price": -124
+          "point": 7.5,
+          "price": -118
         },
         {
           "name": "Under",
-          "point": 6.5,
-          "price": -105
+          "point": 7.5,
+          "price": -110
         }
       ]
     },
@@ -200,12 +200,12 @@
         {
           "name": "Over",
           "point": 8.5,
-          "price": -114
+          "price": -112
         },
         {
           "name": "Under",
           "point": 8.5,
-          "price": -105
+          "price": -107
         }
       ]
     },
