@@ -115,20 +115,34 @@ function renderHero(payload) {
 function renderSummary(s) {
   const dollarsWon = (+(s.units_profit || 0)) * 100;
   const dollarsRisked = (+(s.units_risked || 0)) * 100;
-  const cards = [
+  const pickCards = [
     ["Won/Lost",    fmt.money(dollarsWon),            `${fmt.money(dollarsRisked,0).replace("+","") } risked at $100 per bet`],
     ["ROI",         fmt.pct(s.roi),                   `${fmt.sign(s.units_profit)} units`],
-    ["Tracked",     s.tracked_bets,                   `${s.wins}-${s.losses}-${s.pushes} W-L-P`],
-    ["Hit Rate",    fmt.pct(s.hit_rate),               "graded picks"],
+    ["Record",      `${s.wins}-${s.losses}`,          `${s.pushes ? s.pushes + " push · " : ""}graded picks`],
+    ["Hit Rate",    fmt.pct(s.hit_rate),               "picks only"],
     ["Today",       s.lineup_card_count,               `${s.daily_pick_count ?? 0} pick${(s.daily_pick_count??0)!==1?"s":""} · ${s.daily_lean_count ?? 0} lean${(s.daily_lean_count??0)!==1?"s":""}`],
   ];
-  $summaryGrid.innerHTML = cards.map(([l,v,d])=>`
+  const mkCard = ([l,v,d]) => `
     <div class="stat-card">
       <div class="label">${l}</div>
       <div class="value">${v}</div>
       <div class="detail">${d}</div>
-    </div>
-  `).join("");
+    </div>`;
+  $summaryGrid.innerHTML = pickCards.map(mkCard).join("");
+
+  const $leanGrid = document.getElementById("lean-summary-grid");
+  if ($leanGrid) {
+    const lw = s.lean_wins ?? 0, ll = s.lean_losses ?? 0, lp = s.lean_pushes ?? 0;
+    const lDollarsWon = (+(s.lean_units_profit || 0)) * 100;
+    const lDollarsRisked = (+(s.lean_units_risked || 0)) * 100;
+    const leanCards = [
+      ["Won/Lost",    fmt.money(lDollarsWon),          `${fmt.money(lDollarsRisked,0).replace("+","") } risked at $100 per lean`],
+      ["ROI",         fmt.pct(s.lean_roi ?? 0),        `${fmt.sign(s.lean_units_profit ?? 0)} units`],
+      ["Record",      `${lw}-${ll}`,                   `${lp ? lp + " push · " : ""}graded leans`],
+      ["Hit Rate",    fmt.pct(s.lean_hit_rate ?? 0),   "leans only"],
+    ];
+    $leanGrid.innerHTML = leanCards.map(mkCard).join("");
+  }
 }
 
 /* ── Render Picks ── */
