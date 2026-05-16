@@ -19,76 +19,7 @@
   },
   "daily": {
     "date": "2026-05-15",
-    "picks": [
-      {
-        "matchup": "Cincinnati Reds @ Cleveland Guardians",
-        "market_type": "moneyline",
-        "pick": "Cincinnati Reds",
-        "line": 0.0,
-        "american_odds": 144,
-        "model_probability": 0.4732,
-        "no_vig_probability": 0.3917,
-        "edge": 0.0815,
-        "tier": "moderate",
-        "bankroll_fraction": 0.02,
-        "top_features": [
-          {
-            "feature": "Simulated total",
-            "value": 9.06,
-            "direction": "up"
-          },
-          {
-            "feature": "Weather stack",
-            "value": 0.17,
-            "direction": "up"
-          },
-          {
-            "feature": "Pitcher vulnerability",
-            "value": 50.14,
-            "direction": "up"
-          }
-        ],
-        "weather_stack_score": 0.17,
-        "start_time": "7:10 PM ET",
-        "lineup_status": "confirmed",
-        "simulation_trials": 10000,
-        "specific_blurb": "Andrew Abbott gives Cincinnati Reds the cleaner starter setup, and JJ Bleday and Spencer Steer (65/54 matchup scores) carry the best hitter-vs-arsenal edges against Tanner Bibee; the sim has it 4.7 to 4.3 with a 8.1-point edge"
-      },
-      {
-        "matchup": "Arizona Diamondbacks @ Colorado Rockies",
-        "market_type": "moneyline",
-        "pick": "Colorado Rockies",
-        "line": 0.0,
-        "american_odds": 119,
-        "model_probability": 0.5099,
-        "no_vig_probability": 0.4369,
-        "edge": 0.073,
-        "tier": "moderate",
-        "bankroll_fraction": 0.02,
-        "top_features": [
-          {
-            "feature": "Simulated total",
-            "value": 10.03,
-            "direction": "up"
-          },
-          {
-            "feature": "Weather stack",
-            "value": 0.02,
-            "direction": "up"
-          },
-          {
-            "feature": "Pitcher vulnerability",
-            "value": 52.48,
-            "direction": "up"
-          }
-        ],
-        "weather_stack_score": 0.02,
-        "start_time": "8:40 PM ET",
-        "lineup_status": "confirmed",
-        "simulation_trials": 10000,
-        "specific_blurb": "Kyle Freeland gives Colorado Rockies the cleaner starter setup, and TJ Rumfield and Mickey Moniak (49/48 matchup scores) carry the best hitter-vs-arsenal edges against Merrill Kelly; the sim has it 5.4 to 4.6 with a 7.3-point edge"
-      }
-    ],
+    "picks": [],
     "leans": [
       {
         "matchup": "Arizona Diamondbacks @ Colorado Rockies",
