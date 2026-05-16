@@ -29,6 +29,40 @@
     "date": "2026-05-16",
     "picks": [
       {
+        "matchup": "Arizona Diamondbacks @ Colorado Rockies",
+        "market_type": "game_total",
+        "pick": "Under",
+        "line": 11.0,
+        "american_odds": -101,
+        "model_probability": 0.5477,
+        "no_vig_probability": 0.4805,
+        "edge": 0.0673,
+        "tier": "moderate",
+        "bankroll_fraction": 0.02,
+        "top_features": [
+          {
+            "feature": "Simulated total",
+            "value": 9.34,
+            "direction": "up"
+          },
+          {
+            "feature": "Weather stack",
+            "value": 0.01,
+            "direction": "up"
+          },
+          {
+            "feature": "Pitcher vulnerability",
+            "value": 57.14,
+            "direction": "up"
+          }
+        ],
+        "weather_stack_score": 0.01,
+        "start_time": "3:10 PM ET",
+        "lineup_status": "projected",
+        "simulation_trials": 10000,
+        "specific_blurb": "Eduardo Rodriguez and Tomoyuki Sugano project to keep quality contact down early, and the softest batter matchups on the board are Brenton Doyle and Jordan Beck (36/38 matchup scores) / Adrian Del Castillo and Lourdes Gurriel Jr. (38/42 matchup scores); the sim sits at 9.3 against 11"
+      },
+      {
         "matchup": "San Diego Padres @ Seattle Mariners",
         "market_type": "moneyline",
         "pick": "San Diego Padres",
