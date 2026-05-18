@@ -1,5 +1,5 @@
 {
-  "fetched_at": "2026-05-18T20:08:28.634185Z",
+  "fetched_at": "2026-05-18T20:19:52.823953Z",
   "date": "2026-05-18",
   "games": [
     {
@@ -122,10 +122,10 @@
       "home_team": "New York Yankees",
       "commence_time": "2026-05-18T23:06:00Z",
       "moneyline": {
-        "away_odds": 141,
-        "home_odds": -171,
-        "away_no_vig": 0.3967,
-        "home_no_vig": 0.6033
+        "away_odds": 146,
+        "home_odds": -177,
+        "away_no_vig": 0.3888,
+        "home_no_vig": 0.6112
       },
       "totals": [
         {
@@ -154,12 +154,12 @@
         {
           "name": "Over",
           "point": 9.0,
-          "price": -115
+          "price": -119
         },
         {
           "name": "Under",
           "point": 9.0,
-          "price": -104
+          "price": -102
         }
       ]
     },
@@ -191,21 +191,21 @@
       "home_team": "Minnesota Twins",
       "commence_time": "2026-05-18T23:41:00Z",
       "moneyline": {
-        "away_odds": -102,
-        "home_odds": -119,
-        "away_no_vig": 0.4817,
-        "home_no_vig": 0.5183
+        "away_odds": -105,
+        "home_odds": -115,
+        "away_no_vig": 0.4892,
+        "home_no_vig": 0.5108
       },
       "totals": [
         {
           "name": "Over",
           "point": 9.5,
-          "price": -105
+          "price": -101
         },
         {
           "name": "Under",
           "point": 9.5,
-          "price": -114
+          "price": -119
         }
       ]
     },
