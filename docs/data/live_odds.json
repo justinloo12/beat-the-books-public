@@ -1,5 +1,5 @@
 {
-  "fetched_at": "2026-05-18T19:46:27.109260Z",
+  "fetched_at": "2026-05-18T20:08:28.634185Z",
   "date": "2026-05-18",
   "games": [
     {
@@ -30,21 +30,21 @@
       "home_team": "Tampa Bay Rays",
       "commence_time": "2026-05-18T22:41:00Z",
       "moneyline": {
-        "away_odds": 119,
-        "home_odds": -144,
-        "away_no_vig": 0.4362,
-        "home_no_vig": 0.5638
+        "away_odds": 123,
+        "home_odds": -148,
+        "away_no_vig": 0.429,
+        "home_no_vig": 0.571
       },
       "totals": [
         {
           "name": "Over",
           "point": 7.5,
-          "price": -109
+          "price": -111
         },
         {
           "name": "Under",
           "point": 7.5,
-          "price": -110
+          "price": -108
         }
       ]
     },
@@ -99,21 +99,21 @@
       "home_team": "Washington Nationals",
       "commence_time": "2026-05-18T22:46:00Z",
       "moneyline": {
-        "away_odds": -126,
-        "home_odds": 105,
-        "away_no_vig": 0.5333,
-        "home_no_vig": 0.4667
+        "away_odds": -123,
+        "home_odds": 102,
+        "away_no_vig": 0.527,
+        "home_no_vig": 0.473
       },
       "totals": [
         {
           "name": "Over",
           "point": 10.0,
-          "price": -115
+          "price": -111
         },
         {
           "name": "Under",
           "point": 10.0,
-          "price": -104
+          "price": -108
         }
       ]
     },
