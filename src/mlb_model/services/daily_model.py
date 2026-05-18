@@ -748,6 +748,7 @@ class DailyPredictionService:
             "home_win_prob": round(context["simulation"]["home_win_prob"], 3),
             "away_win_prob": round(context["simulation"]["away_win_prob"], 3),
             "top_game_picks": context.get("top_game_picks", []),
+            "game_blurb": self.simulation.build_game_blurb(context),
             "home_bullpen": context.get("home_bullpen", {}),
             "away_bullpen": context.get("away_bullpen", {}),
             "home_pitcher": self._pitcher_card(context["home_team"], context.get("home_pitcher_name", ""), context["home_pitcher_profile"], context["home_pitcher_score"], context.get("home_pitcher_vs_l"), context.get("home_pitcher_vs_r"), context.get("home_pitcher_is_opener", False), context.get("home_bulk_pitcher_name")),
