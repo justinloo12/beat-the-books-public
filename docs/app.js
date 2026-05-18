@@ -328,7 +328,7 @@ function renderGames(cards) {
   if ($gameList) {
     $gameList.innerHTML = sorted.map(c => {
       const total = +(c.simulated_total || c.projected_total || 0);
-      const hasPick = (c.top_game_picks || []).some(p => p.tier === "strong" || p.tier === "moderate");
+      const hasPick = (c.top_game_picks || []).some(p => p.tier === "strong" || p.tier === "moderate" || p.tier === "lean");
       const pickBadge = hasPick ? `<span class="game-list-pick-dot"></span>` : "";
       const confirmed = c.lineup_status === "confirmed";
       return `
@@ -874,18 +874,16 @@ async function loadBoard() {
       }
     } catch (_) { /* live odds optional */ }
 
-    // Sync game card top_game_picks with live-adjusted picks/leans so both
-    // sections always show identical edges (no re-matching required).
+    // Replace each game card's top_game_picks with only the entries that
+    // actually appear in the final picks/leans list — guarantees the game
+    // card and leans section always show the same picks with identical edges.
     const livePickMap = new Map();
     for (const p of [...(payload.daily.picks || []), ...(payload.daily.leans || [])]) {
-      livePickMap.set(`${p.market_type}|${p.pick}|${p.line}`, p);
+      livePickMap.set(`${p.market_type}|${p.pick}|${p.line}|${p.matchup}`, p);
     }
     for (const card of currentCards) {
-      if (card.top_game_picks) {
-        card.top_game_picks = card.top_game_picks.map(p =>
-          livePickMap.get(`${p.market_type}|${p.pick}|${p.line}`) || p
-        );
-      }
+      card.top_game_picks = [...(payload.daily.picks || []), ...(payload.daily.leans || [])]
+        .filter(p => p.matchup === card.matchup);
     }
 
     renderHero(payload);
