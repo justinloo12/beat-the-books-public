@@ -43,10 +43,25 @@ function tierBadge(tier) {
   return `<span class="badge badge-${cls}">${tier||"—"}</span>`;
 }
 
-function matchupScoreBadge(score) {
+function matchupGrade(score) {
   const n = +(score||0);
-  const cls = n>=62?"mscore-high": n>=48?"mscore-mid": n>=36?"mscore-low":"mscore-neutral";
-  return `<span class="matchup-score-badge ${cls}">${n.toFixed(1)}</span>`;
+  if (n >= 62) return ["A", "grade-a"];
+  if (n >= 52) return ["B", "grade-b"];
+  if (n >= 44) return ["C", "grade-c"];
+  if (n >= 36) return ["D", "grade-d"];
+  return ["F", "grade-f"];
+}
+function matchupScoreBadge(score) {
+  const [letter, cls] = matchupGrade(score);
+  return `<span class="matchup-score-badge ${cls}">${letter}</span>`;
+}
+function pitcherVsLineupGrade(avgScore) {
+  // Lower avg matchup score = pitcher dominates = better grade
+  if (avgScore <= 40) return ["A", "grade-a"];
+  if (avgScore <= 45) return ["B", "grade-b"];
+  if (avgScore <= 50) return ["C", "grade-c"];
+  if (avgScore <= 56) return ["D", "grade-d"];
+  return ["F", "grade-f"];
 }
 
 function pitchMatchClass(score) {
@@ -470,8 +485,8 @@ function renderGameCard(card) {
     ` : ""}
 
     <div class="pitcher-section">
-      ${renderPitcherPanel(ap, "away")}
-      ${renderPitcherPanel(hp, "home")}
+      ${renderPitcherPanel(ap, "away", avgMatchup(card.home_lineup?.players || []))}
+      ${renderPitcherPanel(hp, "home", avgMatchup(card.away_lineup?.players || []))}
     </div>
 
     <div class="lineup-grid">
@@ -483,7 +498,7 @@ function renderGameCard(card) {
 }
 
 /* ── Pitcher Panel ── */
-function renderPitcherPanel(pitcher, side) {
+function renderPitcherPanel(pitcher, side, oppAvgMatchup) {
   if (!pitcher) return "";
   const arsenal = pitcher.arsenal || [];
   const vsL = pitcher.arsenal_vs_l || [];
@@ -491,6 +506,7 @@ function renderPitcherPanel(pitcher, side) {
   const hand = pitcher.handedness || "?";
   const flag = pitcher.vulnerability_flag || "";
   const flagBadge = flag==="Elite"?"badge-elite": flag==="Low"?"badge-strong": flag==="Medium"?"badge-moderate":"badge-pass";
+  const [vsGrade, vsGradeCls] = oppAvgMatchup > 0 ? pitcherVsLineupGrade(oppAvgMatchup) : ["—", "grade-c"];
 
   return `
   <div class="pitcher-panel" data-pitcher-panel="${side}">
@@ -504,7 +520,7 @@ function renderPitcherPanel(pitcher, side) {
         ${pitcher.is_opener?`<span class="badge badge-opener" title="Opener — projected ~1 IP; model blends bulk reliever stats for remaining innings">OPENER</span>`:""}
         ${pitcher.is_opener && pitcher.bulk_pitcher_name?`<span class="badge badge-neutral" title="Identified bulk reliever following the opener">Bulk: ${pitcher.bulk_pitcher_name}</span>`:""}
         <span class="badge ${flagBadge}">${flag||"—"}</span>
-        <span class="badge badge-neutral">Qlty ${fmt.num(pitcher.quality_score,1)}</span>
+        <span class="matchup-score-badge ${vsGradeCls}" title="Pitcher grade vs this lineup">${vsGrade}</span>
         ${pitcher.stuff_plus!=null?`<span class="badge ${stuffBadgeClass(pitcher.stuff_plus)}">Stuff+ ${pitcher.stuff_plus}</span>`:""}
       </div>
     </div>
@@ -573,8 +589,9 @@ function renderTeamSection(lineupCard) {
   const confirmed = lineupCard.confirmed;
   const players = (lineupCard.players || []).slice().sort((a, b) => {
     if (confirmed) {
-      const aSlot = typeof a.slot === "number" ? a.slot : 999;
-      const bSlot = typeof b.slot === "number" ? b.slot : 999;
+      // slot may be stored as string "1", number 1, or "-"/null
+      const aSlot = parseInt(a.slot) || parseInt(a.batting_order) || 999;
+      const bSlot = parseInt(b.slot) || parseInt(b.batting_order) || 999;
       return aSlot - bSlot;
     }
     return (b.matchup_score || 0) - (a.matchup_score || 0);
@@ -679,11 +696,9 @@ function renderPlayerRow(player, confirmed = false) {
   <article class="player-row">
     <div class="player-header">
       <div class="player-name-block">
-        ${confirmed && typeof player.slot === "number"
-          ? `<span class="player-batting-order">${player.slot}</span>`
-          : `<span class="player-slot">${player.slot}</span>`}
+        ${(() => { const n = parseInt(player.slot) || parseInt(player.batting_order); return n ? `<span class="player-batting-order">${n}</span>` : ""; })()}
         <span class="player-name">${player.name}</span>
-        <span class="badge ${hand==="L"?"badge-lhb":"badge-rhb"}">${hand}</span>
+        ${hand !== "?" ? `<span class="badge ${hand==="L"?"badge-lhb":"badge-rhb"}">${hand}</span>` : ""}
         ${platoonBadge}
         ${srcTag}
       </div>

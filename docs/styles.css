@@ -1035,6 +1035,11 @@ body {
 .mscore-mid     { background: var(--gold-dim);   color: var(--gold);         border: 1px solid rgba(210,153,34,0.25); }
 .mscore-low     { background: var(--red-dim);    color: var(--red);          border: 1px solid rgba(248,81,73,0.20); }
 .mscore-neutral { background: var(--surface-3);  color: var(--text-3);       border: 1px solid var(--border); }
+.grade-a { background: rgba(63,185,80,0.15);  color: #3fb950; border: 1px solid rgba(63,185,80,0.30); font-weight: 800; }
+.grade-b { background: rgba(63,185,80,0.08);  color: #7ee787; border: 1px solid rgba(63,185,80,0.20); font-weight: 800; }
+.grade-c { background: var(--gold-dim);        color: var(--gold); border: 1px solid rgba(210,153,34,0.25); font-weight: 800; }
+.grade-d { background: rgba(248,81,73,0.08);  color: #f8a060; border: 1px solid rgba(248,81,73,0.20); font-weight: 800; }
+.grade-f { background: var(--red-dim);         color: var(--red);  border: 1px solid rgba(248,81,73,0.25); font-weight: 800; }
 
 /* stat strip */
 .player-stats {
