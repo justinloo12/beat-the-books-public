@@ -43,12 +43,35 @@ function tierBadge(tier) {
   return `<span class="badge badge-${cls}">${tier||"—"}</span>`;
 }
 
+let _gradeThresholds = { a: 58, b: 50, c: 44, d: 38 };
+
+function computeGradeThresholds(cards) {
+  const scores = [];
+  for (const card of (cards || [])) {
+    for (const lineup of [card.away_lineup, card.home_lineup]) {
+      for (const p of (lineup?.players || [])) {
+        const s = +(p.matchup_score || 0);
+        if (s > 0) scores.push(s);
+      }
+    }
+  }
+  if (scores.length < 5) return;
+  scores.sort((a, b) => a - b);
+  const n = scores.length;
+  _gradeThresholds = {
+    a: scores[Math.floor(n * 0.80)],
+    b: scores[Math.floor(n * 0.60)],
+    c: scores[Math.floor(n * 0.40)],
+    d: scores[Math.floor(n * 0.20)],
+  };
+}
+
 function matchupGrade(score) {
   const n = +(score||0);
-  if (n >= 62) return ["A", "grade-a"];
-  if (n >= 52) return ["B", "grade-b"];
-  if (n >= 44) return ["C", "grade-c"];
-  if (n >= 36) return ["D", "grade-d"];
+  if (n >= _gradeThresholds.a) return ["A", "grade-a"];
+  if (n >= _gradeThresholds.b) return ["B", "grade-b"];
+  if (n >= _gradeThresholds.c) return ["C", "grade-c"];
+  if (n >= _gradeThresholds.d) return ["D", "grade-d"];
   return ["F", "grade-f"];
 }
 function matchupScoreBadge(score) {
@@ -57,10 +80,10 @@ function matchupScoreBadge(score) {
 }
 function pitcherVsLineupGrade(avgScore) {
   // Lower avg matchup score = pitcher dominates = better grade
-  if (avgScore <= 40) return ["A", "grade-a"];
-  if (avgScore <= 45) return ["B", "grade-b"];
-  if (avgScore <= 50) return ["C", "grade-c"];
-  if (avgScore <= 56) return ["D", "grade-d"];
+  if (avgScore <= _gradeThresholds.d) return ["A", "grade-a"];
+  if (avgScore <= _gradeThresholds.c) return ["B", "grade-b"];
+  if (avgScore <= _gradeThresholds.b) return ["C", "grade-c"];
+  if (avgScore <= _gradeThresholds.a) return ["D", "grade-d"];
   return ["F", "grade-f"];
 }
 
@@ -606,7 +629,7 @@ function renderTeamSection(lineupCard) {
       ${!confirmed ? `<span class="badge badge-pass">Projected</span>` : `<span class="badge badge-strong badge-confirmed-lineup">✓ Confirmed Lineup</span>`}
     </div>
     <div class="player-list">
-      ${players.map(p => renderPlayerRow(p, confirmed)).join("")}
+      ${players.map((p, i) => renderPlayerRow(p, confirmed, i + 1)).join("")}
     </div>
   </div>
   `;
@@ -665,7 +688,7 @@ function renderPitchVsStarter(player) {
   return rows ? `<div class="pitch-vs-wrap"><div class="pitch-vs-header">vs starter's top pitches</div>${rows}</div>` : "";
 }
 
-function renderPlayerRow(player, confirmed = false) {
+function renderPlayerRow(player, confirmed = false, listIndex = null) {
   const sim = player.simulation || {};
   const pitchScores = player.pitch_scores || player.best_pitch_matches || [];
   const hand = player.handedness || "?";
@@ -696,7 +719,7 @@ function renderPlayerRow(player, confirmed = false) {
   <article class="player-row">
     <div class="player-header">
       <div class="player-name-block">
-        ${(() => { const n = parseInt(player.slot) || parseInt(player.batting_order); return n ? `<span class="player-batting-order">${n}</span>` : ""; })()}
+        ${(() => { const n = parseInt(player.slot) || parseInt(player.batting_order) || (confirmed && listIndex ? listIndex : null); return n ? `<span class="player-batting-order">${n}</span>` : ""; })()}
         <span class="player-name">${player.name}</span>
         ${hand !== "?" ? `<span class="badge ${hand==="L"?"badge-lhb":"badge-rhb"}">${hand}</span>` : ""}
         ${platoonBadge}
@@ -874,17 +897,28 @@ async function loadBoard() {
     const payload = await fetchPayload();
     currentCards = payload.daily.lineup_cards || [];
 
-    // Fetch live odds for current price display — picks/leans are locked at model-run
-    // time and are not re-filtered here; only the displayed odds price updates.
+    // Apply live odds: re-calculate edges, then re-sort and re-bucket.
+    // Picks that drop below 6% move to leans; leans that clear 6% become picks;
+    // anything under 2.5% is removed. The stored snapshot is unchanged — this
+    // is display-only so grading still uses model-run values.
     try {
       const r = await fetch(`data/live_odds.json?ts=${Date.now()}`);
       if (r.ok) {
         const lo = await r.json();
         if (lo.date === payload.date) {
           _liveOddsPayload = lo;
-          // Update displayed price on picks and leans without changing their status.
-          payload.daily.picks = applyLiveOdds(payload.daily.picks || [], lo);
-          payload.daily.leans = applyLiveOdds(payload.daily.leans || [], lo);
+          const seen = new Set();
+          const all = applyLiveOdds([
+            ...(payload.daily.picks || []),
+            ...(payload.daily.leans || []),
+          ], lo).filter(p => {
+            const key = `${p.market_type}|${p.pick}|${p.line}|${p.matchup}`;
+            if (seen.has(key)) return false;
+            seen.add(key);
+            return p.edge >= 0.025;
+          });
+          payload.daily.picks = all.filter(p => p.edge >= 0.06).sort((a,b) => b.edge - a.edge);
+          payload.daily.leans = all.filter(p => p.edge >= 0.025 && p.edge < 0.06).sort((a,b) => b.edge - a.edge);
         }
       }
     } catch (_) { /* live odds optional */ }
@@ -901,6 +935,7 @@ async function loadBoard() {
         .filter(p => p.matchup === card.matchup);
     }
 
+    computeGradeThresholds(currentCards);
     renderHero(payload);
     renderSummary(payload.summary || {});
     renderPicks(payload.daily.picks || []);
