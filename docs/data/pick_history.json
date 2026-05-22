@@ -896,5 +896,37 @@
     "away_score": 9,
     "home_score": 1,
     "final_total": 10
+  },
+  {
+    "date": "2026-05-21",
+    "matchup": "Colorado Rockies @ Arizona Diamondbacks",
+    "market_type": "moneyline",
+    "pick": "Colorado Rockies",
+    "line": 0.0,
+    "american_odds": 169,
+    "edge": 0.0314,
+    "tier": "pass",
+    "is_lean": true,
+    "result": "loss",
+    "pnl": -100.0,
+    "away_score": 1,
+    "home_score": 2,
+    "final_total": 3
+  },
+  {
+    "date": "2026-05-21",
+    "matchup": "New York Mets @ Washington Nationals",
+    "market_type": "moneyline",
+    "pick": "Washington Nationals",
+    "line": 0.0,
+    "american_odds": -108,
+    "edge": 0.0302,
+    "tier": "pass",
+    "is_lean": true,
+    "result": "loss",
+    "pnl": -100.0,
+    "away_score": 2,
+    "home_score": 1,
+    "final_total": 3
   }
 ]
