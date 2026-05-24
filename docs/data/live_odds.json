@@ -1,85 +1,246 @@
 {
-  "fetched_at": "2026-05-23T15:40:36.692833Z",
-  "date": "2026-05-23",
+  "fetched_at": "2026-05-24T16:20:21.653531Z",
+  "date": "2026-05-24",
   "games": [
-    {
-      "away_team": "St. Louis Cardinals",
-      "home_team": "Cincinnati Reds",
-      "commence_time": "2026-05-23T17:11:00Z",
-      "moneyline": {
-        "away_odds": -108,
-        "home_odds": -112,
-        "away_no_vig": 0.4957,
-        "home_no_vig": 0.5043
-      },
-      "totals": [
-        {
-          "name": "Over",
-          "point": 9.5,
-          "price": -117
-        },
-        {
-          "name": "Under",
-          "point": 9.5,
-          "price": -103
-        }
-      ]
-    },
-    {
-      "away_team": "Houston Astros",
-      "home_team": "Chicago Cubs",
-      "commence_time": "2026-05-23T18:21:00Z",
-      "moneyline": {
-        "away_odds": 129,
-        "home_odds": -156,
-        "away_no_vig": 0.4175,
-        "home_no_vig": 0.5825
-      },
-      "totals": [
-        {
-          "name": "Over",
-          "point": 7.5,
-          "price": -103
-        },
-        {
-          "name": "Under",
-          "point": 7.5,
-          "price": -117
-        }
-      ]
-    },
     {
       "away_team": "Pittsburgh Pirates",
       "home_team": "Toronto Blue Jays",
-      "commence_time": "2026-05-23T19:08:00Z",
+      "commence_time": "2026-05-24T16:16:00Z",
       "moneyline": {
-        "away_odds": -156,
-        "home_odds": 129,
-        "away_no_vig": 0.5825,
-        "home_no_vig": 0.4175
+        "away_odds": -108,
+        "home_odds": -119,
+        "away_no_vig": 0.4886,
+        "home_no_vig": 0.5114
       },
       "totals": [
         {
           "name": "Over",
-          "point": 7.5,
-          "price": -105
+          "point": 8.5,
+          "price": -111
         },
         {
           "name": "Under",
-          "point": 7.5,
-          "price": -114
+          "point": 8.5,
+          "price": -117
         }
       ]
     },
     {
       "away_team": "Detroit Tigers",
       "home_team": "Baltimore Orioles",
-      "commence_time": "2026-05-23T20:06:00Z",
+      "commence_time": "2026-05-24T16:36:00Z",
+      "moneyline": {
+        "away_odds": 108,
+        "home_odds": -131,
+        "away_no_vig": 0.4588,
+        "home_no_vig": 0.5412
+      },
+      "totals": [
+        {
+          "name": "Over",
+          "point": 8.0,
+          "price": -104
+        },
+        {
+          "name": "Under",
+          "point": 8.0,
+          "price": -115
+        }
+      ]
+    },
+    {
+      "away_team": "Minnesota Twins",
+      "home_team": "Boston Red Sox",
+      "commence_time": "2026-05-24T17:36:00Z",
+      "moneyline": {
+        "away_odds": 147,
+        "home_odds": -178,
+        "away_no_vig": 0.3874,
+        "home_no_vig": 0.6126
+      },
+      "totals": [
+        {
+          "name": "Over",
+          "point": 7.0,
+          "price": -119
+        },
+        {
+          "name": "Under",
+          "point": 7.0,
+          "price": -101
+        }
+      ]
+    },
+    {
+      "away_team": "Cleveland Guardians",
+      "home_team": "Philadelphia Phillies",
+      "commence_time": "2026-05-24T17:36:00Z",
+      "moneyline": {
+        "away_odds": -115,
+        "home_odds": -105,
+        "away_no_vig": 0.5108,
+        "home_no_vig": 0.4892
+      },
+      "totals": [
+        {
+          "name": "Over",
+          "point": 7.0,
+          "price": -122
+        },
+        {
+          "name": "Under",
+          "point": 7.0,
+          "price": 102
+        }
+      ]
+    },
+    {
+      "away_team": "Tampa Bay Rays",
+      "home_team": "New York Yankees",
+      "commence_time": "2026-05-24T17:36:00Z",
+      "moneyline": {
+        "away_odds": 117,
+        "home_odds": -141,
+        "away_no_vig": 0.4406,
+        "home_no_vig": 0.5594
+      },
+      "totals": [
+        {
+          "name": "Over",
+          "point": 7.0,
+          "price": -114
+        },
+        {
+          "name": "Under",
+          "point": 7.0,
+          "price": -106
+        }
+      ]
+    },
+    {
+      "away_team": "St. Louis Cardinals",
+      "home_team": "Cincinnati Reds",
+      "commence_time": "2026-05-24T17:41:00Z",
+      "moneyline": {
+        "away_odds": 101,
+        "home_odds": -122,
+        "away_no_vig": 0.4752,
+        "home_no_vig": 0.5248
+      },
+      "totals": [
+        {
+          "name": "Over",
+          "point": 10.0,
+          "price": -110
+        },
+        {
+          "name": "Under",
+          "point": 10.0,
+          "price": -109
+        }
+      ]
+    },
+    {
+      "away_team": "New York Mets",
+      "home_team": "Miami Marlins",
+      "commence_time": "2026-05-24T17:41:00Z",
+      "moneyline": {
+        "away_odds": 108,
+        "home_odds": -131,
+        "away_no_vig": 0.4588,
+        "home_no_vig": 0.5412
+      },
+      "totals": [
+        {
+          "name": "Over",
+          "point": 7.5,
+          "price": -115
+        },
+        {
+          "name": "Under",
+          "point": 7.5,
+          "price": -104
+        }
+      ]
+    },
+    {
+      "away_team": "Seattle Mariners",
+      "home_team": "Kansas City Royals",
+      "commence_time": "2026-05-24T18:11:00Z",
+      "moneyline": {
+        "away_odds": -127,
+        "home_odds": 106,
+        "away_no_vig": 0.5354,
+        "home_no_vig": 0.4646
+      },
+      "totals": [
+        {
+          "name": "Over",
+          "point": 8.5,
+          "price": -103
+        },
+        {
+          "name": "Under",
+          "point": 8.5,
+          "price": -117
+        }
+      ]
+    },
+    {
+      "away_team": "Los Angeles Dodgers",
+      "home_team": "Milwaukee Brewers",
+      "commence_time": "2026-05-24T18:11:00Z",
+      "moneyline": {
+        "away_odds": -157,
+        "home_odds": 130,
+        "away_no_vig": 0.5842,
+        "home_no_vig": 0.4158
+      },
+      "totals": [
+        {
+          "name": "Over",
+          "point": 8.0,
+          "price": -109
+        },
+        {
+          "name": "Under",
+          "point": 8.0,
+          "price": -110
+        }
+      ]
+    },
+    {
+      "away_team": "Houston Astros",
+      "home_team": "Chicago Cubs",
+      "commence_time": "2026-05-24T18:21:00Z",
+      "moneyline": {
+        "away_odds": 148,
+        "home_odds": -180,
+        "away_no_vig": 0.3855,
+        "home_no_vig": 0.6145
+      },
+      "totals": [
+        {
+          "name": "Over",
+          "point": 7.0,
+          "price": -111
+        },
+        {
+          "name": "Under",
+          "point": 7.0,
+          "price": -108
+        }
+      ]
+    },
+    {
+      "away_team": "Chicago White Sox",
+      "home_team": "San Francisco Giants",
+      "commence_time": "2026-05-24T20:06:00Z",
       "moneyline": {
         "away_odds": -102,
-        "home_odds": -118,
-        "away_no_vig": 0.4826,
-        "home_no_vig": 0.5174
+        "home_odds": -119,
+        "away_no_vig": 0.4817,
+        "home_no_vig": 0.5183
       },
       "totals": [
         {
@@ -90,260 +251,122 @@
         {
           "name": "Under",
           "point": 8.0,
-          "price": -113
-        }
-      ]
-    },
-    {
-      "away_team": "Chicago White Sox",
-      "home_team": "San Francisco Giants",
-      "commence_time": "2026-05-23T20:06:00Z",
-      "moneyline": {
-        "away_odds": -102,
-        "home_odds": -118,
-        "away_no_vig": 0.4826,
-        "home_no_vig": 0.5174
-      },
-      "totals": [
-        {
-          "name": "Over",
-          "point": 9.0,
-          "price": 100
-        },
-        {
-          "name": "Under",
-          "point": 9.0,
-          "price": -120
-        }
-      ]
-    },
-    {
-      "away_team": "Cleveland Guardians",
-      "home_team": "Philadelphia Phillies",
-      "commence_time": "2026-05-23T20:06:00Z",
-      "moneyline": {
-        "away_odds": 154,
-        "home_odds": -188,
-        "away_no_vig": 0.3762,
-        "home_no_vig": 0.6238
-      },
-      "totals": [
-        {
-          "name": "Over",
-          "point": 7.0,
-          "price": -113
-        },
-        {
-          "name": "Under",
-          "point": 7.0,
-          "price": -106
-        }
-      ]
-    },
-    {
-      "away_team": "Washington Nationals",
-      "home_team": "Atlanta Braves",
-      "commence_time": "2026-05-23T20:11:00Z",
-      "moneyline": {
-        "away_odds": 141,
-        "home_odds": -171,
-        "away_no_vig": 0.3967,
-        "home_no_vig": 0.6033
-      },
-      "totals": [
-        {
-          "name": "Over",
-          "point": 8.5,
           "price": -112
-        },
-        {
-          "name": "Under",
-          "point": 8.5,
-          "price": -108
-        }
-      ]
-    },
-    {
-      "away_team": "Minnesota Twins",
-      "home_team": "Boston Red Sox",
-      "commence_time": "2026-05-23T20:11:00Z",
-      "moneyline": {
-        "away_odds": 104,
-        "home_odds": -126,
-        "away_no_vig": 0.4679,
-        "home_no_vig": 0.5321
-      },
-      "totals": [
-        {
-          "name": "Over",
-          "point": 8.0,
-          "price": -115
-        },
-        {
-          "name": "Under",
-          "point": 8.0,
-          "price": -104
-        }
-      ]
-    },
-    {
-      "away_team": "Seattle Mariners",
-      "home_team": "Kansas City Royals",
-      "commence_time": "2026-05-23T20:11:00Z",
-      "moneyline": {
-        "away_odds": -131,
-        "home_odds": 108,
-        "away_no_vig": 0.5412,
-        "home_no_vig": 0.4588
-      },
-      "totals": [
-        {
-          "name": "Over",
-          "point": 8.5,
-          "price": -105
-        },
-        {
-          "name": "Under",
-          "point": 8.5,
-          "price": -114
-        }
-      ]
-    },
-    {
-      "away_team": "New York Mets",
-      "home_team": "Miami Marlins",
-      "commence_time": "2026-05-23T20:11:00Z",
-      "moneyline": {
-        "away_odds": -102,
-        "home_odds": -118,
-        "away_no_vig": 0.4826,
-        "home_no_vig": 0.5174
-      },
-      "totals": [
-        {
-          "name": "Over",
-          "point": 7.5,
-          "price": -119
-        },
-        {
-          "name": "Under",
-          "point": 7.5,
-          "price": -102
-        }
-      ]
-    },
-    {
-      "away_team": "St. Louis Cardinals",
-      "home_team": "Cincinnati Reds",
-      "commence_time": "2026-05-23T23:16:00Z",
-      "moneyline": {
-        "away_odds": -110,
-        "home_odds": -110,
-        "away_no_vig": 0.5,
-        "home_no_vig": 0.5
-      },
-      "totals": [
-        {
-          "name": "Over",
-          "point": 9.5,
-          "price": -116
-        },
-        {
-          "name": "Under",
-          "point": 9.5,
-          "price": -104
-        }
-      ]
-    },
-    {
-      "away_team": "Los Angeles Dodgers",
-      "home_team": "Milwaukee Brewers",
-      "commence_time": "2026-05-23T23:16:00Z",
-      "moneyline": {
-        "away_odds": -122,
-        "home_odds": 101,
-        "away_no_vig": 0.5248,
-        "home_no_vig": 0.4752
-      },
-      "totals": [
-        {
-          "name": "Over",
-          "point": 9.0,
-          "price": -104
-        },
-        {
-          "name": "Under",
-          "point": 9.0,
-          "price": -115
-        }
-      ]
-    },
-    {
-      "away_team": "Athletics",
-      "home_team": "San Diego Padres",
-      "commence_time": "2026-05-24T01:41:00Z",
-      "moneyline": {
-        "away_odds": -118,
-        "home_odds": -102,
-        "away_no_vig": 0.5174,
-        "home_no_vig": 0.4826
-      },
-      "totals": [
-        {
-          "name": "Over",
-          "point": 8.0,
-          "price": -108
-        },
-        {
-          "name": "Under",
-          "point": 8.0,
-          "price": -111
-        }
-      ]
-    },
-    {
-      "away_team": "Texas Rangers",
-      "home_team": "Los Angeles Angels",
-      "commence_time": "2026-05-24T02:06:00Z",
-      "moneyline": {
-        "away_odds": -142,
-        "home_odds": 118,
-        "away_no_vig": 0.5612,
-        "home_no_vig": 0.4388
-      },
-      "totals": [
-        {
-          "name": "Over",
-          "point": 7.5,
-          "price": -114
-        },
-        {
-          "name": "Under",
-          "point": 7.5,
-          "price": -106
         }
       ]
     },
     {
       "away_team": "Colorado Rockies",
       "home_team": "Arizona Diamondbacks",
-      "commence_time": "2026-05-24T02:11:00Z",
+      "commence_time": "2026-05-24T20:11:00Z",
       "moneyline": {
-        "away_odds": 157,
-        "home_odds": -191,
-        "away_no_vig": 0.3722,
-        "home_no_vig": 0.6278
+        "away_odds": 168,
+        "home_odds": -205,
+        "away_no_vig": 0.357,
+        "home_no_vig": 0.643
       },
       "totals": [
         {
           "name": "Over",
-          "point": 9.0,
+          "point": 8.5,
           "price": -120
         },
         {
           "name": "Under",
-          "point": 9.0,
-          "price": -101
+          "point": 8.5,
+          "price": 100
+        }
+      ]
+    },
+    {
+      "away_team": "Athletics",
+      "home_team": "San Diego Padres",
+      "commence_time": "2026-05-24T20:11:00Z",
+      "moneyline": {
+        "away_odds": 144,
+        "home_odds": -175,
+        "away_no_vig": 0.3917,
+        "home_no_vig": 0.6083
+      },
+      "totals": [
+        {
+          "name": "Over",
+          "point": 7.5,
+          "price": -110
+        },
+        {
+          "name": "Under",
+          "point": 7.5,
+          "price": -109
+        }
+      ]
+    },
+    {
+      "away_team": "Washington Nationals",
+      "home_team": "Atlanta Braves",
+      "commence_time": "2026-05-24T20:11:00Z",
+      "moneyline": {
+        "away_odds": 139,
+        "home_odds": -168,
+        "away_no_vig": 0.4003,
+        "home_no_vig": 0.5997
+      },
+      "totals": [
+        {
+          "name": "Over",
+          "point": 8.5,
+          "price": -104
+        },
+        {
+          "name": "Under",
+          "point": 8.5,
+          "price": -115
+        }
+      ]
+    },
+    {
+      "away_team": "Detroit Tigers",
+      "home_team": "Baltimore Orioles",
+      "commence_time": "2026-05-24T22:06:00Z",
+      "moneyline": {
+        "away_odds": 105,
+        "home_odds": -126,
+        "away_no_vig": 0.4667,
+        "home_no_vig": 0.5333
+      },
+      "totals": [
+        {
+          "name": "Over",
+          "point": 8.0,
+          "price": -114
+        },
+        {
+          "name": "Under",
+          "point": 8.0,
+          "price": -106
+        }
+      ]
+    },
+    {
+      "away_team": "Texas Rangers",
+      "home_team": "Los Angeles Angels",
+      "commence_time": "2026-05-24T23:21:00Z",
+      "moneyline": {
+        "away_odds": -101,
+        "home_odds": -120,
+        "away_no_vig": 0.4795,
+        "home_no_vig": 0.5205
+      },
+      "totals": [
+        {
+          "name": "Over",
+          "point": 8.0,
+          "price": -112
+        },
+        {
+          "name": "Under",
+          "point": 8.0,
+          "price": -108
         }
       ]
     }
