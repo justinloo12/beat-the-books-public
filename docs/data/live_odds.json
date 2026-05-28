@@ -1,73 +1,27 @@
 {
-  "fetched_at": "2026-05-28T15:01:42.109461Z",
+  "fetched_at": "2026-05-28T19:57:10.299598Z",
   "date": "2026-05-28",
   "games": [
-    {
-      "away_team": "Los Angeles Angels",
-      "home_team": "Detroit Tigers",
-      "commence_time": "2026-05-28T17:11:00Z",
-      "moneyline": {
-        "away_odds": 109,
-        "home_odds": -131,
-        "away_no_vig": 0.4576,
-        "home_no_vig": 0.5424
-      },
-      "totals": [
-        {
-          "name": "Over",
-          "point": 8.5,
-          "price": -111
-        },
-        {
-          "name": "Under",
-          "point": 8.5,
-          "price": -108
-        }
-      ]
-    },
-    {
-      "away_team": "Minnesota Twins",
-      "home_team": "Chicago White Sox",
-      "commence_time": "2026-05-28T18:10:00Z",
-      "moneyline": {
-        "away_odds": 129,
-        "home_odds": -156,
-        "away_no_vig": 0.4175,
-        "home_no_vig": 0.5825
-      },
-      "totals": [
-        {
-          "name": "Over",
-          "point": 7.5,
-          "price": -112
-        },
-        {
-          "name": "Under",
-          "point": 7.5,
-          "price": -107
-        }
-      ]
-    },
     {
       "away_team": "Atlanta Braves",
       "home_team": "Boston Red Sox",
       "commence_time": "2026-05-28T20:10:00Z",
       "moneyline": {
-        "away_odds": -137,
-        "home_odds": 114,
-        "away_no_vig": 0.553,
-        "home_no_vig": 0.447
+        "away_odds": -136,
+        "home_odds": 113,
+        "away_no_vig": 0.5511,
+        "home_no_vig": 0.4489
       },
       "totals": [
         {
           "name": "Over",
-          "point": 7.0,
-          "price": 104
+          "point": 6.5,
+          "price": -126
         },
         {
           "name": "Under",
-          "point": 7.0,
-          "price": -125
+          "point": 6.5,
+          "price": 104
         }
       ]
     },
@@ -122,21 +76,21 @@
       "home_team": "Texas Rangers",
       "commence_time": "2026-05-29T00:06:00Z",
       "moneyline": {
-        "away_odds": 119,
-        "home_odds": -143,
-        "away_no_vig": 0.4369,
-        "home_no_vig": 0.5631
+        "away_odds": 113,
+        "home_odds": -136,
+        "away_no_vig": 0.4489,
+        "home_no_vig": 0.5511
       },
       "totals": [
         {
           "name": "Over",
-          "point": 7.5,
-          "price": 103
+          "point": 7.0,
+          "price": -124
         },
         {
           "name": "Under",
-          "point": 7.5,
-          "price": -124
+          "point": 7.0,
+          "price": 103
         }
       ]
     }
