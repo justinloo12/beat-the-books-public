@@ -1421,5 +1421,53 @@
     "away_score": 4,
     "home_score": 3,
     "final_total": 7
+  },
+  {
+    "date": "2026-05-27",
+    "matchup": "Colorado Rockies @ Los Angeles Dodgers",
+    "market_type": "game_total",
+    "pick": "Over",
+    "line": 8.0,
+    "american_odds": -107,
+    "edge": 0.0382,
+    "tier": "pass",
+    "is_lean": true,
+    "result": "loss",
+    "pnl": -100.0,
+    "away_score": 1,
+    "home_score": 4,
+    "final_total": 5
+  },
+  {
+    "date": "2026-05-27",
+    "matchup": "Houston Astros @ Texas Rangers",
+    "market_type": "game_total",
+    "pick": "Over",
+    "line": 7.5,
+    "american_odds": -107,
+    "edge": 0.035,
+    "tier": "pass",
+    "is_lean": true,
+    "result": "loss",
+    "pnl": -100.0,
+    "away_score": 4,
+    "home_score": 3,
+    "final_total": 7
+  },
+  {
+    "date": "2026-05-27",
+    "matchup": "St. Louis Cardinals @ Milwaukee Brewers",
+    "market_type": "moneyline",
+    "pick": "St. Louis Cardinals",
+    "line": 0.0,
+    "american_odds": 128,
+    "edge": 0.0292,
+    "tier": "pass",
+    "is_lean": true,
+    "result": "loss",
+    "pnl": -100.0,
+    "away_score": 1,
+    "home_score": 2,
+    "final_total": 3
   }
 ]
