@@ -1469,5 +1469,53 @@
     "away_score": 1,
     "home_score": 2,
     "final_total": 3
+  },
+  {
+    "date": "2026-05-28",
+    "matchup": "Atlanta Braves @ Boston Red Sox",
+    "market_type": "moneyline",
+    "pick": "Boston Red Sox",
+    "line": 0.0,
+    "american_odds": 114,
+    "edge": 0.0353,
+    "tier": "pass",
+    "is_lean": true,
+    "result": "loss",
+    "pnl": -100.0,
+    "away_score": 10,
+    "home_score": 2,
+    "final_total": 12
+  },
+  {
+    "date": "2026-05-28",
+    "matchup": "Chicago Cubs @ Pittsburgh Pirates",
+    "market_type": "game_total",
+    "pick": "Over",
+    "line": 7.5,
+    "american_odds": -107,
+    "edge": 0.0302,
+    "tier": "pass",
+    "is_lean": true,
+    "result": "win",
+    "pnl": 93.46,
+    "away_score": 7,
+    "home_score": 2,
+    "final_total": 9
+  },
+  {
+    "date": "2026-05-28",
+    "matchup": "Houston Astros @ Texas Rangers",
+    "market_type": "moneyline",
+    "pick": "Houston Astros",
+    "line": 0.0,
+    "american_odds": 113,
+    "edge": 0.0296,
+    "tier": "pass",
+    "is_lean": true,
+    "result": "win",
+    "pnl": 113.0,
+    "away_score": 5,
+    "home_score": 1,
+    "final_total": 6
   }
 ]
