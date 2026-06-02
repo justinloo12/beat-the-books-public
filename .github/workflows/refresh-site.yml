@@ -3,12 +3,12 @@ name: Refresh Site
 on:
   workflow_dispatch:
   schedule:
-    # 11am ET — locks picks for 12–3pm games
-    - cron: "0 16 * * *"
-    # 3pm ET — locks picks for 4–6pm games
-    - cron: "0 20 * * *"
-    # 6pm ET — locks picks for 6–10pm games
-    - cron: "0 23 * * *"
+    # 11am ET — locks picks for 12–3pm games (15 UTC during EDT / 16 UTC during EST)
+    - cron: "0 15 * * *"
+    # 3pm ET — locks picks for 4–6pm games (19 UTC during EDT / 20 UTC during EST)
+    - cron: "0 19 * * *"
+    # 6pm ET — locks picks for 6–10pm games (22 UTC during EDT / 23 UTC during EST)
+    - cron: "0 22 * * *"
 
 permissions:
   contents: write
@@ -132,7 +132,7 @@ jobs:
           git add docs/data/pick_history.json || true
           git diff --cached --quiet && exit 0
           git commit -m "Refresh site snapshot for ${{ steps.slate.outputs.slate_date }}"
-          # Pull latest remote changes (rebase) before pushing so concurrent
-          # workflow runs don't overwrite each other's pick_history updates.
-          git pull --rebase origin main
+          # Merge remote changes before pushing; prefer our freshly-generated
+          # data files over remote in the rare case of a concurrent run conflict.
+          git pull origin main --no-rebase -X ours
           git push
