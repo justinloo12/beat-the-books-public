@@ -1,5 +1,5 @@
 {
-  "fetched_at": "2026-06-03T16:49:07.662656Z",
+  "fetched_at": "2026-06-03T19:19:37.793119Z",
   "date": "2026-06-03",
   "games": [
     {
@@ -7,44 +7,21 @@
       "home_team": "Washington Nationals",
       "commence_time": "2026-06-03T17:06:00Z",
       "moneyline": {
-        "away_odds": -112,
-        "home_odds": -108,
-        "away_no_vig": 0.5043,
-        "home_no_vig": 0.4957
+        "away_odds": 112,
+        "home_odds": -145,
+        "away_no_vig": 0.4435,
+        "home_no_vig": 0.5565
       },
       "totals": [
         {
           "name": "Over",
-          "point": 8.0,
-          "price": -105
+          "point": 4.5,
+          "price": 102
         },
         {
           "name": "Under",
-          "point": 8.0,
-          "price": -114
-        }
-      ]
-    },
-    {
-      "away_team": "Detroit Tigers",
-      "home_team": "Tampa Bay Rays",
-      "commence_time": "2026-06-03T17:11:00Z",
-      "moneyline": {
-        "away_odds": 123,
-        "home_odds": -149,
-        "away_no_vig": 0.4284,
-        "home_no_vig": 0.5716
-      },
-      "totals": [
-        {
-          "name": "Over",
-          "point": 8.5,
-          "price": -102
-        },
-        {
-          "name": "Under",
-          "point": 8.5,
-          "price": -118
+          "point": 4.5,
+          "price": -132
         }
       ]
     },
@@ -53,21 +30,21 @@
       "home_team": "Minnesota Twins",
       "commence_time": "2026-06-03T17:41:00Z",
       "moneyline": {
-        "away_odds": 123,
-        "home_odds": -149,
-        "away_no_vig": 0.4284,
-        "home_no_vig": 0.5716
+        "away_odds": -3200,
+        "home_odds": 910,
+        "away_no_vig": 0.9074,
+        "home_no_vig": 0.0926
       },
       "totals": [
         {
           "name": "Over",
-          "point": 9.0,
-          "price": -108
+          "point": 7.5,
+          "price": -135
         },
         {
           "name": "Under",
-          "point": 9.0,
-          "price": -111
+          "point": 7.5,
+          "price": 103
         }
       ]
     },
@@ -76,10 +53,10 @@
       "home_team": "Seattle Mariners",
       "commence_time": "2026-06-03T19:41:00Z",
       "moneyline": {
-        "away_odds": 123,
-        "home_odds": -149,
-        "away_no_vig": 0.4284,
-        "home_no_vig": 0.5716
+        "away_odds": 119,
+        "home_odds": -144,
+        "away_no_vig": 0.4362,
+        "home_no_vig": 0.5638
       },
       "totals": [
         {
@@ -108,12 +85,12 @@
         {
           "name": "Over",
           "point": 7.5,
-          "price": -104
+          "price": -112
         },
         {
           "name": "Under",
           "point": 7.5,
-          "price": -116
+          "price": -107
         }
       ]
     },
@@ -130,13 +107,13 @@
       "totals": [
         {
           "name": "Over",
-          "point": 9.0,
-          "price": -105
+          "point": 8.5,
+          "price": -113
         },
         {
           "name": "Under",
-          "point": 9.0,
-          "price": -114
+          "point": 8.5,
+          "price": -106
         }
       ]
     },
@@ -153,36 +130,36 @@
       "totals": [
         {
           "name": "Over",
-          "point": 7.0,
-          "price": -123
+          "point": 7.5,
+          "price": -101
         },
         {
           "name": "Under",
-          "point": 7.0,
-          "price": 102
+          "point": 7.5,
+          "price": -119
         }
       ]
     },
     {
       "away_team": "Kansas City Royals",
       "home_team": "Cincinnati Reds",
-      "commence_time": "2026-06-03T23:10:00Z",
+      "commence_time": "2026-06-03T23:11:00Z",
       "moneyline": {
-        "away_odds": 130,
-        "home_odds": -157,
-        "away_no_vig": 0.4158,
-        "home_no_vig": 0.5842
+        "away_odds": 134,
+        "home_odds": -162,
+        "away_no_vig": 0.4087,
+        "home_no_vig": 0.5913
       },
       "totals": [
         {
           "name": "Over",
-          "point": 8.5,
-          "price": -104
+          "point": 8.0,
+          "price": -112
         },
         {
           "name": "Under",
-          "point": 8.5,
-          "price": -115
+          "point": 8.0,
+          "price": -108
         }
       ]
     },
@@ -212,7 +189,7 @@
     {
       "away_team": "San Francisco Giants",
       "home_team": "Milwaukee Brewers",
-      "commence_time": "2026-06-03T23:40:00Z",
+      "commence_time": "2026-06-03T23:41:00Z",
       "moneyline": {
         "away_odds": 129,
         "home_odds": -156,
@@ -223,12 +200,12 @@
         {
           "name": "Over",
           "point": 8.0,
-          "price": -105
+          "price": -108
         },
         {
           "name": "Under",
           "point": 8.0,
-          "price": -114
+          "price": -112
         }
       ]
     },
@@ -269,12 +246,12 @@
         {
           "name": "Over",
           "point": 8.5,
-          "price": -120
+          "price": -116
         },
         {
           "name": "Under",
           "point": 8.5,
-          "price": -101
+          "price": -104
         }
       ]
     },
@@ -306,21 +283,21 @@
       "home_team": "Los Angeles Angels",
       "commence_time": "2026-06-04T01:39:00Z",
       "moneyline": {
-        "away_odds": 130,
-        "home_odds": -157,
-        "away_no_vig": 0.4158,
-        "home_no_vig": 0.5842
+        "away_odds": 124,
+        "home_odds": -149,
+        "away_no_vig": 0.4273,
+        "home_no_vig": 0.5727
       },
       "totals": [
         {
           "name": "Over",
           "point": 8.5,
-          "price": -117
+          "price": -115
         },
         {
           "name": "Under",
           "point": 8.5,
-          "price": -103
+          "price": -104
         }
       ]
     },
@@ -329,21 +306,21 @@
       "home_team": "Arizona Diamondbacks",
       "commence_time": "2026-06-04T01:41:00Z",
       "moneyline": {
-        "away_odds": -198,
-        "home_odds": 162,
-        "away_no_vig": 0.6351,
-        "home_no_vig": 0.3649
+        "away_odds": -194,
+        "home_odds": 159,
+        "away_no_vig": 0.6309,
+        "home_no_vig": 0.3691
       },
       "totals": [
         {
           "name": "Over",
           "point": 9.0,
-          "price": -105
+          "price": -102
         },
         {
           "name": "Under",
           "point": 9.0,
-          "price": -114
+          "price": -118
         }
       ]
     }
