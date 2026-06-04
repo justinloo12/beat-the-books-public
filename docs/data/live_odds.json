@@ -1,5 +1,5 @@
 {
-  "fetched_at": "2026-06-04T20:23:21.093115Z",
+  "fetched_at": "2026-06-04T21:42:26.689469Z",
   "date": "2026-06-04",
   "games": [
     {
@@ -7,21 +7,21 @@
       "home_team": "Milwaukee Brewers",
       "commence_time": "2026-06-04T18:11:00Z",
       "moneyline": {
-        "away_odds": -1160,
-        "home_odds": 593,
-        "away_no_vig": 0.8645,
-        "home_no_vig": 0.1355
+        "away_odds": -6200,
+        "home_odds": 1140,
+        "away_no_vig": 0.9243,
+        "home_no_vig": 0.0757
       },
       "totals": [
         {
           "name": "Over",
-          "point": 12.5,
-          "price": -143
+          "point": 21.5,
+          "price": 260
         },
         {
           "name": "Under",
-          "point": 12.5,
-          "price": 110
+          "point": 21.5,
+          "price": -368
         }
       ]
     },
@@ -53,10 +53,10 @@
       "home_team": "Minnesota Twins",
       "commence_time": "2026-06-04T23:41:00Z",
       "moneyline": {
-        "away_odds": -118,
-        "home_odds": -102,
-        "away_no_vig": 0.5174,
-        "home_no_vig": 0.4826
+        "away_odds": -117,
+        "home_odds": -103,
+        "away_no_vig": 0.5152,
+        "home_no_vig": 0.4848
       },
       "totals": [
         {
@@ -67,7 +67,7 @@
         {
           "name": "Under",
           "point": 9.0,
-          "price": -101
+          "price": 100
         }
       ]
     },
@@ -76,10 +76,10 @@
       "home_team": "Chicago Cubs",
       "commence_time": "2026-06-05T00:06:00Z",
       "moneyline": {
-        "away_odds": 114,
-        "home_odds": -137,
-        "away_no_vig": 0.447,
-        "home_no_vig": 0.553
+        "away_odds": 123,
+        "home_odds": -148,
+        "away_no_vig": 0.429,
+        "home_no_vig": 0.571
       },
       "totals": [
         {
@@ -122,10 +122,10 @@
       "home_team": "Arizona Diamondbacks",
       "commence_time": "2026-06-05T01:41:00Z",
       "moneyline": {
-        "away_odds": -143,
+        "away_odds": -144,
         "home_odds": 119,
-        "away_no_vig": 0.5631,
-        "home_no_vig": 0.4369
+        "away_no_vig": 0.5638,
+        "home_no_vig": 0.4362
       },
       "totals": [
         {
@@ -137,6 +137,75 @@
           "name": "Under",
           "point": 9.0,
           "price": -112
+        }
+      ]
+    },
+    {
+      "away_team": "Chicago White Sox",
+      "home_team": "Philadelphia Phillies",
+      "commence_time": "2026-06-05T22:41:00Z",
+      "moneyline": {
+        "away_odds": 153,
+        "home_odds": -186,
+        "away_no_vig": 0.378,
+        "home_no_vig": 0.622
+      },
+      "totals": [
+        {
+          "name": "Over",
+          "point": 8.5,
+          "price": -112
+        },
+        {
+          "name": "Under",
+          "point": 8.5,
+          "price": -108
+        }
+      ]
+    },
+    {
+      "away_team": "Seattle Mariners",
+      "home_team": "Detroit Tigers",
+      "commence_time": "2026-06-05T22:41:00Z",
+      "moneyline": {
+        "away_odds": -131,
+        "home_odds": 109,
+        "away_no_vig": 0.5424,
+        "home_no_vig": 0.4576
+      },
+      "totals": [
+        {
+          "name": "Over",
+          "point": 8.0,
+          "price": -103
+        },
+        {
+          "name": "Under",
+          "point": 8.0,
+          "price": -117
+        }
+      ]
+    },
+    {
+      "away_team": "Tampa Bay Rays",
+      "home_team": "Miami Marlins",
+      "commence_time": "2026-06-05T23:11:00Z",
+      "moneyline": {
+        "away_odds": -143,
+        "home_odds": 119,
+        "away_no_vig": 0.5631,
+        "home_no_vig": 0.4369
+      },
+      "totals": [
+        {
+          "name": "Over",
+          "point": 7.5,
+          "price": -112
+        },
+        {
+          "name": "Under",
+          "point": 7.5,
+          "price": -108
         }
       ]
     }
