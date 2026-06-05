@@ -217,6 +217,11 @@ async def main() -> None:
         default=["totals", "spreads"],
         help="Odds API markets to pull for MLB.",
     )
+    parser.add_argument(
+        "--odds-only",
+        action="store_true",
+        help="Skip Statcast/leaderboard downloads — only refresh odds. Use for mid-day re-runs.",
+    )
     args = parser.parse_args()
 
     odds_date = date.fromisoformat(args.odds_date)
@@ -224,8 +229,12 @@ async def main() -> None:
     end_date = date.fromisoformat(args.end_date)
 
     odds = await download_odds(odds_date, args.markets)
-    statcast = await download_savant_statcast(start_date, end_date)
-    leaderboards = await download_savant_leaderboards(args.seasons)
+    if args.odds_only:
+        statcast = DownloadSummary(files_written=[], requests_made=0, errors=[])
+        leaderboards = DownloadSummary(files_written=[], requests_made=0, errors=[])
+    else:
+        statcast = await download_savant_statcast(start_date, end_date)
+        leaderboards = await download_savant_leaderboards(args.seasons)
 
     summary = {
         "timestamp": datetime.utcnow().isoformat(),

@@ -39,6 +39,7 @@ jobs:
         run: |
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             echo "run_refresh=true" >> "$GITHUB_OUTPUT"
+            echo "full_download=true" >> "$GITHUB_OUTPUT"
             echo "slate_date=$(date +%F)" >> "$GITHUB_OUTPUT"
             echo "grade_date=$(date -d 'yesterday' +%F)" >> "$GITHUB_OUTPUT"
             exit 0
@@ -53,6 +54,13 @@ jobs:
           echo "slate_date=$(date +%F)" >> "$GITHUB_OUTPUT"
           # yesterday in ET for grading
           echo "grade_date=$(date -d 'yesterday' +%F)" >> "$GITHUB_OUTPUT"
+          # 11am is the full run (fresh Statcast + leaderboards for the new slate).
+          # 3pm and 6pm only need updated odds — pitcher data doesn't change mid-day.
+          if [ "$hour" = "11" ]; then
+            echo "full_download=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "full_download=false" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Grade yesterday's picks
         if: steps.slate.outputs.run_refresh == 'true'
@@ -62,12 +70,17 @@ jobs:
       - name: Download odds and Statcast inputs
         if: steps.slate.outputs.run_refresh == 'true'
         run: |
+          ODDS_ONLY_FLAG=""
+          if [ "${{ steps.slate.outputs.full_download }}" != "true" ]; then
+            ODDS_ONLY_FLAG="--odds-only"
+          fi
           python -m mlb_model.download_data \
             --odds-date "${{ steps.slate.outputs.slate_date }}" \
             --start-date "${{ steps.slate.outputs.slate_date }}" \
             --end-date "${{ steps.slate.outputs.slate_date }}" \
             --seasons "$(date +%Y)" \
-            --markets h2h totals spreads
+            --markets h2h totals spreads \
+            $ODDS_ONLY_FLAG
 
       - name: Build live odds snapshot for browser refresh
         if: steps.slate.outputs.run_refresh == 'true'
