@@ -741,6 +741,15 @@ body {
 
 /* ── Picks inside game card ── */
 
+.game-blurb-block {
+  padding: 12px 18px;
+  font-size: 0.80rem;
+  line-height: 1.6;
+  color: var(--text-2);
+  border-bottom: 1px solid var(--border);
+  background: rgba(255,255,255,0.02);
+}
+
 .game-picks-bar {
   padding: 10px 16px;
   background: rgba(63,185,80,0.04);

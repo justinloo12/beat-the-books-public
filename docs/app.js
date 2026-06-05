@@ -494,6 +494,8 @@ function renderGameCard(card) {
       ${renderBullpenHealth(card.away_pitcher?.team, card.away_bullpen)}
     </div>
 
+    ${card.game_blurb ? `<div class="game-blurb-block">${card.game_blurb}</div>` : ""}
+
     ${topPicks.length ? `
     <div class="game-picks-bar">
       ${topPicks.map(p=>`

@@ -691,47 +691,491 @@ class SimulationModelService:
         away_team = context.get("away_team", "Away")
         home_pitcher = context.get("home_pitcher_name", home_team)
         away_pitcher = context.get("away_pitcher_name", away_team)
+        home_pitcher_profile = context.get("home_pitcher_profile") or {}
+        away_pitcher_profile = context.get("away_pitcher_profile") or {}
+        home_bullpen_score = float((context.get("home_bullpen") or {}).get("bullpen_score", 65.0))
+        away_bullpen_score = float((context.get("away_bullpen") or {}).get("bullpen_score", 65.0))
         home_offense = float((context.get("home_offense") or {}).get("offense_score", 50.0))
         away_offense = float((context.get("away_offense") or {}).get("offense_score", 50.0))
+        home_run_ctx = context.get("home_run_context") or {}
+        away_run_ctx = context.get("away_run_context") or {}
         total_mean = float((context.get("simulation") or {}).get("total_mean", 0.0))
         home_mean = float((context.get("simulation") or {}).get("home_runs_mean", 0.0))
         away_mean = float((context.get("simulation") or {}).get("away_runs_mean", 0.0))
+        home_win_prob = float((context.get("simulation") or {}).get("home_win_prob", 0.5))
+        away_win_prob = float((context.get("simulation") or {}).get("away_win_prob", 0.5))
         weather = context.get("weather", {}) or {}
         edge_pts = (model_prob - no_vig_prob) * 100
-        weather_tail = self._weather_tail(weather)
+        home_confirmed = context.get("home_lineup_confirmed", False)
+        away_confirmed = context.get("away_lineup_confirmed", False)
 
-        if market_type == "game_total" and side == "Over":
-            attack_team = home_team if home_offense >= away_offense else away_team
-            attack_leaders = home_leaders if home_offense >= away_offense else away_leaders
-            target_pitcher = away_pitcher if home_offense >= away_offense else home_pitcher
-            target_profile = context.get("away_pitcher_profile") if home_offense >= away_offense else context.get("home_pitcher_profile")
-            leaders_text = self._leaders_text(attack_leaders)
-            pitcher_text = self._pitcher_contact_text(target_pitcher, target_profile)
-            return f"{leaders_text} profile best into {target_pitcher}'s pitch mix for {attack_team}, and {pitcher_text}; the sim lands at {total_mean:.1f} runs versus {line:g}{weather_tail}"
+        if market_type in ("game_total", "first_five_total") and side == "Over":
+            return self._blurb_over(
+                home_team, away_team, home_pitcher, away_pitcher,
+                home_pitcher_profile, away_pitcher_profile,
+                home_leaders, away_leaders,
+                home_offense, away_offense,
+                home_bullpen_score, away_bullpen_score,
+                total_mean, home_mean, away_mean,
+                weather, line, edge_pts,
+                home_confirmed, away_confirmed,
+                market_type,
+            )
 
-        if market_type == "game_total" and side == "Under":
-            strong_arms = f"{away_pitcher} and {home_pitcher}"
-            suppressors = self._leaders_text(home_laggards, fallback=home_team) + " / " + self._leaders_text(away_laggards, fallback=away_team)
-            return f"{strong_arms} project to keep quality contact down early, and the softest batter matchups on the board are {suppressors}; the sim sits at {total_mean:.1f} against {line:g}{weather_tail}"
+        if market_type in ("game_total", "first_five_total") and side == "Under":
+            return self._blurb_under(
+                home_team, away_team, home_pitcher, away_pitcher,
+                home_pitcher_profile, away_pitcher_profile,
+                home_laggards, away_laggards,
+                home_bullpen_score, away_bullpen_score,
+                total_mean, home_mean, away_mean,
+                weather, line, edge_pts,
+                home_confirmed, away_confirmed,
+                market_type,
+            )
 
         if market_type == "moneyline":
-            team = side
-            is_home = team == home_team
-            team_mean = home_mean if is_home else away_mean
-            opp_mean = away_mean if is_home else home_mean
-            starter = home_pitcher if is_home else away_pitcher
-            leaders = home_leaders if is_home else away_leaders
-            opp_pitcher = away_pitcher if is_home else home_pitcher
-            return f"{starter} gives {team} the cleaner starter setup, and {self._leaders_text(leaders, fallback=team)} carry the best hitter-vs-arsenal edges against {opp_pitcher}; the sim has it {team_mean:.1f} to {opp_mean:.1f} with a {edge_pts:.1f}-point edge"
+            return self._blurb_moneyline(
+                side, home_team, away_team, home_pitcher, away_pitcher,
+                home_pitcher_profile, away_pitcher_profile,
+                home_leaders, away_leaders,
+                home_offense, away_offense,
+                home_bullpen_score, away_bullpen_score,
+                home_mean, away_mean, home_win_prob, away_win_prob,
+                weather, edge_pts,
+                home_confirmed, away_confirmed,
+            )
 
         if market_type == "runline":
-            team = side
-            is_home = team == home_team
-            leaders = home_leaders if is_home else away_leaders
-            margin = abs(home_mean - away_mean)
-            return f"{self._leaders_text(leaders, fallback=team)} give {team} the strongest matchup cluster in this game, and the sim creates about a {margin:.1f}-run gap on average"
+            return self._blurb_runline(
+                side, home_team, away_team, home_pitcher, away_pitcher,
+                home_pitcher_profile, away_pitcher_profile,
+                home_leaders, away_leaders,
+                home_offense, away_offense,
+                home_bullpen_score, away_bullpen_score,
+                home_mean, away_mean,
+                weather, line, edge_pts,
+                home_confirmed, away_confirmed,
+            )
 
-        return f"The model prices this side {edge_pts:.1f} percentage points above no-vig market odds based on the current hitter-pitcher matchup set."
+        return (
+            f"The model prices this side {edge_pts:.1f} percentage points above no-vig market odds "
+            f"based on the current hitter-pitcher matchup set and {self.trials:,}-trial simulation."
+        )
+
+    # ------------------------------------------------------------------ #
+    # Per-market narrative builders                                        #
+    # ------------------------------------------------------------------ #
+
+    def _blurb_over(
+        self,
+        home_team: str, away_team: str,
+        home_pitcher: str, away_pitcher: str,
+        home_profile: dict, away_profile: dict,
+        home_leaders: list, away_leaders: list,
+        home_offense: float, away_offense: float,
+        home_bullpen: float, away_bullpen: float,
+        total_mean: float, home_mean: float, away_mean: float,
+        weather: dict, line: float, edge_pts: float,
+        home_confirmed: bool, away_confirmed: bool,
+        market_type: str,
+    ) -> str:
+        # Identify which side leads the scoring — strongest offense vs weakest arm
+        if home_offense >= away_offense:
+            attack_team, def_team = home_team, away_team
+            attack_pitcher, def_pitcher = away_pitcher, home_pitcher
+            attack_profile, def_profile = away_profile, home_profile
+            attack_leaders = home_leaders
+            attack_bullpen, def_bullpen = away_bullpen, home_bullpen
+            attack_mean = home_mean
+        else:
+            attack_team, def_team = away_team, home_team
+            attack_pitcher, def_pitcher = home_pitcher, away_pitcher
+            attack_profile, def_profile = home_profile, away_profile
+            attack_leaders = away_leaders
+            attack_bullpen, def_bullpen = home_bullpen, away_bullpen
+            attack_mean = away_mean
+
+        def_xba = float(def_profile.get("xba") or 0.255)
+        def_hh = float(def_profile.get("hard_hit_pct") or 0.375)
+        def_k = float(def_profile.get("weighted_k_pct") or 0.228)
+        atk_xba = float(attack_profile.get("xba") or 0.255)
+        atk_hh = float(attack_profile.get("hard_hit_pct") or 0.375)
+
+        gap = total_mean - line
+        gap_str = f"+{gap:.1f}" if gap >= 0 else f"{gap:.1f}"
+
+        # Pitcher vulnerability sentence
+        def_label = self._pitcher_label(def_xba, def_hh, def_k)
+        pitch_sentence = (
+            f"{def_pitcher} presents as {def_label} — "
+            f".{int(round(def_xba * 1000)):03d} xBA allowed, {def_hh * 100:.0f}% hard-hit rate — "
+            f"giving {attack_team}'s lineup a clear path to quality contact."
+        )
+
+        # Matchup leaders sentence
+        if attack_leaders:
+            leaders_str = self._leaders_text(attack_leaders)
+            matchup_sentence = (
+                f"{leaders_str} post the strongest hitter-vs-arsenal scores against {def_pitcher}'s pitch mix."
+            )
+        else:
+            matchup_sentence = f"{attack_team}'s lineup carries a favorable collective matchup against {def_pitcher}."
+
+        # Bullpen / run-up context
+        weaker_bullpen = min(attack_bullpen, def_bullpen)
+        if weaker_bullpen < 58:
+            bpen_team = attack_team if attack_bullpen < def_bullpen else def_team
+            bullpen_sentence = (
+                f"The {bpen_team} bullpen ({weaker_bullpen:.0f}/100) is a late-game run-up threat "
+                f"that adds to the over case once starters exit."
+            )
+        else:
+            bullpen_sentence = ""
+
+        # Weather sentence
+        wind = float(weather.get("wind_speed_mph", 0.0) or 0.0)
+        stack = float(weather.get("weather_stack_score", 0.0) or 0.0)
+        wind_dir = str(weather.get("wind_direction", "") or "")
+        if wind >= 12 or stack >= 2.0:
+            wind_dir_desc = "blowing out" if "out" in wind_dir.lower() else "in play"
+            weather_sentence = (
+                f"Weather is a secondary tailwind — {wind:.0f} mph wind (stack {stack:.1f}) "
+                f"{wind_dir_desc} boosts run environment."
+            )
+        else:
+            weather_sentence = ""
+
+        # Lineup confirmation note
+        if not home_confirmed or not away_confirmed:
+            conf_note = " (lineups projected — edge reflects added uncertainty)"
+        else:
+            conf_note = ""
+
+        prefix = "First-five" if market_type == "first_five_total" else "Full-game"
+        sim_sentence = (
+            f"{prefix} sim projects {total_mean:.1f} runs versus the {line:g} line ({gap_str}) "
+            f"— {edge_pts:.1f} percentage points of model edge{conf_note}."
+        )
+
+        parts = [pitch_sentence, matchup_sentence]
+        if bullpen_sentence:
+            parts.append(bullpen_sentence)
+        if weather_sentence:
+            parts.append(weather_sentence)
+        parts.append(sim_sentence)
+        return " ".join(parts)
+
+    def _blurb_under(
+        self,
+        home_team: str, away_team: str,
+        home_pitcher: str, away_pitcher: str,
+        home_profile: dict, away_profile: dict,
+        home_laggards: list, away_laggards: list,
+        home_bullpen: float, away_bullpen: float,
+        total_mean: float, home_mean: float, away_mean: float,
+        weather: dict, line: float, edge_pts: float,
+        home_confirmed: bool, away_confirmed: bool,
+        market_type: str,
+    ) -> str:
+        home_xba = float(home_profile.get("xba") or 0.255)
+        home_hh = float(home_profile.get("hard_hit_pct") or 0.375)
+        home_k = float(home_profile.get("weighted_k_pct") or 0.228)
+        away_xba = float(away_profile.get("xba") or 0.255)
+        away_hh = float(away_profile.get("hard_hit_pct") or 0.375)
+        away_k = float(away_profile.get("weighted_k_pct") or 0.228)
+
+        gap = total_mean - line
+        gap_str = f"+{gap:.1f}" if gap >= 0 else f"{gap:.1f}"
+
+        home_label = self._pitcher_label(home_xba, home_hh, home_k)
+        away_label = self._pitcher_label(away_xba, away_hh, away_k)
+
+        starter_sentence = (
+            f"{away_pitcher} ({away_label}: .{int(round(away_xba * 1000)):03d} xBA, {away_k * 100:.0f}% K) "
+            f"and {home_pitcher} ({home_label}: .{int(round(home_xba * 1000)):03d} xBA, {home_k * 100:.0f}% K) "
+            f"both project to limit hard contact and keep the lineup under control early."
+        )
+
+        # Softest matchup hitters (lowest scores = most suppressed)
+        laggards_parts = []
+        if home_laggards:
+            laggards_parts.append(f"{self._leaders_text(home_laggards)} for {home_team}")
+        if away_laggards:
+            laggards_parts.append(f"{self._leaders_text(away_laggards)} for {away_team}")
+        if laggards_parts:
+            sup_sentence = (
+                f"The softest hitter-vs-arsenal matchups on the slate are "
+                f"{' and '.join(laggards_parts)}, indicating limited expected damage at the plate."
+            )
+        else:
+            sup_sentence = "Both lineups face unfavorable collective matchups against their opposing starters."
+
+        # Bullpen — strong pens reinforce under
+        stronger_bullpen = max(home_bullpen, away_bullpen)
+        if stronger_bullpen >= 70:
+            bpen_team = home_team if home_bullpen >= away_bullpen else away_team
+            bullpen_sentence = (
+                f"The {bpen_team} bullpen ({stronger_bullpen:.0f}/100) is a reliable shutdown unit "
+                f"that should keep the run total in check through the late innings."
+            )
+        elif home_bullpen >= 65 and away_bullpen >= 65:
+            bullpen_sentence = "Both bullpens are above average, providing a reliable bridge to preserve low-scoring games."
+        else:
+            bullpen_sentence = ""
+
+        # Weather — suppressive conditions reinforce under
+        wind = float(weather.get("wind_speed_mph", 0.0) or 0.0)
+        stack = float(weather.get("weather_stack_score", 0.0) or 0.0)
+        wind_dir = str(weather.get("wind_direction", "") or "")
+        if "in" in wind_dir.lower() and wind >= 10:
+            weather_sentence = (
+                f"Wind blowing in at {wind:.0f} mph compresses the run environment further, "
+                f"adding another layer of confidence for the under."
+            )
+        elif stack <= -1.5:
+            weather_sentence = f"Suppressive weather conditions (stack {stack:.1f}) tighten the scoring ceiling."
+        else:
+            weather_sentence = ""
+
+        if not home_confirmed or not away_confirmed:
+            conf_note = " (lineups projected — edge reflects added uncertainty)"
+        else:
+            conf_note = ""
+
+        prefix = "First-five" if market_type == "first_five_total" else "Full-game"
+        sim_sentence = (
+            f"{prefix} sim lands at {total_mean:.1f} total runs versus the {line:g} line ({gap_str}) "
+            f"— {edge_pts:.1f} percentage points of model edge{conf_note}."
+        )
+
+        parts = [starter_sentence, sup_sentence]
+        if bullpen_sentence:
+            parts.append(bullpen_sentence)
+        if weather_sentence:
+            parts.append(weather_sentence)
+        parts.append(sim_sentence)
+        return " ".join(parts)
+
+    def _blurb_moneyline(
+        self,
+        team: str, home_team: str, away_team: str,
+        home_pitcher: str, away_pitcher: str,
+        home_profile: dict, away_profile: dict,
+        home_leaders: list, away_leaders: list,
+        home_offense: float, away_offense: float,
+        home_bullpen: float, away_bullpen: float,
+        home_mean: float, away_mean: float,
+        home_win_prob: float, away_win_prob: float,
+        weather: dict, edge_pts: float,
+        home_confirmed: bool, away_confirmed: bool,
+    ) -> str:
+        is_home = team == home_team
+        team_mean = home_mean if is_home else away_mean
+        opp_mean = away_mean if is_home else home_mean
+        starter = home_pitcher if is_home else away_pitcher
+        opp_starter = away_pitcher if is_home else home_pitcher
+        team_profile = home_profile if is_home else away_profile
+        opp_profile = away_profile if is_home else home_profile
+        team_leaders = home_leaders if is_home else away_leaders
+        team_offense = home_offense if is_home else away_offense
+        opp_offense = away_offense if is_home else home_offense
+        team_bullpen = home_bullpen if is_home else away_bullpen
+        opp_bullpen = away_bullpen if is_home else home_bullpen
+        team_confirmed = home_confirmed if is_home else away_confirmed
+        opp_confirmed = away_confirmed if is_home else home_confirmed
+
+        t_xba = float(team_profile.get("xba") or 0.255)
+        t_hh = float(team_profile.get("hard_hit_pct") or 0.375)
+        t_k = float(team_profile.get("weighted_k_pct") or 0.228)
+        o_xba = float(opp_profile.get("xba") or 0.255)
+        o_hh = float(opp_profile.get("hard_hit_pct") or 0.375)
+        o_k = float(opp_profile.get("weighted_k_pct") or 0.228)
+
+        t_label = self._pitcher_label(t_xba, t_hh, t_k)
+        o_label = self._pitcher_label(o_xba, o_hh, o_k)
+
+        # Starter comparison
+        if t_xba < o_xba or t_k > o_k:
+            starter_sentence = (
+                f"{starter} holds a clear starting-pitching edge — "
+                f"{t_label} (.{int(round(t_xba * 1000)):03d} xBA, {t_k * 100:.0f}% K) "
+                f"versus {opp_starter}'s {o_label} profile "
+                f"(.{int(round(o_xba * 1000)):03d} xBA, {o_k * 100:.0f}% K)."
+            )
+        else:
+            starter_sentence = (
+                f"{starter} ({t_label}: .{int(round(t_xba * 1000)):03d} xBA, {t_k * 100:.0f}% K) "
+                f"gets the nod while {opp_starter} ({o_label}: .{int(round(o_xba * 1000)):03d} xBA) "
+                f"is the more hittable option in this matchup."
+            )
+
+        # Offensive matchup leaders
+        if team_leaders:
+            leaders_str = self._leaders_text(team_leaders)
+            offense_sentence = (
+                f"{leaders_str} generate the sharpest hitter-vs-arsenal edges against {opp_starter}, "
+                f"giving {team}'s lineup multiple legitimate run-scoring threats."
+            )
+        elif team_offense > opp_offense:
+            offense_sentence = (
+                f"{team}'s offense carries a meaningful edge in projected output "
+                f"({team_offense:.1f} vs {opp_offense:.1f} offensive score) coming into this slate."
+            )
+        else:
+            offense_sentence = f"{team}'s lineup has been producing above expectation relative to the market's assessment."
+
+        # Bullpen angle
+        if team_bullpen >= 70 and opp_bullpen < 65:
+            bullpen_sentence = (
+                f"The {team} bullpen ({team_bullpen:.0f}/100) is among the better relief corps on the slate "
+                f"and should protect a lead if the starters exit early."
+            )
+        elif opp_bullpen < 58:
+            bullpen_sentence = (
+                f"The {home_team if not is_home else away_team} bullpen ({opp_bullpen:.0f}/100) "
+                f"is a vulnerability — late-inning exposure could accelerate {team}'s run total."
+            )
+        else:
+            bullpen_sentence = ""
+
+        # Confirmation note
+        if not team_confirmed or not opp_confirmed:
+            conf_note = " (lineups projected)"
+        else:
+            conf_note = ""
+
+        win_prob = home_win_prob if is_home else away_win_prob
+        sim_sentence = (
+            f"The sim projects {team} {team_mean:.1f} – {opp_mean:.1f} with a {win_prob * 100:.1f}% win probability "
+            f"and {edge_pts:.1f} points of model edge over the no-vig market{conf_note}."
+        )
+
+        parts = [starter_sentence, offense_sentence]
+        if bullpen_sentence:
+            parts.append(bullpen_sentence)
+        parts.append(sim_sentence)
+        return " ".join(parts)
+
+    def _blurb_runline(
+        self,
+        team: str, home_team: str, away_team: str,
+        home_pitcher: str, away_pitcher: str,
+        home_profile: dict, away_profile: dict,
+        home_leaders: list, away_leaders: list,
+        home_offense: float, away_offense: float,
+        home_bullpen: float, away_bullpen: float,
+        home_mean: float, away_mean: float,
+        weather: dict, line: float, edge_pts: float,
+        home_confirmed: bool, away_confirmed: bool,
+    ) -> str:
+        is_home = team == home_team
+        team_mean = home_mean if is_home else away_mean
+        opp_mean = away_mean if is_home else home_mean
+        starter = home_pitcher if is_home else away_pitcher
+        opp_starter = away_pitcher if is_home else home_pitcher
+        team_profile = home_profile if is_home else away_profile
+        opp_profile = away_profile if is_home else home_profile
+        team_leaders = home_leaders if is_home else away_leaders
+        team_offense = home_offense if is_home else away_offense
+        opp_offense = away_offense if is_home else home_offense
+        team_bullpen = home_bullpen if is_home else away_bullpen
+        opp_bullpen = away_bullpen if is_home else home_bullpen
+
+        t_xba = float(team_profile.get("xba") or 0.255)
+        t_k = float(team_profile.get("weighted_k_pct") or 0.228)
+        o_xba = float(opp_profile.get("xba") or 0.255)
+        o_hh = float(opp_profile.get("hard_hit_pct") or 0.375)
+        o_k = float(opp_profile.get("weighted_k_pct") or 0.228)
+
+        margin = team_mean - opp_mean
+        margin_str = f"+{margin:.1f}" if margin >= 0 else f"{margin:.1f}"
+        cover_line = abs(line)
+
+        # Offensive dominance driver
+        o_label = self._pitcher_label(o_xba, o_hh, o_k)
+        if team_offense > opp_offense:
+            driver_sentence = (
+                f"{team}'s offense ({team_offense:.1f} score) faces a {o_label} opposition in {opp_starter} "
+                f"(.{int(round(o_xba * 1000)):03d} xBA, {o_k * 100:.0f}% K) "
+                f"— the model sees a mismatch that pushes the projected margin to {margin_str} runs."
+            )
+        else:
+            driver_sentence = (
+                f"{opp_starter}'s {o_label} profile (.{int(round(o_xba * 1000)):03d} xBA, {o_k * 100:.0f}% K) "
+                f"matches up poorly against {team}'s lineup, generating the run-margin edge "
+                f"the model needs to cover the {cover_line:g}."
+            )
+
+        # Key matchup leaders who create the margin
+        if team_leaders:
+            leaders_str = self._leaders_text(team_leaders)
+            matchup_sentence = (
+                f"{leaders_str} lead {team} in hitter-vs-arsenal score against {opp_starter}, "
+                f"creating sustained on-base pressure that widens the projected gap."
+            )
+        else:
+            matchup_sentence = f"{team}'s lineup has a favorable collective profile against {opp_starter}'s pitch mix."
+
+        # Bullpen — sustaining the margin
+        if opp_bullpen < 58:
+            bullpen_sentence = (
+                f"The opposing bullpen ({opp_bullpen:.0f}/100) is a secondary edge — "
+                f"late-inning exposure gives {team} further opportunity to pad the lead beyond the spread."
+            )
+        elif team_bullpen >= 70:
+            bullpen_sentence = (
+                f"The {team} bullpen ({team_bullpen:.0f}/100) is built to hold a multi-run lead "
+                f"and protect the cover in the final three frames."
+            )
+        else:
+            bullpen_sentence = ""
+
+        # Weather context
+        wind = float(weather.get("wind_speed_mph", 0.0) or 0.0)
+        stack = float(weather.get("weather_stack_score", 0.0) or 0.0)
+        if wind >= 12 or stack >= 2.0:
+            weather_sentence = (
+                f"Weather boosts run environment ({wind:.0f} mph, stack {stack:.1f}), "
+                f"which benefits the higher-scoring side and reinforces the cover."
+            )
+        else:
+            weather_sentence = ""
+
+        if not home_confirmed or not away_confirmed:
+            conf_note = " (lineups projected)"
+        else:
+            conf_note = ""
+
+        sim_sentence = (
+            f"The sim produces a {margin_str}-run projected margin — enough to cover the {cover_line:g} "
+            f"with {edge_pts:.1f} percentage points of model edge{conf_note}."
+        )
+
+        parts = [driver_sentence, matchup_sentence]
+        if bullpen_sentence:
+            parts.append(bullpen_sentence)
+        if weather_sentence:
+            parts.append(weather_sentence)
+        parts.append(sim_sentence)
+        return " ".join(parts)
+
+    # ------------------------------------------------------------------ #
+    # Shared helpers                                                       #
+    # ------------------------------------------------------------------ #
+
+    def _pitcher_label(self, xba: float, hard_hit: float, k_pct: float) -> str:
+        if xba <= 0.265 and k_pct >= 0.24:
+            return "a sharp, high-strikeout arm"
+        if xba <= 0.270 and hard_hit <= 0.345:
+            return "a quality contact-suppressor"
+        if xba <= 0.278 and k_pct >= 0.22:
+            return "an above-average starter"
+        if xba >= 0.300 or hard_hit >= 0.405:
+            return "a hittable, contact-prone option"
+        if xba >= 0.288 and k_pct < 0.20:
+            return "a soft-contact groundballer with limited swing-and-miss"
+        return "a league-average arm"
 
     def _lineup_matchup_leaders(
         self,
@@ -780,6 +1224,120 @@ class SimulationModelService:
         if wind >= 12 or stack >= 2.0:
             return f", with weather adding another push ({wind:.0f} mph wind)"
         return ""
+
+    def build_game_blurb(self, context: dict[str, Any]) -> str:
+        """Return a 3-4 sentence narrative summary of the game for display in the game card."""
+        home_team = context.get("home_team", "Home")
+        away_team = context.get("away_team", "Away")
+        home_pitcher = context.get("home_pitcher_name", home_team)
+        away_pitcher = context.get("away_pitcher_name", away_team)
+        home_profile = context.get("home_pitcher_profile") or {}
+        away_profile = context.get("away_pitcher_profile") or {}
+        home_bullpen = float((context.get("home_bullpen") or {}).get("bullpen_score", 65.0))
+        away_bullpen = float((context.get("away_bullpen") or {}).get("bullpen_score", 65.0))
+        home_offense = float((context.get("home_offense") or {}).get("offense_score", 50.0))
+        away_offense = float((context.get("away_offense") or {}).get("offense_score", 50.0))
+        sim = context.get("simulation") or {}
+        home_mean = float(sim.get("home_runs_mean", 0.0))
+        away_mean = float(sim.get("away_runs_mean", 0.0))
+        total_mean = float(sim.get("total_mean", 0.0))
+        home_win_prob = float(sim.get("home_win_prob", 0.5))
+        away_win_prob = float(sim.get("away_win_prob", 0.5))
+        weather = context.get("weather", {}) or {}
+        home_confirmed = context.get("home_lineup_confirmed", False)
+        away_confirmed = context.get("away_lineup_confirmed", False)
+        venue = context.get("venue", "")
+
+        home_xba = float(home_profile.get("xba") or 0.255)
+        home_hh = float(home_profile.get("hard_hit_pct") or 0.375)
+        home_k = float(home_profile.get("weighted_k_pct") or 0.228)
+        away_xba = float(away_profile.get("xba") or 0.255)
+        away_hh = float(away_profile.get("hard_hit_pct") or 0.375)
+        away_k = float(away_profile.get("weighted_k_pct") or 0.228)
+
+        home_label = self._pitcher_label(home_xba, home_hh, home_k)
+        away_label = self._pitcher_label(away_xba, away_hh, away_k)
+
+        # Starter intro
+        starter_sentence = (
+            f"{away_pitcher} ({away_label}: .{int(round(away_xba * 1000)):03d} xBA, {away_k * 100:.0f}% K) "
+            f"takes the mound for {away_team} against {home_pitcher} "
+            f"({home_label}: .{int(round(home_xba * 1000)):03d} xBA, {home_k * 100:.0f}% K) for {home_team}."
+        )
+
+        # Offense comparison
+        if abs(home_offense - away_offense) >= 3:
+            stronger_team = home_team if home_offense > away_offense else away_team
+            weaker_team = away_team if home_offense > away_offense else home_team
+            stronger_score = max(home_offense, away_offense)
+            weaker_score = min(home_offense, away_offense)
+            offense_sentence = (
+                f"{stronger_team} carries the more dangerous offense ({stronger_score:.1f} vs {weaker_score:.1f} lineup score), "
+                f"meaning {weaker_team}'s starter will face heavier traffic than the line might suggest."
+            )
+        else:
+            offense_sentence = (
+                f"Both lineups are evenly matched on paper ({home_team} {home_offense:.1f}, {away_team} {away_offense:.1f} lineup score), "
+                f"making starter execution and bullpen quality the key differentiators tonight."
+            )
+
+        # Bullpen context
+        weaker_bullpen_score = min(home_bullpen, away_bullpen)
+        stronger_bullpen_score = max(home_bullpen, away_bullpen)
+        if weaker_bullpen_score < 55:
+            weak_bpen_team = home_team if home_bullpen < away_bullpen else away_team
+            bullpen_sentence = (
+                f"The {weak_bpen_team} bullpen ({weaker_bullpen_score:.0f}/100) is the most significant late-game variable — "
+                f"once the starter exits, run-scoring opportunities are likely to increase."
+            )
+        elif stronger_bullpen_score >= 72:
+            strong_bpen_team = home_team if home_bullpen >= away_bullpen else away_team
+            bullpen_sentence = (
+                f"The {strong_bpen_team} bullpen ({stronger_bullpen_score:.0f}/100) is one of the better relief units on the slate today, "
+                f"adding an important run-suppression layer in the late innings."
+            )
+        else:
+            bullpen_sentence = ""
+
+        # Weather context
+        wind = float(weather.get("wind_speed_mph", 0.0) or 0.0)
+        stack = float(weather.get("weather_stack_score", 0.0) or 0.0)
+        wind_dir = str(weather.get("wind_direction", "") or "")
+        temp = float(weather.get("temperature_f", 70.0) or 70.0)
+        if wind >= 15 or stack >= 2.5:
+            if "out" in wind_dir.lower():
+                wind_desc = "blowing out (elevation boost)"
+            else:
+                wind_desc = f"from {wind_dir.lower()}" if wind_dir else "across the field"
+            weather_sentence = (
+                f"Weather is a meaningful factor at {venue} — {wind:.0f} mph wind {wind_desc} "
+                f"with a run-environment stack of {stack:.1f}."
+            )
+        elif wind >= 10 and "in" in wind_dir.lower():
+            weather_sentence = (
+                f"Wind blowing in at {wind:.0f} mph at {venue} provides a natural suppressor for home-run balls."
+            )
+        elif temp >= 85:
+            weather_sentence = f"Warm conditions ({temp:.0f}°F) at {venue} can contribute to slightly elevated carry on batted balls."
+        else:
+            weather_sentence = ""
+
+        # Sim summary
+        fav_team = home_team if home_win_prob >= away_win_prob else away_team
+        fav_prob = max(home_win_prob, away_win_prob)
+        sim_sentence = (
+            f"The model's {self.trials:,}-trial simulation projects {away_team} {away_mean:.1f} – {home_mean:.1f} {home_team} "
+            f"(total {total_mean:.1f} runs), with {fav_team} favored at {fav_prob * 100:.1f}%"
+            + (" using confirmed lineups." if home_confirmed and away_confirmed else " using projected lineups.")
+        )
+
+        parts = [starter_sentence, offense_sentence]
+        if bullpen_sentence:
+            parts.append(bullpen_sentence)
+        if weather_sentence:
+            parts.append(weather_sentence)
+        parts.append(sim_sentence)
+        return " ".join(parts)
 
     def _fallback_total_probability(self, mean_total: float, line: float) -> float:
         z = (mean_total - line) / 2.0

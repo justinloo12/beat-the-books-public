@@ -3,12 +3,12 @@ name: Refresh Site
 on:
   workflow_dispatch:
   schedule:
-    # 11am ET — locks picks for 12–3pm games
-    - cron: "0 16 * * *"
-    # 3pm ET — locks picks for 4–6pm games
-    - cron: "0 20 * * *"
-    # 6pm ET — locks picks for 6–10pm games
-    - cron: "0 23 * * *"
+    # 11am ET — locks picks for 12–3pm games (15 UTC during EDT / 16 UTC during EST)
+    - cron: "0 15 * * *"
+    # 3pm ET — locks picks for 4–6pm games (19 UTC during EDT / 20 UTC during EST)
+    - cron: "0 19 * * *"
+    # 6pm ET — locks picks for 6–10pm games (22 UTC during EDT / 23 UTC during EST)
+    - cron: "0 22 * * *"
 
 permissions:
   contents: write
