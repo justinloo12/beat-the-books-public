@@ -16,14 +16,14 @@
     "daily_pick_count": 2,
     "daily_lean_count": 7,
     "lineup_card_count": 14,
-    "lean_tracked_bets": 93,
-    "lean_wins": 32,
-    "lean_losses": 58,
-    "lean_pushes": 3,
-    "lean_units_risked": 93.0,
-    "lean_units_profit": -21.5068,
-    "lean_roi": -0.2312559139784946,
-    "lean_hit_rate": 0.35555555555555557
+    "lean_tracked_bets": 26,
+    "lean_wins": 10,
+    "lean_losses": 15,
+    "lean_pushes": 1,
+    "lean_units_risked": 26.0,
+    "lean_units_profit": -3.4159,
+    "lean_roi": -0.13138076923076925,
+    "lean_hit_rate": 0.4
   },
   "daily": {
     "date": "2026-06-02",
