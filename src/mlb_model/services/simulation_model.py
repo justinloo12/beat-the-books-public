@@ -1243,6 +1243,14 @@ class SimulationModelService:
         total_mean = float(sim.get("total_mean", 0.0))
         home_win_prob = float(sim.get("home_win_prob", 0.5))
         away_win_prob = float(sim.get("away_win_prob", 0.5))
+        # Use calibrated moneyline probabilities when available — these match
+        # what is shown on the lean/pick cards and account for lineup uncertainty.
+        top_picks = context.get("top_game_picks", [])
+        ml_home = next((p for p in top_picks if p.get("market_type") == "moneyline" and p.get("pick") == home_team), None)
+        ml_away = next((p for p in top_picks if p.get("market_type") == "moneyline" and p.get("pick") == away_team), None)
+        if ml_home and ml_away:
+            home_win_prob = float(ml_home.get("model_probability", home_win_prob))
+            away_win_prob = float(ml_away.get("model_probability", away_win_prob))
         weather = context.get("weather", {}) or {}
         home_confirmed = context.get("home_lineup_confirmed", False)
         away_confirmed = context.get("away_lineup_confirmed", False)
