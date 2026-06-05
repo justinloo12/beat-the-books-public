@@ -1,9 +1,128 @@
 {
   "dates": [
     {
+      "date": "2026-06-04",
+      "picks": 0,
+      "leans": 6,
+      "strong": 0,
+      "games": 5
+    },
+    {
+      "date": "2026-06-03",
+      "picks": 0,
+      "leans": 8,
+      "strong": 0,
+      "games": 11
+    },
+    {
+      "date": "2026-06-02",
+      "picks": 4,
+      "leans": 11,
+      "strong": 0,
+      "games": 14
+    },
+    {
+      "date": "2026-06-01",
+      "picks": 2,
+      "leans": 2,
+      "strong": 1,
+      "games": 9
+    },
+    {
+      "date": "2026-05-31",
+      "picks": 1,
+      "leans": 7,
+      "strong": 0,
+      "games": 15
+    },
+    {
+      "date": "2026-05-30",
+      "picks": 1,
+      "leans": 6,
+      "strong": 0,
+      "games": 15
+    },
+    {
+      "date": "2026-05-29",
+      "picks": 1,
+      "leans": 5,
+      "strong": 0,
+      "games": 14
+    },
+    {
+      "date": "2026-05-28",
+      "picks": 0,
+      "leans": 3,
+      "strong": 0,
+      "games": 4
+    },
+    {
+      "date": "2026-05-27",
+      "picks": 0,
+      "leans": 3,
+      "strong": 0,
+      "games": 14
+    },
+    {
+      "date": "2026-05-26",
+      "picks": 1,
+      "leans": 5,
+      "strong": 0,
+      "games": 8
+    },
+    {
+      "date": "2026-05-25",
+      "picks": 1,
+      "leans": 3,
+      "strong": 0,
+      "games": 13
+    },
+    {
+      "date": "2026-05-24",
+      "picks": 0,
+      "leans": 5,
+      "strong": 0,
+      "games": 14
+    },
+    {
+      "date": "2026-05-23",
+      "picks": 1,
+      "leans": 7,
+      "strong": 0,
+      "games": 16
+    },
+    {
+      "date": "2026-05-22",
+      "picks": 1,
+      "leans": 7,
+      "strong": 0,
+      "games": 14
+    },
+    {
+      "date": "2026-05-21",
+      "picks": 0,
+      "leans": 2,
+      "strong": 0,
+      "games": 7
+    },
+    {
+      "date": "2026-05-20",
+      "picks": 0,
+      "leans": 9,
+      "strong": 0,
+      "games": 8
+    },
+    {
+      "date": "2026-05-19",
+      "picks": 1,
+      "leans": 5,
+      "strong": 0,
+      "games": 15
+    },
+    {
       "date": "2026-05-18",
       "picks": 1,
-      "leans": 11,
+      "leans": 13,
       "strong": 0,
       "games": 14
     },
