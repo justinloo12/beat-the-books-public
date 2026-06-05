@@ -76,7 +76,7 @@
   },
   "edge_thresholds": {
     "lean_min": 0.040,
-    "pass_below": 0.05,
+    "pass_below": 0.06,
     "watch_min": 0.05,
     "watch_max": 0.06,
     "strong_min": 0.06,
