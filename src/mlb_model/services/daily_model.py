@@ -338,6 +338,8 @@ class DailyPredictionService:
             park_factor=park_factor,
             bullpen_score=float(away_bullpen.get("bullpen_score", 65.0)),
             starter_ip_projection=away_pitcher_score["starter_ip_projection"],
+            pitcher_sample_pitches=int(away_profile_for_runs.get("sample_pitches") or 0),
+            lineup_avg_pa=int(home_lineup_avgs.get("avg_pa") or 0),
             top_features=self._top_run_features_direct(
                 pitcher_xba=float(away_profile_for_runs.get("xba") or 0.255),
                 pitcher_k_pct=float(away_profile_for_runs.get("weighted_k_pct") or 0.228),
@@ -361,6 +363,8 @@ class DailyPredictionService:
             park_factor=park_factor,
             bullpen_score=float(home_bullpen.get("bullpen_score", 65.0)),
             starter_ip_projection=home_pitcher_score["starter_ip_projection"],
+            pitcher_sample_pitches=int(home_profile_for_runs.get("sample_pitches") or 0),
+            lineup_avg_pa=int(away_lineup_avgs.get("avg_pa") or 0),
             top_features=self._top_run_features_direct(
                 pitcher_xba=float(home_profile_for_runs.get("xba") or 0.255),
                 pitcher_k_pct=float(home_profile_for_runs.get("weighted_k_pct") or 0.228),
@@ -431,10 +435,11 @@ class DailyPredictionService:
             {"feature": "Lineup xwOBA", "value": round(lineup_xwoba, 3)},
         ]
 
-    def _lineup_averages(self, matchup_reports: list[dict[str, Any]]) -> dict[str, float]:
+    def _lineup_averages(self, matchup_reports: list[dict[str, Any]]) -> dict[str, float | int]:
         if not matchup_reports:
-            return {"xwoba": 0.318, "k_pct": 0.228, "bb_pct": 0.076, "hard_hit_pct": 0.375}
+            return {"xwoba": 0.318, "k_pct": 0.228, "bb_pct": 0.076, "hard_hit_pct": 0.375, "avg_pa": 0}
         w_xwoba = w_k = w_bb = w_hh = total_w = 0.0
+        pa_vals: list[int] = []
         for report in matchup_reports:
             slot = report.get("slot")
             try:
@@ -454,13 +459,18 @@ class DailyPredictionService:
             w_bb    += weight * bb
             w_hh    += weight * hh
             total_w += weight
+            sample_pa = int(p.get("sample_pa") or 0)
+            if sample_pa > 0:
+                pa_vals.append(sample_pa)
         if total_w <= 0:
-            return {"xwoba": 0.318, "k_pct": 0.228, "bb_pct": 0.076, "hard_hit_pct": 0.375}
+            return {"xwoba": 0.318, "k_pct": 0.228, "bb_pct": 0.076, "hard_hit_pct": 0.375, "avg_pa": 0}
+        avg_pa = int(sum(pa_vals) / len(pa_vals)) if pa_vals else 0
         return {
-            "xwoba":       round(w_xwoba / total_w, 4),
-            "k_pct":       round(w_k     / total_w, 4),
-            "bb_pct":      round(w_bb    / total_w, 4),
-            "hard_hit_pct": round(w_hh   / total_w, 4),
+            "xwoba":        round(w_xwoba / total_w, 4),
+            "k_pct":        round(w_k     / total_w, 4),
+            "bb_pct":       round(w_bb    / total_w, 4),
+            "hard_hit_pct": round(w_hh    / total_w, 4),
+            "avg_pa":       avg_pa,
         }
 
     def _lineup_matchups(

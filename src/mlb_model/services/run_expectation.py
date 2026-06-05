@@ -14,18 +14,23 @@ _LG_HARD_HIT = 0.375
 _LG_BARREL = 0.080
 _LG_XWOBA = 0.318
 
-# Regression weights — how much of the actual stat deviation to trust.
-# Pitcher stats are noisier (small early-season samples), so regress more aggressively.
-# Batter stats from a full lineup average out more, so allow more signal.
-_PITCHER_REGRESSION = 0.18
-_BATTER_REGRESSION  = 0.35
-
 # MLB per-team average runs/game (conservative: April context, not peak-summer offense)
 _BASE_RUNS = 4.30
+
+# Empirical sample-size priors for Bayesian regression.
+# At these thresholds, the weight reaches its midpoint between min and max.
+# Pitcher: ~80 IP ≈ 1 200 pitches.  Batter: lineup avg PA anchor.
+_PITCHER_PRIOR_PITCHES = 1_200
+_BATTER_PRIOR_PA = 400
 
 
 def _regress(value: float, league_avg: float, weight: float) -> float:
     return league_avg + weight * (value - league_avg)
+
+
+def _sample_weight(sample: int, prior: int, min_w: float, max_w: float) -> float:
+    """Return a regression weight that scales from min_w (no data) to max_w (large sample)."""
+    return min_w + (max_w - min_w) * sample / (sample + prior)
 
 
 class RunExpectationService:
@@ -46,22 +51,26 @@ class RunExpectationService:
         park_factor: float,
         bullpen_score: float,
         starter_ip_projection: float,
+        pitcher_sample_pitches: int = 0,
+        lineup_avg_pa: int = 0,
         top_features: list[dict] | None = None,
     ) -> TeamRunContext:
-        # Regress pitcher stats: trust only 18% of deviation from league average.
-        # This tames noisy early-season samples (small innings counts) while
-        # still letting genuine quality signal through.
-        p_xba    = _regress(pitcher_xba,           _LG_XBA,      _PITCHER_REGRESSION)
-        p_k      = _regress(pitcher_k_pct,          _LG_K_PCT,    _PITCHER_REGRESSION)
-        p_bb     = _regress(pitcher_bb_pct,         _LG_BB_PCT,   _PITCHER_REGRESSION)
-        p_hh     = _regress(pitcher_hard_hit_pct,   _LG_HARD_HIT, _PITCHER_REGRESSION)
-        p_barrel = _regress(pitcher_barrel_pct,     _LG_BARREL,   _PITCHER_REGRESSION)
+        # Sample-size-aware regression: trust more of the data when sample is large.
+        # Pitcher: ranges from 8% (call-up, 0 pitches) to 35% (full-season ace).
+        # Batter:  ranges from 20% (no data) to 55% (600+ PA lineup).
+        p_weight = _sample_weight(pitcher_sample_pitches, _PITCHER_PRIOR_PITCHES, min_w=0.08, max_w=0.35)
+        b_weight = _sample_weight(lineup_avg_pa,          _BATTER_PRIOR_PA,       min_w=0.20, max_w=0.55)
 
-        # Regress lineup averages: trust 35% of deviation — more stable than per-pitcher.
-        b_xwoba = _regress(lineup_xwoba,        _LG_XWOBA,   _BATTER_REGRESSION)
-        b_k     = _regress(lineup_k_pct,        _LG_K_PCT,   _BATTER_REGRESSION)
-        b_bb    = _regress(lineup_bb_pct,       _LG_BB_PCT,  _BATTER_REGRESSION)
-        b_hh    = _regress(lineup_hard_hit_pct, _LG_HARD_HIT, _BATTER_REGRESSION)
+        p_xba    = _regress(pitcher_xba,           _LG_XBA,      p_weight)
+        p_k      = _regress(pitcher_k_pct,          _LG_K_PCT,    p_weight)
+        p_bb     = _regress(pitcher_bb_pct,         _LG_BB_PCT,   p_weight)
+        p_hh     = _regress(pitcher_hard_hit_pct,   _LG_HARD_HIT, p_weight)
+        p_barrel = _regress(pitcher_barrel_pct,     _LG_BARREL,   p_weight)
+
+        b_xwoba = _regress(lineup_xwoba,        _LG_XWOBA,    b_weight)
+        b_k     = _regress(lineup_k_pct,        _LG_K_PCT,    b_weight)
+        b_bb    = _regress(lineup_bb_pct,       _LG_BB_PCT,   b_weight)
+        b_hh    = _regress(lineup_hard_hit_pct, _LG_HARD_HIT, b_weight)
 
         # Expected runs this pitcher allows above/below average (capped at ±1.0)
         pitcher_runs = clamp(
