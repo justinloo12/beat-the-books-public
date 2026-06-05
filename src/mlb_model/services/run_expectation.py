@@ -14,8 +14,8 @@ _LG_HARD_HIT = 0.375
 _LG_BARREL = 0.080
 _LG_XWOBA = 0.318
 
-# MLB per-team average runs/game (conservative: April context, not peak-summer offense)
-_BASE_RUNS = 4.30
+# MLB per-team average runs/game — June+ scoring environment (~4.5 per team/game)
+_BASE_RUNS = 4.50
 
 # Empirical sample-size priors for Bayesian regression.
 # At these thresholds, the weight reaches its midpoint between min and max.

@@ -204,7 +204,7 @@ function renderPicks(picks) {
 function renderLeans(leans) {
   if (!$dailyLeans) return;
   if (!leans || !leans.length) {
-    $dailyLeans.innerHTML = `<div class="empty-state">No leans today — model saw no edges between 2.5% and 5%.</div>`;
+    $dailyLeans.innerHTML = `<div class="empty-state">No leans today — model saw no edges between 4% and 6%.</div>`;
     if ($leansMeta) $leansMeta.textContent = "";
     return;
   }
@@ -869,9 +869,18 @@ async function loadBoard() {
         const lo = await r.json();
         if (lo.date === payload.date) {
           _liveOddsPayload = lo;
-          // Update displayed price on picks and leans without changing their status.
-          payload.daily.picks = applyLiveOdds(payload.daily.picks || [], lo);
-          payload.daily.leans = applyLiveOdds(payload.daily.leans || [], lo);
+          const seen = new Set();
+          const all = applyLiveOdds([
+            ...(payload.daily.picks || []),
+            ...(payload.daily.leans || []),
+          ], lo).filter(p => {
+            const key = `${p.market_type}|${p.pick}|${p.line}|${p.matchup}`;
+            if (seen.has(key)) return false;
+            seen.add(key);
+            return p.edge >= 0.040;
+          });
+          payload.daily.picks = all.filter(p => p.edge >= 0.06).sort((a,b) => b.edge - a.edge);
+          payload.daily.leans = all.filter(p => p.edge >= 0.040 && p.edge < 0.06).sort((a,b) => b.edge - a.edge);
         }
       }
     } catch (_) { /* live odds optional */ }
