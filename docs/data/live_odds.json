@@ -1,5 +1,5 @@
 {
-  "fetched_at": "2026-06-05T15:06:11.124506Z",
+  "fetched_at": "2026-06-05T15:59:05.404465Z",
   "date": "2026-06-05",
   "games": [
     {
@@ -7,21 +7,21 @@
       "home_team": "Chicago Cubs",
       "commence_time": "2026-06-05T18:21:00Z",
       "moneyline": {
-        "away_odds": 149,
-        "home_odds": -181,
-        "away_no_vig": 0.384,
-        "home_no_vig": 0.616
+        "away_odds": 153,
+        "home_odds": -186,
+        "away_no_vig": 0.378,
+        "home_no_vig": 0.622
       },
       "totals": [
         {
           "name": "Over",
           "point": 11.0,
-          "price": -104
+          "price": -103
         },
         {
           "name": "Under",
           "point": 11.0,
-          "price": -115
+          "price": -117
         }
       ]
     },
@@ -145,21 +145,21 @@
       "home_team": "Atlanta Braves",
       "commence_time": "2026-06-05T23:16:00Z",
       "moneyline": {
-        "away_odds": 123,
-        "home_odds": -149,
-        "away_no_vig": 0.4284,
-        "home_no_vig": 0.5716
+        "away_odds": 119,
+        "home_odds": -144,
+        "away_no_vig": 0.4362,
+        "home_no_vig": 0.5638
       },
       "totals": [
         {
           "name": "Over",
           "point": 8.5,
-          "price": -105
+          "price": -104
         },
         {
           "name": "Under",
           "point": 8.5,
-          "price": -114
+          "price": -116
         }
       ]
     },
@@ -191,10 +191,10 @@
       "home_team": "St. Louis Cardinals",
       "commence_time": "2026-06-06T00:16:00Z",
       "moneyline": {
-        "away_odds": 123,
-        "home_odds": -149,
-        "away_no_vig": 0.4284,
-        "home_no_vig": 0.5716
+        "away_odds": 119,
+        "home_odds": -144,
+        "away_no_vig": 0.4362,
+        "home_no_vig": 0.5638
       },
       "totals": [
         {
@@ -214,21 +214,21 @@
       "home_team": "Texas Rangers",
       "commence_time": "2026-06-06T00:16:00Z",
       "moneyline": {
-        "away_odds": -136,
-        "home_odds": 113,
-        "away_no_vig": 0.5511,
-        "home_no_vig": 0.4489
+        "away_odds": -126,
+        "home_odds": 105,
+        "away_no_vig": 0.5333,
+        "home_no_vig": 0.4667
       },
       "totals": [
         {
           "name": "Over",
           "point": 7.5,
-          "price": -112
+          "price": -114
         },
         {
           "name": "Under",
           "point": 7.5,
-          "price": -107
+          "price": -105
         }
       ]
     },
@@ -269,12 +269,12 @@
         {
           "name": "Over",
           "point": 12.0,
-          "price": -105
+          "price": -106
         },
         {
           "name": "Under",
           "point": 12.0,
-          "price": -115
+          "price": -114
         }
       ]
     },
@@ -329,10 +329,10 @@
       "home_team": "Los Angeles Dodgers",
       "commence_time": "2026-06-06T02:11:00Z",
       "moneyline": {
-        "away_odds": 168,
-        "home_odds": -205,
-        "away_no_vig": 0.357,
-        "home_no_vig": 0.643
+        "away_odds": 163,
+        "home_odds": -199,
+        "away_no_vig": 0.3636,
+        "home_no_vig": 0.6364
       },
       "totals": [
         {
