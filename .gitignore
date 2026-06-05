@@ -9,6 +9,8 @@ data/baseball_savant/
 data/odds_api/
 data/roster_cache/
 data/schedule_cache/
+data/boxscore_cache/
+data/player_cache/
 data/download_summary.json
 src/mlb_odds_model.egg-info/
 src/mlb_model/__pycache__/
