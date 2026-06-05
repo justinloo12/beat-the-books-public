@@ -314,6 +314,59 @@ body {
   margin-top: 3px;
 }
 
+/* ── Split row (ML vs Totals breakdown) ── */
+
+.split-row {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--r3);
+  margin-bottom: 22px;
+  overflow: hidden;
+}
+
+.split-cell {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 18px;
+}
+
+.split-divider {
+  width: 1px;
+  height: 36px;
+  background: var(--border);
+  flex-shrink: 0;
+}
+
+.split-label {
+  font-size: 0.63rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.10em;
+  color: var(--text-3);
+  min-width: 72px;
+}
+
+.split-record {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+
+.split-roi {
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-left: auto;
+}
+
+.split-good { color: var(--green); }
+.split-bad  { color: var(--red); }
+
 /* ── Archive ── */
 
 .archive-layout {

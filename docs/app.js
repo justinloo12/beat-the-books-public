@@ -150,6 +150,25 @@ function renderHero(payload) {
 }
 
 /* ── Render Summary ── */
+function mkSplitRow(mlW, mlL, mlP, mlRoi, totW, totL, totP, totRoi) {
+  const roiCls = r => +(r||0) >= 0 ? "split-good" : "split-bad";
+  const rec = (w,l,p) => `${w}-${l}${p ? `-${p}` : ""}`;
+  return `
+  <div class="split-row">
+    <div class="split-cell">
+      <span class="split-label">Moneyline</span>
+      <span class="split-record">${rec(mlW,mlL,mlP)}</span>
+      <span class="split-roi ${roiCls(mlRoi)}">${fmt.pct(mlRoi)} ROI</span>
+    </div>
+    <div class="split-divider"></div>
+    <div class="split-cell">
+      <span class="split-label">Totals</span>
+      <span class="split-record">${rec(totW,totL,totP)}</span>
+      <span class="split-roi ${roiCls(totRoi)}">${fmt.pct(totRoi)} ROI</span>
+    </div>
+  </div>`;
+}
+
 function renderSummary(s) {
   const dollarsWon = (+(s.units_profit || 0)) * 100;
   const dollarsRisked = (+(s.units_risked || 0)) * 100;
@@ -168,6 +187,14 @@ function renderSummary(s) {
     </div>`;
   $summaryGrid.innerHTML = pickCards.map(mkCard).join("");
 
+  const $pickSplit = document.getElementById("pick-split-row");
+  if ($pickSplit) {
+    $pickSplit.innerHTML = mkSplitRow(
+      s.pick_ml_wins ?? 0, s.pick_ml_losses ?? 0, s.pick_ml_pushes ?? 0, s.pick_ml_roi ?? 0,
+      s.pick_total_wins ?? 0, s.pick_total_losses ?? 0, s.pick_total_pushes ?? 0, s.pick_total_roi ?? 0,
+    );
+  }
+
   const $leanGrid = document.getElementById("lean-summary-grid");
   if ($leanGrid) {
     const lw = s.lean_wins ?? 0, ll = s.lean_losses ?? 0, lp = s.lean_pushes ?? 0;
@@ -180,6 +207,14 @@ function renderSummary(s) {
       ["Hit Rate",    fmt.pct(s.lean_hit_rate ?? 0),   "leans only"],
     ];
     $leanGrid.innerHTML = leanCards.map(mkCard).join("");
+  }
+
+  const $leanSplit = document.getElementById("lean-split-row");
+  if ($leanSplit) {
+    $leanSplit.innerHTML = mkSplitRow(
+      s.lean_ml_wins ?? 0, s.lean_ml_losses ?? 0, s.lean_ml_pushes ?? 0, s.lean_ml_roi ?? 0,
+      s.lean_total_wins ?? 0, s.lean_total_losses ?? 0, s.lean_total_pushes ?? 0, s.lean_total_roi ?? 0,
+    );
   }
 }
 

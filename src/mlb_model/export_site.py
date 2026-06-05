@@ -42,6 +42,25 @@ def _stats_for(entries: list[dict]) -> dict:
     }
 
 
+def _split_stats(entries: list[dict], prefix: str) -> dict:
+    ml = _stats_for([e for e in entries if e.get("market_type") == "moneyline"])
+    totals = _stats_for([e for e in entries if e.get("market_type") == "game_total"])
+    return {
+        f"{prefix}_ml_wins": ml["wins"],
+        f"{prefix}_ml_losses": ml["losses"],
+        f"{prefix}_ml_pushes": ml["pushes"],
+        f"{prefix}_ml_hit_rate": ml["hit_rate"],
+        f"{prefix}_ml_roi": ml["roi"],
+        f"{prefix}_ml_units_profit": ml["units_profit"],
+        f"{prefix}_total_wins": totals["wins"],
+        f"{prefix}_total_losses": totals["losses"],
+        f"{prefix}_total_pushes": totals["pushes"],
+        f"{prefix}_total_hit_rate": totals["hit_rate"],
+        f"{prefix}_total_roi": totals["roi"],
+        f"{prefix}_total_units_profit": totals["units_profit"],
+    }
+
+
 def _history_summary(entries: list[dict]) -> dict:
     # is_lean=None means the entry pre-dates the field — treat as a pick
     picks = [e for e in entries if not e.get("is_lean")]
@@ -51,6 +70,7 @@ def _history_summary(entries: list[dict]) -> dict:
     return {
         **pick_stats,
         "graded_bets": pick_stats["tracked_bets"],
+        **_split_stats(picks, "pick"),
         "lean_tracked_bets": lean_stats["tracked_bets"],
         "lean_wins": lean_stats["wins"],
         "lean_losses": lean_stats["losses"],
@@ -59,6 +79,7 @@ def _history_summary(entries: list[dict]) -> dict:
         "lean_units_profit": lean_stats["units_profit"],
         "lean_roi": lean_stats["roi"],
         "lean_hit_rate": lean_stats["hit_rate"],
+        **_split_stats(leans, "lean"),
     }
 
 
