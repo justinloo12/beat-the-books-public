@@ -883,6 +883,7 @@ function _findLiveGame(matchup, liveGames) {
 }
 function _liveEdge(pick, game) {
   if (!game) return null;
+  if (game.commence_time && new Date(game.commence_time).getTime() < Date.now()) return null;
   const mtype = pick.market_type;
   if (mtype === "moneyline" || mtype === "h2h") {
     const { away_odds, home_odds, away_no_vig, home_no_vig } = game.moneyline || {};
