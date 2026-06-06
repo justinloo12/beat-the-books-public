@@ -864,5 +864,21 @@
     "away_score": 18,
     "home_score": 3,
     "final_total": 21
+  },
+  {
+    "date": "2026-06-06",
+    "matchup": "Kansas City Royals @ Minnesota Twins",
+    "market_type": "moneyline",
+    "pick": "Kansas City Royals",
+    "line": 0.0,
+    "american_odds": 124,
+    "edge": 0.0775,
+    "tier": "strong",
+    "is_lean": false,
+    "result": null,
+    "pnl": null,
+    "away_score": null,
+    "home_score": null,
+    "final_total": null
   }
 ]
