@@ -104,9 +104,6 @@ class DailyPredictionService:
                 away_pitcher_role = await self.stats.fetch_pitcher_season_role(int(probable_away["id"]), slate_date.year)
                 # Model lineup: use confirmed players when available (more accurate — we
                 # know who's actually starting), otherwise fall back to projected.
-                # confirmed=False is passed to _build_game_projection so the leaderboard
-                # stat path (_hitter_pool_matchups) is always used — the per-pitch statcast
-                # profiles in the confirmed path are too noisy with early-season sparse data.
                 home_model_lineup = home_confirmed_players or await self.stats.fetch_recent_lineup_by_opposing_hand(
                     home_team_id,
                     away_pitcher_hand,
@@ -131,8 +128,8 @@ class DailyPredictionService:
                     away_pitcher_role=away_pitcher_role,
                     home_lineup=home_model_lineup,
                     away_lineup=away_model_lineup,
-                    home_lineup_confirmed=False,
-                    away_lineup_confirmed=False,
+                    home_lineup_confirmed=home_confirmed,
+                    away_lineup_confirmed=away_confirmed,
                     venue=game.get("venue", {}).get("name", "Unknown"),
                     start_time=game.get("gameDate"),
                 )
@@ -482,8 +479,9 @@ class DailyPredictionService:
         slate_date: date,
         confirmed: bool,
     ) -> list[dict[str, Any]]:
-        if not confirmed:
-            return self._hitter_pool_matchups(lineup, slate_date)
+        # Always use leaderboard path — per-pitch statcast profiles are too
+        # noisy with sparse early-season data and hurt calibration accuracy.
+        return self._hitter_pool_matchups(lineup, slate_date)
         pitch_types = {pitch["pitch_type"] for pitch in opposing_pitcher.get("pitch_arsenal", [])}
         reports = []
         sample_start = slate_date - timedelta(days=365)
