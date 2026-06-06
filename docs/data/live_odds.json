@@ -1,5 +1,5 @@
 {
-  "fetched_at": "2026-06-06T15:16:51.195997Z",
+  "fetched_at": "2026-06-06T15:45:15.605896Z",
   "date": "2026-06-06",
   "games": [
     {
@@ -145,10 +145,10 @@
       "home_team": "Arizona Diamondbacks",
       "commence_time": "2026-06-06T20:11:00Z",
       "moneyline": {
-        "away_odds": 128,
-        "home_odds": -155,
-        "away_no_vig": 0.4191,
-        "home_no_vig": 0.5809
+        "away_odds": 124,
+        "home_odds": -149,
+        "away_no_vig": 0.4273,
+        "home_no_vig": 0.5727
       },
       "totals": [
         {
@@ -159,7 +159,7 @@
         {
           "name": "Under",
           "point": 9.5,
-          "price": -122
+          "price": -121
         }
       ]
     },
@@ -177,12 +177,12 @@
         {
           "name": "Over",
           "point": 9.5,
-          "price": -106
+          "price": -104
         },
         {
           "name": "Under",
           "point": 9.5,
-          "price": -113
+          "price": -116
         }
       ]
     },
@@ -261,20 +261,20 @@
       "commence_time": "2026-06-06T23:36:00Z",
       "moneyline": {
         "away_odds": -102,
-        "home_odds": -118,
-        "away_no_vig": 0.4826,
-        "home_no_vig": 0.5174
+        "home_odds": -119,
+        "away_no_vig": 0.4817,
+        "home_no_vig": 0.5183
       },
       "totals": [
         {
           "name": "Over",
           "point": 7.5,
-          "price": -113
+          "price": -111
         },
         {
           "name": "Under",
           "point": 7.5,
-          "price": -107
+          "price": -108
         }
       ]
     },
