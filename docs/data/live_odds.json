@@ -1,5 +1,5 @@
 {
-  "fetched_at": "2026-06-07T14:57:02.604390Z",
+  "fetched_at": "2026-06-07T15:11:45.388732Z",
   "date": "2026-06-07",
   "games": [
     {
@@ -53,10 +53,10 @@
       "home_team": "Philadelphia Phillies",
       "commence_time": "2026-06-07T17:36:00Z",
       "moneyline": {
-        "away_odds": 139,
-        "home_odds": -168,
-        "away_no_vig": 0.4003,
-        "home_no_vig": 0.5997
+        "away_odds": 143,
+        "home_odds": -173,
+        "away_no_vig": 0.3937,
+        "home_no_vig": 0.6063
       },
       "totals": [
         {
@@ -84,13 +84,13 @@
       "totals": [
         {
           "name": "Over",
-          "point": 8.5,
-          "price": -102
+          "point": 8.0,
+          "price": -119
         },
         {
           "name": "Under",
-          "point": 8.5,
-          "price": -118
+          "point": 8.0,
+          "price": -102
         }
       ]
     },
@@ -108,12 +108,12 @@
         {
           "name": "Over",
           "point": 8.5,
-          "price": -119
+          "price": -120
         },
         {
           "name": "Under",
           "point": 8.5,
-          "price": -102
+          "price": -101
         }
       ]
     },
@@ -177,12 +177,12 @@
         {
           "name": "Over",
           "point": 8.5,
-          "price": -121
+          "price": -119
         },
         {
           "name": "Under",
           "point": 8.5,
-          "price": 101
+          "price": -102
         }
       ]
     },
@@ -191,16 +191,16 @@
       "home_team": "St. Louis Cardinals",
       "commence_time": "2026-06-07T18:16:00Z",
       "moneyline": {
-        "away_odds": 119,
-        "home_odds": -144,
-        "away_no_vig": 0.4362,
-        "home_no_vig": 0.5638
+        "away_odds": 123,
+        "home_odds": -149,
+        "away_no_vig": 0.4284,
+        "home_no_vig": 0.5716
       },
       "totals": [
         {
           "name": "Over",
           "point": 9.5,
-          "price": -101
+          "price": 100
         },
         {
           "name": "Under",
@@ -237,10 +237,10 @@
       "home_team": "Colorado Rockies",
       "commence_time": "2026-06-07T19:11:00Z",
       "moneyline": {
-        "away_odds": -186,
-        "home_odds": 153,
-        "away_no_vig": 0.622,
-        "home_no_vig": 0.378
+        "away_odds": -191,
+        "home_odds": 157,
+        "away_no_vig": 0.6278,
+        "home_no_vig": 0.3722
       },
       "totals": [
         {
