@@ -875,11 +875,11 @@
     "edge": 0.0775,
     "tier": "strong",
     "is_lean": false,
-    "result": null,
-    "pnl": null,
-    "away_score": null,
-    "home_score": null,
-    "final_total": null
+    "result": "loss",
+    "pnl": -100.0,
+    "away_score": 2,
+    "home_score": 5,
+    "final_total": 7
   },
   {
     "date": "2026-06-06",
