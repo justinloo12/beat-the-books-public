@@ -97,6 +97,34 @@ async def main() -> None:
     dated_path = docs_data / f"{slate_date.isoformat()}.json"
     latest_path = docs_data / "latest.json"
 
+    # Preserve picks/leans already locked from an earlier run today.
+    # New picks from this run are merged in (deduplicated by market+pick+matchup).
+    # This means the 11am picks survive the 3pm re-run, and the 3pm picks
+    # survive the 6pm re-run — picks only accumulate, never disappear.
+    if dated_path.exists():
+        try:
+            existing = json.loads(dated_path.read_text(encoding="utf-8"))
+            if existing.get("date") == slate_date.isoformat():
+                existing_picks = existing.get("daily", {}).get("picks", [])
+                existing_leans = existing.get("daily", {}).get("leans", [])
+                new_picks = payload["daily"].get("picks", [])
+                new_leans = payload["daily"].get("leans", [])
+
+                def _merge(existing_list, new_list):
+                    seen = {(p["market_type"], p["pick"], p.get("matchup", "")) for p in existing_list}
+                    merged = list(existing_list)
+                    for p in new_list:
+                        key = (p["market_type"], p["pick"], p.get("matchup", ""))
+                        if key not in seen:
+                            merged.append(p)
+                            seen.add(key)
+                    return merged
+
+                payload["daily"]["picks"] = _merge(existing_picks, new_picks)
+                payload["daily"]["leans"] = _merge(existing_leans, new_leans)
+        except Exception:
+            pass
+
     # Merge file-based graded pick history (overrides SQLite history which lacks results)
     graded_history = _load_pick_history()
     if graded_history:
