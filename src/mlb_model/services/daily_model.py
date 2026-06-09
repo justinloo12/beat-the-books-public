@@ -132,6 +132,7 @@ class DailyPredictionService:
                     away_lineup_confirmed=away_confirmed,
                     venue=game.get("venue", {}).get("name", "Unknown"),
                     start_time=game.get("gameDate"),
+                    odds_game=odds_game,
                 )
                 game_picks, top_game_picks, game_leans = self._score_markets(context, odds_game)
                 context["top_game_picks"] = top_game_picks
@@ -229,6 +230,7 @@ class DailyPredictionService:
         home_pitcher_role: dict[str, Any] | None = None,
         away_pitcher_role: dict[str, Any] | None = None,
         start_time: str | None = None,
+        odds_game: dict[str, Any] | None = None,
     ) -> dict[str, Any]:
         sample_start = slate_date - timedelta(days=365)
         home_pitcher_id = int(home_pitcher["id"])
@@ -320,6 +322,9 @@ class DailyPredictionService:
         weather = self.weather.score_weather({"ballpark": venue, "is_indoor": False}, weather_projection)
         park_factor = PARK_FACTORS.get(venue or "", 1.0)
 
+        total_lines = self._market_total_lines(odds_game)
+        market_total: float | None = min(total_lines) if total_lines else None
+
         home_runs = self.runs.expected_runs(
             team=home_team,
             pitcher_xba=float(away_profile_for_runs.get("xba") or 0.255),
@@ -337,6 +342,7 @@ class DailyPredictionService:
             starter_ip_projection=away_pitcher_score["starter_ip_projection"],
             pitcher_sample_pitches=int(away_profile_for_runs.get("sample_pitches") or 0),
             lineup_avg_pa=int(home_lineup_avgs.get("avg_pa") or 0),
+            market_total=market_total,
             top_features=self._top_run_features_direct(
                 pitcher_xba=float(away_profile_for_runs.get("xba") or 0.255),
                 pitcher_k_pct=float(away_profile_for_runs.get("weighted_k_pct") or 0.228),
@@ -362,6 +368,7 @@ class DailyPredictionService:
             starter_ip_projection=home_pitcher_score["starter_ip_projection"],
             pitcher_sample_pitches=int(home_profile_for_runs.get("sample_pitches") or 0),
             lineup_avg_pa=int(away_lineup_avgs.get("avg_pa") or 0),
+            market_total=market_total,
             top_features=self._top_run_features_direct(
                 pitcher_xba=float(home_profile_for_runs.get("xba") or 0.255),
                 pitcher_k_pct=float(home_profile_for_runs.get("weighted_k_pct") or 0.228),
