@@ -953,10 +953,10 @@ async function loadBoard() {
             const key = `${p.market_type}|${p.pick}|${p.line}|${p.matchup}`;
             if (seen.has(key)) return false;
             seen.add(key);
-            return p.edge >= 0.040;
+            return p.edge >= 0.05;
           });
-          payload.daily.picks = all.filter(p => p.edge >= 0.06).sort((a,b) => b.edge - a.edge);
-          payload.daily.leans = all.filter(p => p.edge >= 0.040 && p.edge < 0.06).sort((a,b) => b.edge - a.edge);
+          payload.daily.picks = all.filter(p => p.edge >= 0.10).sort((a,b) => b.edge - a.edge);
+          payload.daily.leans = all.filter(p => p.edge >= 0.05 && p.edge < 0.10).sort((a,b) => b.edge - a.edge);
         }
       }
     } catch (_) { /* live odds optional */ }
