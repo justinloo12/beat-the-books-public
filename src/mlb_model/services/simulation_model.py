@@ -744,6 +744,7 @@ class SimulationModelService:
                 home_mean, away_mean, home_win_prob, away_win_prob,
                 weather, edge_pts,
                 home_confirmed, away_confirmed,
+                model_prob=model_prob,
             )
 
         if market_type == "runline":
@@ -969,6 +970,7 @@ class SimulationModelService:
         home_win_prob: float, away_win_prob: float,
         weather: dict, edge_pts: float,
         home_confirmed: bool, away_confirmed: bool,
+        model_prob: float | None = None,
     ) -> str:
         is_home = team == home_team
         team_mean = home_mean if is_home else away_mean
@@ -1045,9 +1047,9 @@ class SimulationModelService:
         else:
             conf_note = ""
 
-        win_prob = home_win_prob if is_home else away_win_prob
+        displayed_prob = model_prob if model_prob is not None else (home_win_prob if is_home else away_win_prob)
         sim_sentence = (
-            f"The sim projects {team} {team_mean:.1f} – {opp_mean:.1f} with a {win_prob * 100:.1f}% win probability "
+            f"The sim projects {team} {team_mean:.1f} – {opp_mean:.1f} with a {displayed_prob * 100:.1f}% win probability "
             f"and {edge_pts:.1f} points of model edge over the no-vig market{conf_note}."
         )
 
