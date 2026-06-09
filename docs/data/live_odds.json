@@ -1,5 +1,5 @@
 {
-  "fetched_at": "2026-06-09T15:46:51.232361Z",
+  "fetched_at": "2026-06-09T17:43:09.550584Z",
   "date": "2026-06-09",
   "games": [
     {
@@ -39,12 +39,12 @@
         {
           "name": "Over",
           "point": 7.5,
-          "price": -117
+          "price": -119
         },
         {
           "name": "Under",
           "point": 7.5,
-          "price": -103
+          "price": -102
         }
       ]
     },
@@ -146,9 +146,9 @@
       "commence_time": "2026-06-09T23:08:00Z",
       "moneyline": {
         "away_odds": -108,
-        "home_odds": -111,
-        "away_no_vig": 0.4967,
-        "home_no_vig": 0.5033
+        "home_odds": -112,
+        "away_no_vig": 0.4957,
+        "home_no_vig": 0.5043
       },
       "totals": [
         {
@@ -214,21 +214,21 @@
       "home_team": "Kansas City Royals",
       "commence_time": "2026-06-09T23:41:00Z",
       "moneyline": {
-        "away_odds": -123,
-        "home_odds": 102,
-        "away_no_vig": 0.527,
-        "home_no_vig": 0.473
+        "away_odds": -126,
+        "home_odds": 104,
+        "away_no_vig": 0.5321,
+        "home_no_vig": 0.4679
       },
       "totals": [
         {
           "name": "Over",
           "point": 9.5,
-          "price": -102
+          "price": -101
         },
         {
           "name": "Under",
           "point": 9.5,
-          "price": -118
+          "price": -120
         }
       ]
     },
@@ -237,21 +237,21 @@
       "home_team": "Colorado Rockies",
       "commence_time": "2026-06-10T00:41:00Z",
       "moneyline": {
-        "away_odds": -156,
-        "home_odds": 129,
-        "away_no_vig": 0.5825,
-        "home_no_vig": 0.4175
+        "away_odds": -162,
+        "home_odds": 134,
+        "away_no_vig": 0.5913,
+        "home_no_vig": 0.4087
       },
       "totals": [
         {
           "name": "Over",
           "point": 12.5,
-          "price": -105
+          "price": -108
         },
         {
           "name": "Under",
           "point": 12.5,
-          "price": -114
+          "price": -111
         }
       ]
     },
@@ -329,21 +329,21 @@
       "home_team": "Athletics",
       "commence_time": "2026-06-10T02:06:00Z",
       "moneyline": {
-        "away_odds": -110,
-        "home_odds": -110,
-        "away_no_vig": 0.5,
-        "home_no_vig": 0.5
+        "away_odds": -107,
+        "home_odds": -112,
+        "away_no_vig": 0.4945,
+        "home_no_vig": 0.5055
       },
       "totals": [
         {
           "name": "Over",
           "point": 13.0,
-          "price": -105
+          "price": -117
         },
         {
           "name": "Under",
           "point": 13.0,
-          "price": -114
+          "price": -103
         }
       ]
     }
