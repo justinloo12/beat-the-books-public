@@ -677,9 +677,9 @@ class BaseballSavantProvider:
         exitvelo = self._load_batter_exitvelo_barrels(season)
         if exitvelo.empty and season - 1 >= 2020:
             exitvelo = self._load_batter_exitvelo_barrels(season - 1)
-        expected_row = expected[pd.to_numeric(expected.get("player_id"), errors="coerce") == batter_id]
-        percentile_row = percentiles[pd.to_numeric(percentiles.get("player_id"), errors="coerce") == batter_id]
-        exitvelo_row = exitvelo[pd.to_numeric(exitvelo.get("player_id"), errors="coerce") == batter_id] if not exitvelo.empty else pd.DataFrame()
+        expected_row = expected[pd.to_numeric(expected["player_id"], errors="coerce") == batter_id] if "player_id" in expected.columns else pd.DataFrame()
+        percentile_row = percentiles[pd.to_numeric(percentiles["player_id"], errors="coerce") == batter_id] if "player_id" in percentiles.columns else pd.DataFrame()
+        exitvelo_row = exitvelo[pd.to_numeric(exitvelo["player_id"], errors="coerce") == batter_id] if ("player_id" in exitvelo.columns and not exitvelo.empty) else pd.DataFrame()
         if expected_row.empty and percentile_row.empty and exitvelo_row.empty:
             return {
                 "batter_id": batter_id,

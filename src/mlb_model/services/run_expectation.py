@@ -14,9 +14,8 @@ _LG_HARD_HIT = 0.375
 _LG_BARREL = 0.080
 _LG_XWOBA = 0.318
 
-# MLB league-average runs per team per game (2024-2025 full-season).
-# This is the neutral-park baseline — park_factor scales it per venue.
-_LG_RUNS = 4.50
+# MLB per-team average runs/game — June+ scoring environment (~4.5 per team/game)
+_BASE_RUNS = 4.50
 
 # Empirical sample-size priors for Bayesian regression.
 # At these thresholds, the weight reaches its midpoint between min and max.
@@ -54,6 +53,7 @@ class RunExpectationService:
         starter_ip_projection: float,
         pitcher_sample_pitches: int = 0,
         lineup_avg_pa: int = 0,
+        market_team_total: float | None = None,
         top_features: list[dict] | None = None,
     ) -> TeamRunContext:
         # Sample-size-aware regression: trust more of the data when sample is large.
@@ -73,39 +73,34 @@ class RunExpectationService:
         b_bb    = _regress(lineup_bb_pct,       _LG_BB_PCT,   b_weight)
         b_hh    = _regress(lineup_hard_hit_pct, _LG_HARD_HIT, b_weight)
 
-        # How much of the game this starter is expected to control (0.33–1.0).
-        # A projected 6.5-inning ace controls ~full game; a 3-inning opener ~one third.
-        starter_share = clamp(starter_ip_projection / 6.5, 0.33, 1.0)
-
-        # Pitcher delta: how many runs above/below average this starter allows.
-        # Scaled by starter_share so a short outing limits the starter's drag/lift.
-        # Cap is wider (±1.5) so elite or terrible starters can actually move the total.
-        pitcher_delta = clamp(
+        # Expected runs this pitcher allows above/below average (capped at ±1.0)
+        pitcher_runs = clamp(
             (p_xba    - _LG_XBA)      * 18
             - (p_k    - _LG_K_PCT)    * 14
             + (p_bb   - _LG_BB_PCT)   * 10
             + (p_hh   - _LG_HARD_HIT) * 10
             + (p_barrel - _LG_BARREL) * 14,
-            -1.5, 1.5,
-        ) * starter_share
+            -1.0, 1.0,
+        )
 
-        # Lineup delta: how many runs above/below average this offense scores (cap ±1.0).
-        batter_delta = clamp(
+        # Expected runs this lineup scores above/below average (capped at ±0.8)
+        batter_runs = clamp(
             (b_xwoba - _LG_XWOBA)   * 15
             - (b_k   - _LG_K_PCT)   * 10
             + (b_bb  - _LG_BB_PCT)  * 8
             + (b_hh  - _LG_HARD_HIT) * 8,
-            -1.0, 1.0,
+            -0.8, 0.8,
         )
 
-        # Bullpen adds runs whenever it covers innings the starter vacates.
-        bullpen_delta = max(0.0, (60.0 - bullpen_score) / 60.0 * 0.5) * (1.0 - starter_share * 0.6)
+        weather_effect = (weather_multiplier - 1.0) * 0.8
+        park_effect    = (park_factor - 1.0) * 0.8
+        bullpen_effect = max(0.0, (60.0 - bullpen_score) / 60.0 * 0.5)
 
-        # Park-adjusted baseline: Coors (1.15) → ~5.18, pitcher parks (0.90) → ~4.05.
-        # Weather multiplier applied multiplicatively on top.
-        park_base = _LG_RUNS * park_factor * weather_multiplier
-
-        expected = clamp(park_base + pitcher_delta + batter_delta + bullpen_delta, 1.5, 8.0)
+        base = market_team_total if market_team_total is not None else _BASE_RUNS
+        expected = clamp(
+            base + pitcher_runs + batter_runs + weather_effect + park_effect + bullpen_effect,
+            1.5, 7.0,
+        )
 
         return TeamRunContext(
             team=team,
