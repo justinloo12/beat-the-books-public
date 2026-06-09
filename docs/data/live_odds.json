@@ -1,5 +1,5 @@
 {
-  "fetched_at": "2026-06-09T17:43:09.550584Z",
+  "fetched_at": "2026-06-09T18:30:03.952348Z",
   "date": "2026-06-09",
   "games": [
     {
@@ -53,21 +53,21 @@
       "home_team": "Tampa Bay Rays",
       "commence_time": "2026-06-09T22:41:00Z",
       "moneyline": {
-        "away_odds": -120,
-        "home_odds": -101,
-        "away_no_vig": 0.5205,
-        "home_no_vig": 0.4795
+        "away_odds": -125,
+        "home_odds": 104,
+        "away_no_vig": 0.5312,
+        "home_no_vig": 0.4687
       },
       "totals": [
         {
           "name": "Over",
           "point": 7.5,
-          "price": 100
+          "price": -101
         },
         {
           "name": "Under",
           "point": 7.5,
-          "price": -121
+          "price": -120
         }
       ]
     },
@@ -99,10 +99,10 @@
       "home_team": "Detroit Tigers",
       "commence_time": "2026-06-09T22:41:00Z",
       "moneyline": {
-        "away_odds": 108,
-        "home_odds": -131,
-        "away_no_vig": 0.4588,
-        "home_no_vig": 0.5412
+        "away_odds": 113,
+        "home_odds": -136,
+        "away_no_vig": 0.4489,
+        "home_no_vig": 0.5511
       },
       "totals": [
         {
@@ -145,16 +145,16 @@
       "home_team": "Toronto Blue Jays",
       "commence_time": "2026-06-09T23:08:00Z",
       "moneyline": {
-        "away_odds": -108,
-        "home_odds": -112,
-        "away_no_vig": 0.4957,
-        "home_no_vig": 0.5043
+        "away_odds": -105,
+        "home_odds": -114,
+        "away_no_vig": 0.4902,
+        "home_no_vig": 0.5098
       },
       "totals": [
         {
           "name": "Over",
           "point": 7.5,
-          "price": 100
+          "price": -101
         },
         {
           "name": "Under",
@@ -306,10 +306,10 @@
       "home_team": "San Francisco Giants",
       "commence_time": "2026-06-10T01:46:00Z",
       "moneyline": {
-        "away_odds": -108,
-        "home_odds": -112,
-        "away_no_vig": 0.4957,
-        "home_no_vig": 0.5043
+        "away_odds": -112,
+        "home_odds": -108,
+        "away_no_vig": 0.5043,
+        "home_no_vig": 0.4957
       },
       "totals": [
         {
