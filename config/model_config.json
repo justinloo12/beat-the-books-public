@@ -11,9 +11,9 @@
   },
   "weights": {
     "pitcher": 0.35,
-    "batter": 0.30,
+    "batter": 0.3,
     "context": 0.25,
-    "recency": 0.10
+    "recency": 0.1
   },
   "feature_weights": {
     "pitcher": {
@@ -45,21 +45,21 @@
       "batting_order_construction": 0.015
     },
     "recency": {
-      "recent_form_decay": 0.10
+      "recent_form_decay": 0.1
     }
   },
   "market_type_weights": {
     "game_total": {
       "pitcher": 0.35,
-      "batter": 0.30,
+      "batter": 0.3,
       "context": 0.25,
-      "recency": 0.10
+      "recency": 0.1
     },
     "first_five_total": {
       "pitcher": 0.42,
-      "batter": 0.30,
+      "batter": 0.3,
       "context": 0.18,
-      "recency": 0.10
+      "recency": 0.1
     },
     "moneyline": {
       "pitcher": 0.33,
@@ -68,18 +68,18 @@
       "recency": 0.15
     },
     "runline": {
-      "pitcher": 0.30,
+      "pitcher": 0.3,
       "batter": 0.25,
-      "context": 0.30,
+      "context": 0.3,
       "recency": 0.15
     }
   },
   "edge_thresholds": {
-    "lean_min": 0.040,
-    "pass_below": 0.06,
-    "watch_min": 0.05,
-    "watch_max": 0.06,
-    "strong_min": 0.06,
+    "lean_min": 0.04,
+    "pass_below": 0.05,
+    "watch_min": 0.04,
+    "watch_max": 0.05,
+    "strong_min": 0.05,
     "strong_max": 0.09,
     "max_bet_min": 0.09,
     "moneyline_min": 0.05
