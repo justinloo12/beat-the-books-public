@@ -323,7 +323,20 @@ class DailyPredictionService:
         park_factor = PARK_FACTORS.get(venue or "", 1.0)
 
         total_lines = self._market_total_lines(odds_game)
-        market_total: float | None = min(total_lines) if total_lines else None
+        game_total: float | None = min(total_lines) if total_lines else None
+        home_spread = self._market_home_spread(odds_game, home_team)
+        # Derive implied per-team totals from the market: if the spread is available,
+        # split the game total asymmetrically (home_total = (game_total + spread) / 2).
+        # Without a spread, fall back to even split.
+        if game_total is not None and home_spread is not None:
+            home_market_runs: float | None = (game_total + home_spread) / 2.0
+            away_market_runs: float | None = (game_total - home_spread) / 2.0
+        elif game_total is not None:
+            home_market_runs = game_total / 2.0
+            away_market_runs = game_total / 2.0
+        else:
+            home_market_runs = None
+            away_market_runs = None
 
         home_runs = self.runs.expected_runs(
             team=home_team,
@@ -342,7 +355,7 @@ class DailyPredictionService:
             starter_ip_projection=away_pitcher_score["starter_ip_projection"],
             pitcher_sample_pitches=int(away_profile_for_runs.get("sample_pitches") or 0),
             lineup_avg_pa=int(home_lineup_avgs.get("avg_pa") or 0),
-            market_total=market_total,
+            market_team_total=home_market_runs,
             top_features=self._top_run_features_direct(
                 pitcher_xba=float(away_profile_for_runs.get("xba") or 0.255),
                 pitcher_k_pct=float(away_profile_for_runs.get("weighted_k_pct") or 0.228),
@@ -368,7 +381,7 @@ class DailyPredictionService:
             starter_ip_projection=home_pitcher_score["starter_ip_projection"],
             pitcher_sample_pitches=int(home_profile_for_runs.get("sample_pitches") or 0),
             lineup_avg_pa=int(away_lineup_avgs.get("avg_pa") or 0),
-            market_total=market_total,
+            market_team_total=away_market_runs,
             top_features=self._top_run_features_direct(
                 pitcher_xba=float(home_profile_for_runs.get("xba") or 0.255),
                 pitcher_k_pct=float(home_profile_for_runs.get("weighted_k_pct") or 0.228),
@@ -930,6 +943,21 @@ class DailyPredictionService:
                 except (KeyError, TypeError, ValueError):
                     continue
         return lines
+
+    def _market_home_spread(self, odds_game: dict[str, Any] | None, home_team: str) -> float | None:
+        """Return the home team's run-line point (e.g. -1.5 if home is favored), or None."""
+        if not odds_game:
+            return None
+        for market in odds_game.get("markets", []):
+            if market.get("market_key") != "spreads":
+                continue
+            for outcome in market.get("outcomes", []):
+                if outcome.get("name") == home_team:
+                    try:
+                        return float(outcome["point"])
+                    except (KeyError, TypeError, ValueError):
+                        return None
+        return None
 
     def _extract_total_lines(self, odds_bundle: list[dict[str, Any]], away_team: str, home_team: str) -> set[float]:
         for game in odds_bundle:

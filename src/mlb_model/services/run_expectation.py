@@ -53,7 +53,7 @@ class RunExpectationService:
         starter_ip_projection: float,
         pitcher_sample_pitches: int = 0,
         lineup_avg_pa: int = 0,
-        market_total: float | None = None,
+        market_team_total: float | None = None,
         top_features: list[dict] | None = None,
     ) -> TeamRunContext:
         # Sample-size-aware regression: trust more of the data when sample is large.
@@ -96,7 +96,7 @@ class RunExpectationService:
         park_effect    = (park_factor - 1.0) * 0.8
         bullpen_effect = max(0.0, (60.0 - bullpen_score) / 60.0 * 0.5)
 
-        base = (market_total / 2.0) if market_total else _BASE_RUNS
+        base = market_team_total if market_team_total is not None else _BASE_RUNS
         expected = clamp(
             base + pitcher_runs + batter_runs + weather_effect + park_effect + bullpen_effect,
             1.5, 7.0,
