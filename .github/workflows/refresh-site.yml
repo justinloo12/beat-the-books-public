@@ -5,6 +5,8 @@ on:
   schedule:
     # 11am ET — full run: Statcast + odds + model for the day's slate (15 UTC during EDT)
     - cron: "0 15 * * *"
+    # 12:30pm ET — lineup confirmation refresh for ~1pm games, before first pitch (16:30 UTC during EDT)
+    - cron: "30 16 * * *"
     # 1pm ET — lineup confirmation refresh: re-exports snapshot with confirmed lineups (17 UTC during EDT)
     - cron: "0 17 * * *"
     # 3pm ET — odds refresh for 4–6pm games (19 UTC during EDT)
@@ -46,9 +48,9 @@ jobs:
             echo "grade_date=$(date -d 'yesterday' +%F)" >> "$GITHUB_OUTPUT"
             exit 0
           fi
-          hour=$(date +%H)
-          valid_hours="11 13 15 18"
-          if ! echo "$valid_hours" | grep -qw "$hour"; then
+          hour_min=$(date +%H:%M)
+          valid_times="11:00 12:30 13:00 15:00 18:00"
+          if ! echo "$valid_times" | grep -qw "$hour_min"; then
             echo "run_refresh=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
@@ -57,9 +59,9 @@ jobs:
           # yesterday in ET for grading
           echo "grade_date=$(date -d 'yesterday' +%F)" >> "$GITHUB_OUTPUT"
           # 11am: full run (Statcast + leaderboards + odds).
-          # 1pm: odds-only re-export — captures confirmed lineups before early games.
-          # 3pm and 6pm: odds-only refreshes.
-          if [ "$hour" = "11" ]; then
+          # 12:30pm, 1pm, 3pm, 6pm: odds-only re-exports — capture confirmed lineups
+          # ahead of each batch of first pitches.
+          if [ "$hour_min" = "11:00" ]; then
             echo "full_download=true" >> "$GITHUB_OUTPUT"
           else
             echo "full_download=false" >> "$GITHUB_OUTPUT"
