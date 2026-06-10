@@ -1,5 +1,5 @@
 {
-  "fetched_at": "2026-06-10T14:57:01.495491Z",
+  "fetched_at": "2026-06-10T15:34:58.777547Z",
   "date": "2026-06-10",
   "games": [
     {
@@ -7,21 +7,21 @@
       "home_team": "Tampa Bay Rays",
       "commence_time": "2026-06-10T17:11:00Z",
       "moneyline": {
-        "away_odds": 123,
-        "home_odds": -149,
-        "away_no_vig": 0.4284,
-        "home_no_vig": 0.5716
+        "away_odds": 129,
+        "home_odds": -155,
+        "away_no_vig": 0.4181,
+        "home_no_vig": 0.5819
       },
       "totals": [
         {
           "name": "Over",
           "point": 7.5,
-          "price": -101
+          "price": 101
         },
         {
           "name": "Under",
           "point": 7.5,
-          "price": -120
+          "price": -121
         }
       ]
     },
@@ -30,21 +30,21 @@
       "home_team": "Cleveland Guardians",
       "commence_time": "2026-06-10T17:11:00Z",
       "moneyline": {
-        "away_odds": 100,
-        "home_odds": -120,
-        "away_no_vig": 0.4783,
-        "home_no_vig": 0.5217
+        "away_odds": -102,
+        "home_odds": -119,
+        "away_no_vig": 0.4817,
+        "home_no_vig": 0.5183
       },
       "totals": [
         {
           "name": "Over",
-          "point": 8.0,
-          "price": -102
+          "point": 7.5,
+          "price": -119
         },
         {
           "name": "Under",
-          "point": 8.0,
-          "price": -119
+          "point": 7.5,
+          "price": -102
         }
       ]
     },
@@ -122,10 +122,10 @@
       "home_team": "Miami Marlins",
       "commence_time": "2026-06-10T22:41:00Z",
       "moneyline": {
-        "away_odds": -115,
+        "away_odds": -114,
         "home_odds": -105,
-        "away_no_vig": 0.5108,
-        "home_no_vig": 0.4892
+        "away_no_vig": 0.5098,
+        "home_no_vig": 0.4902
       },
       "totals": [
         {
@@ -154,12 +154,12 @@
         {
           "name": "Over",
           "point": 9.0,
-          "price": -119
+          "price": -122
         },
         {
           "name": "Under",
           "point": 9.0,
-          "price": -101
+          "price": 102
         }
       ]
     },
@@ -292,12 +292,12 @@
         {
           "name": "Over",
           "point": 12.0,
-          "price": -115
+          "price": -107
         },
         {
           "name": "Under",
           "point": 12.0,
-          "price": -104
+          "price": -112
         }
       ]
     },
