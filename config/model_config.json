@@ -101,5 +101,8 @@
   "recalibration": {
     "bets_per_cycle": 50,
     "lookback_bets": 200
+  },
+  "situational_factors": {
+    "sweep_avoidance_run_bonus": 0.12
   }
 }
