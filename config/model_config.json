@@ -103,6 +103,6 @@
     "lookback_bets": 200
   },
   "situational_factors": {
-    "sweep_avoidance_run_bonus": 0.12
+    "sweep_avoidance_run_bonus": 0.08
   }
 }
