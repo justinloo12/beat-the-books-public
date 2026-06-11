@@ -23,6 +23,7 @@ class ModelSettings(BaseModel):
     juice_block_threshold: int
     simulation: dict[str, int]
     recalibration: dict[str, int]
+    situational_factors: dict[str, float] = Field(default_factory=dict)
 
 
 class Settings(BaseSettings):

@@ -25,7 +25,7 @@ class MLBStatsProvider:
         params = {
             "sportId": 1,
             "date": slate_date.isoformat(),
-            "hydrate": "lineups,probablePitcher,team",
+            "hydrate": "lineups,probablePitcher,team,seriesStatus",
         }
         try:
             async with httpx.AsyncClient(timeout=20.0) as client:

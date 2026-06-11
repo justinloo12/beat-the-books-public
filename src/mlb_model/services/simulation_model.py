@@ -708,6 +708,8 @@ class SimulationModelService:
         edge_pts = (model_prob - no_vig_prob) * 100
         home_confirmed = context.get("home_lineup_confirmed", False)
         away_confirmed = context.get("away_lineup_confirmed", False)
+        home_facing_sweep = context.get("home_facing_sweep", False)
+        away_facing_sweep = context.get("away_facing_sweep", False)
 
         if market_type in ("game_total", "first_five_total") and side == "Over":
             return self._blurb_over(
@@ -745,6 +747,7 @@ class SimulationModelService:
                 weather, edge_pts,
                 home_confirmed, away_confirmed,
                 model_prob=model_prob,
+                team_facing_sweep=home_facing_sweep if side == home_team else away_facing_sweep,
             )
 
         if market_type == "runline":
@@ -971,6 +974,7 @@ class SimulationModelService:
         weather: dict, edge_pts: float,
         home_confirmed: bool, away_confirmed: bool,
         model_prob: float | None = None,
+        team_facing_sweep: bool = False,
     ) -> str:
         is_home = team == home_team
         team_mean = home_mean if is_home else away_mean
@@ -1056,6 +1060,8 @@ class SimulationModelService:
         parts = [starter_sentence, offense_sentence]
         if bullpen_sentence:
             parts.append(bullpen_sentence)
+        if team_facing_sweep:
+            parts.append(f"{team} is facing a series sweep and gets a small bump for extra motivation to avoid it.")
         parts.append(sim_sentence)
         return " ".join(parts)
 

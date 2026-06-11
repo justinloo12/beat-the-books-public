@@ -95,6 +95,7 @@ class DailyPredictionService:
                 away_confirmed_players = (game.get("lineups") or {}).get("awayPlayers") or []
                 home_confirmed = len(home_confirmed_players) >= 7
                 away_confirmed = len(away_confirmed_players) >= 7
+                home_facing_sweep, away_facing_sweep = self._facing_sweep(game)
                 if not probable_home.get("id") or not probable_away.get("id"):
                     skipped.append({"matchup": matchup_label, "reason": "missing probable starters"})
                     continue
@@ -130,6 +131,8 @@ class DailyPredictionService:
                     away_lineup=away_model_lineup,
                     home_lineup_confirmed=home_confirmed,
                     away_lineup_confirmed=away_confirmed,
+                    home_facing_sweep=home_facing_sweep,
+                    away_facing_sweep=away_facing_sweep,
                     venue=game.get("venue", {}).get("name", "Unknown"),
                     start_time=game.get("gameDate"),
                     odds_game=odds_game,
@@ -227,6 +230,8 @@ class DailyPredictionService:
         home_lineup_confirmed: bool,
         away_lineup_confirmed: bool,
         venue: str,
+        home_facing_sweep: bool = False,
+        away_facing_sweep: bool = False,
         home_pitcher_role: dict[str, Any] | None = None,
         away_pitcher_role: dict[str, Any] | None = None,
         start_time: str | None = None,
@@ -338,6 +343,12 @@ class DailyPredictionService:
             home_market_runs = None
             away_market_runs = None
 
+        # Teams facing a series sweep (0-fer entering the final game) tend to play with
+        # extra urgency and perform a bit better than their season-long profile suggests.
+        sweep_bonus = self.settings.load_model_settings().situational_factors.get("sweep_avoidance_run_bonus", 0.0)
+        home_sweep_runs = sweep_bonus if home_facing_sweep else 0.0
+        away_sweep_runs = sweep_bonus if away_facing_sweep else 0.0
+
         home_runs = self.runs.expected_runs(
             team=home_team,
             pitcher_xba=float(away_profile_for_runs.get("xba") or 0.255),
@@ -356,12 +367,14 @@ class DailyPredictionService:
             pitcher_sample_pitches=int(away_profile_for_runs.get("sample_pitches") or 0),
             lineup_avg_pa=int(home_lineup_avgs.get("avg_pa") or 0),
             market_team_total=home_market_runs,
+            sweep_avoidance_runs=home_sweep_runs,
             top_features=self._top_run_features_direct(
                 pitcher_xba=float(away_profile_for_runs.get("xba") or 0.255),
                 pitcher_k_pct=float(away_profile_for_runs.get("weighted_k_pct") or 0.228),
                 lineup_xwoba=home_lineup_avgs["xwoba"],
                 weather_multiplier=float(weather.get("weather_multiplier", 1.0)),
                 bullpen_score=float(away_bullpen.get("bullpen_score", 65.0)),
+                facing_sweep=home_facing_sweep,
             ),
         )
         away_runs = self.runs.expected_runs(
@@ -382,12 +395,14 @@ class DailyPredictionService:
             pitcher_sample_pitches=int(home_profile_for_runs.get("sample_pitches") or 0),
             lineup_avg_pa=int(away_lineup_avgs.get("avg_pa") or 0),
             market_team_total=away_market_runs,
+            sweep_avoidance_runs=away_sweep_runs,
             top_features=self._top_run_features_direct(
                 pitcher_xba=float(home_profile_for_runs.get("xba") or 0.255),
                 pitcher_k_pct=float(home_profile_for_runs.get("weighted_k_pct") or 0.228),
                 lineup_xwoba=away_lineup_avgs["xwoba"],
                 weather_multiplier=float(weather.get("weather_multiplier", 1.0)),
                 bullpen_score=float(home_bullpen.get("bullpen_score", 65.0)),
+                facing_sweep=away_facing_sweep,
             ),
         )
         return {
@@ -420,6 +435,8 @@ class DailyPredictionService:
             "away_lineup_raw": away_lineup,
             "home_lineup_confirmed": home_lineup_confirmed,
             "away_lineup_confirmed": away_lineup_confirmed,
+            "home_facing_sweep": home_facing_sweep,
+            "away_facing_sweep": away_facing_sweep,
             "home_offense": home_offense,
             "away_offense": away_offense,
             "home_runs": home_runs.expected_runs,
@@ -445,12 +462,16 @@ class DailyPredictionService:
         lineup_xwoba: float,
         weather_multiplier: float,
         bullpen_score: float,
+        facing_sweep: bool = False,
     ) -> list[dict[str, float | str]]:
-        return [
+        features: list[dict[str, float | str]] = [
             {"feature": "Pitcher xBA", "value": round(pitcher_xba, 3)},
             {"feature": "Pitcher K%", "value": round(pitcher_k_pct, 3)},
             {"feature": "Lineup xwOBA", "value": round(lineup_xwoba, 3)},
         ]
+        if facing_sweep:
+            features.append({"feature": "Avoiding sweep", "value": "yes"})
+        return features
 
     def _lineup_averages(self, matchup_reports: list[dict[str, Any]]) -> dict[str, float | int]:
         if not matchup_reports:
@@ -928,6 +949,23 @@ class DailyPredictionService:
             return value.strftime("%-I:%M %p ET")
         except ValueError:
             return raw
+
+    def _facing_sweep(self, game: dict[str, Any]) -> tuple[bool, bool]:
+        """Return (home_facing_sweep, away_facing_sweep): True if a team enters the
+        final game of a series with zero wins against this opponent so far."""
+        games_in_series = game.get("gamesInSeries") or 1
+        series_game_number = game.get("seriesGameNumber") or 1
+        if games_in_series < 2 or series_game_number != games_in_series:
+            return False, False
+        home_status = game["teams"]["home"].get("seriesStatus") or {}
+        away_status = game["teams"]["away"].get("seriesStatus") or {}
+        home_facing_sweep = (
+            home_status.get("wins") == 0 and home_status.get("losses") == games_in_series - 1
+        )
+        away_facing_sweep = (
+            away_status.get("wins") == 0 and away_status.get("losses") == games_in_series - 1
+        )
+        return home_facing_sweep, away_facing_sweep
 
     def _market_total_lines(self, odds_game: dict[str, Any] | None) -> set[float]:
         if not odds_game:
