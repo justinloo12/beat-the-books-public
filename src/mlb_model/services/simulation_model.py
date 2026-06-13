@@ -585,7 +585,16 @@ class SimulationModelService:
             if not context.get("away_pitcher_profile", {}).get("handedness"):
                 shrink -= 0.06
         shrink = clamp(shrink, 0.22, 0.85)
-        return clamp(no_vig_probability + (raw_probability - no_vig_probability) * shrink, 0.02, 0.98)
+
+        # A sportsbook treats a model that disagrees wildly with its own market price
+        # as more likely broken than brilliant. Beyond a 12-point gap, trust the model
+        # progressively less the further it strays from the consensus price.
+        gap = raw_probability - no_vig_probability
+        abs_gap = abs(gap)
+        if abs_gap > 0.12:
+            shrink *= clamp(0.12 / abs_gap, 0.35, 1.0)
+
+        return clamp(no_vig_probability + gap * shrink, 0.02, 0.98)
 
     def _projected_total_probability(
         self,
