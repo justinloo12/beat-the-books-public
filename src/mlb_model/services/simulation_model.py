@@ -547,13 +547,21 @@ class SimulationModelService:
         left_raw = implied_probability_from_american(left_odds)
         right_raw = implied_probability_from_american(right_odds)
         left_no_vig, right_no_vig = no_vig_two_sided(left_raw, right_raw)
-        calibrated_left = self._calibrate_market_probability(context, market_type, left_prob, left_no_vig)
-        calibrated_right = self._calibrate_market_probability(context, market_type, right_prob, right_no_vig)
+        calibrated_left, legacy_left = self._calibrate_market_probability(context, market_type, left_prob, left_no_vig)
+        calibrated_right, legacy_right = self._calibrate_market_probability(context, market_type, right_prob, right_no_vig)
         left_decision = classify_edge(calibrated_left, left_no_vig, left_odds, american_to_decimal(left_odds))
         right_decision = classify_edge(calibrated_right, right_no_vig, right_odds, american_to_decimal(right_odds))
+        legacy_left_decision = classify_edge(legacy_left, left_no_vig, left_odds, american_to_decimal(left_odds))
+        legacy_right_decision = classify_edge(legacy_right, right_no_vig, right_odds, american_to_decimal(right_odds))
         return [
-            self._candidate(context, market_type, left_name, line, left_odds, calibrated_left, left_no_vig, left_decision),
-            self._candidate(context, market_type, right_name, line, right_odds, calibrated_right, right_no_vig, right_decision),
+            self._candidate(
+                context, market_type, left_name, line, left_odds, calibrated_left, left_no_vig, left_decision,
+                legacy_model_prob=legacy_left, legacy_decision=legacy_left_decision,
+            ),
+            self._candidate(
+                context, market_type, right_name, line, right_odds, calibrated_right, right_no_vig, right_decision,
+                legacy_model_prob=legacy_right, legacy_decision=legacy_right_decision,
+            ),
         ]
 
     def _calibrate_market_probability(
@@ -562,7 +570,13 @@ class SimulationModelService:
         market_type: str,
         raw_probability: float,
         no_vig_probability: float,
-    ) -> float:
+    ) -> tuple[float, float]:
+        """Return (calibrated_probability, legacy_calibrated_probability).
+
+        legacy_calibrated_probability reproduces the pre-2026-06-14 formula
+        (no discount for large raw-vs-market disagreements) so both can be
+        logged side-by-side in pick history for comparison.
+        """
         shrink = 0.72
         weather = context.get("weather", {})
         if weather.get("weather_missing"):
@@ -585,16 +599,18 @@ class SimulationModelService:
             if not context.get("away_pitcher_profile", {}).get("handedness"):
                 shrink -= 0.06
         shrink = clamp(shrink, 0.22, 0.85)
+        gap = raw_probability - no_vig_probability
+        legacy = clamp(no_vig_probability + gap * shrink, 0.02, 0.98)
 
         # A sportsbook treats a model that disagrees wildly with its own market price
         # as more likely broken than brilliant. Beyond a 12-point gap, trust the model
         # progressively less the further it strays from the consensus price.
-        gap = raw_probability - no_vig_probability
         abs_gap = abs(gap)
         if abs_gap > 0.12:
             shrink *= clamp(0.12 / abs_gap, 0.35, 1.0)
 
-        return clamp(no_vig_probability + gap * shrink, 0.02, 0.98)
+        calibrated = clamp(no_vig_probability + gap * shrink, 0.02, 0.98)
+        return calibrated, legacy
 
     def _projected_total_probability(
         self,
@@ -638,6 +654,8 @@ class SimulationModelService:
         model_prob: float,
         no_vig_prob: float,
         decision: Any,
+        legacy_model_prob: float | None = None,
+        legacy_decision: Any | None = None,
     ) -> dict[str, Any]:
         model_prob = clamp(model_prob, 0.02, 0.98)
         home_vulnerability = float(
@@ -652,6 +670,13 @@ class SimulationModelService:
             or context.get("away_pitcher_score", {}).get("pitcher_quality_score")
             or 50.0
         )
+        legacy_fields: dict[str, Any] = {}
+        if legacy_decision is not None:
+            legacy_fields = {
+                "legacy_model_probability": round(clamp(legacy_model_prob, 0.02, 0.98), 4),
+                "legacy_edge": round(legacy_decision.edge, 4),
+                "legacy_tier": legacy_decision.tier.value,
+            }
         return {
             "matchup": context["matchup"],
             "market_type": market_type,
@@ -663,6 +688,7 @@ class SimulationModelService:
             "edge": round(decision.edge, 4),
             "tier": decision.tier.value,
             "bankroll_fraction": round(decision.bankroll_fraction, 4),
+            **legacy_fields,
             "top_features": [
                 {"feature": "Simulated total", "value": context["simulation"]["total_mean"], "direction": "up"},
                 {"feature": "Weather stack", "value": context["weather"]["weather_stack_score"], "direction": "up"},
