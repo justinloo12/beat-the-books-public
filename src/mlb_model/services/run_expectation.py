@@ -88,8 +88,13 @@ class RunExpectationService:
         #    half the game, so their published full-game factors are dampened.
         offense_runs *= 1.0 + (park_factor - 1.0) * 0.5
         offense_runs *= 1.0 + (weather_multiplier - 1.0) * 0.5
-        bullpen_effect = max(0.0, (60.0 - bullpen_score) / 60.0 * 0.5)
-        model_runs = offense_runs + bullpen_effect + sweep_avoidance_runs
+        # The bullpen is no longer a separate flat effect. The opposing pitching
+        # the lineup faces (pitcher_woba_against) is already a starter/bullpen
+        # blend computed upstream, weighted by the starter's projected outs — so
+        # a 5-inning starter hands ~44% of the game to the pen and the pen's
+        # quality is weighted accordingly. bullpen_score is retained only for the
+        # TeamRunContext display below.
+        model_runs = offense_runs + sweep_avoidance_runs
 
         # 5. Market anchor + confidence-scaled, capped deviation.
         p_conf = _sample_weight(pitcher_sample_pitches, _PITCHER_PRIOR_PITCHES)

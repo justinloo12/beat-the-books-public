@@ -11,7 +11,7 @@ from zoneinfo import ZoneInfo
 _SLOT_PA_WEIGHTS = [0.129, 0.124, 0.120, 0.115, 0.111, 0.107, 0.102, 0.098, 0.093]
 
 from mlb_model.config import get_settings
-from mlb_model.utils import safe_mean
+from mlb_model.utils import clamp, safe_mean
 from mlb_model.providers.baseball import BaseballSavantProvider
 from mlb_model.providers.market import MarketProvider
 from mlb_model.providers.mlb_stats import MLBStatsProvider
@@ -354,13 +354,34 @@ class DailyPredictionService:
             (getattr(self.settings.load_model_settings(), "run_model", {}) or {}).get("market_deviation_cap", 1.0)
         )
 
-        # Opposing pitcher's wOBA-against, handedness-weighted by the lineup it
+        # Opposing STARTER's wOBA-against, handedness-weighted by the lineup it
         # faces. Falls back to the overall profile when splits are too thin.
-        away_woba_against = self._pitcher_woba_against(
+        away_starter_woba = self._pitcher_woba_against(
             away_profile_for_runs, away_pitcher_vs_l, away_pitcher_vs_r, home_matchups
         )
-        home_woba_against = self._pitcher_woba_against(
+        home_starter_woba = self._pitcher_woba_against(
             home_profile_for_runs, home_pitcher_vs_l, home_pitcher_vs_r, away_matchups
+        )
+        # Starter's projected outs: the sportsbook pitcher-outs line when available
+        # (market anchor), else the model's IP projection x3. This sets how much of
+        # the game the bullpen covers.
+        away_starter_outs = self._market_pitcher_outs(odds_game, away_pitcher) or (
+            float(away_pitcher_score["starter_ip_projection"]) * 3.0
+        )
+        home_starter_outs = self._market_pitcher_outs(odds_game, home_pitcher) or (
+            float(home_pitcher_score["starter_ip_projection"]) * 3.0
+        )
+        # Blend starter + bullpen wOBA-against by their share of the game's 27 outs.
+        # The HOME lineup faces the AWAY starter then the AWAY bullpen, and vice versa.
+        away_woba_against = self._blended_pitching_woba(
+            away_starter_woba,
+            self._bullpen_woba_against(float(away_bullpen.get("bullpen_score", 65.0))),
+            away_starter_outs,
+        )
+        home_woba_against = self._blended_pitching_woba(
+            home_starter_woba,
+            self._bullpen_woba_against(float(home_bullpen.get("bullpen_score", 65.0))),
+            home_starter_outs,
         )
 
         home_runs = self.runs.expected_runs(
@@ -427,6 +448,10 @@ class DailyPredictionService:
             "away_bulk_pitcher_name": away_bulk_name,
             "home_bullpen": home_bullpen,
             "away_bullpen": away_bullpen,
+            "home_starter_outs": round(home_starter_outs, 1),
+            "away_starter_outs": round(away_starter_outs, 1),
+            "home_bullpen_out_share": round(1.0 - clamp(home_starter_outs, 3.0, 27.0) / 27.0, 3),
+            "away_bullpen_out_share": round(1.0 - clamp(away_starter_outs, 3.0, 27.0) / 27.0, 3),
             "home_pitcher_profile": home_pitcher_profile,
             "away_pitcher_profile": away_pitcher_profile,
             "home_pitcher_vs_l": home_pitcher_vs_l,
@@ -515,6 +540,51 @@ class DailyPredictionService:
         woba_r = self.runs.pitcher_woba_against_from_xba(vr_xba)
         frac_l = lefties / total
         return frac_l * woba_l + (1.0 - frac_l) * woba_r
+
+    # League-average relief-corps wOBA-against, adjusted by the pen's reliability.
+    _BULLPEN_BASE_WOBA = 0.315
+
+    def _bullpen_woba_against(self, bullpen_score: float) -> float:
+        """Relief corps wOBA-against. A weaker pen (low reliability score) yields
+        a higher wOBA-against and therefore more runs. score 65 = neutral."""
+        adj = (65.0 - bullpen_score) / 65.0 * 0.06
+        return clamp(self._BULLPEN_BASE_WOBA + adj, 0.270, 0.380)
+
+    def _blended_pitching_woba(
+        self,
+        starter_woba: float,
+        bullpen_woba: float,
+        starter_outs: float,
+    ) -> float:
+        """Blend the starter's and bullpen's wOBA-against by their share of the
+        game's 27 outs. A 5-inning starter (15 outs) gives the bullpen ~44% of
+        the game; a 7-inning starter (21 outs) only ~22%."""
+        starter_outs = clamp(starter_outs, 3.0, 27.0)
+        starter_share = starter_outs / 27.0
+        return starter_share * starter_woba + (1.0 - starter_share) * bullpen_woba
+
+    def _market_pitcher_outs(
+        self,
+        odds_game: dict[str, Any] | None,
+        pitcher: dict[str, Any],
+    ) -> float | None:
+        """Sportsbook pitcher-outs line for this starter, if present in the odds
+        bundle. Returns None until the per-event 'pitcher_outs' prop market is
+        fetched, so the model falls back to its own IP projection gracefully."""
+        if not odds_game:
+            return None
+        name = str(pitcher.get("fullName") or pitcher.get("name") or "").strip().lower()
+        if not name:
+            return None
+        for market in odds_game.get("markets", []):
+            if market.get("market_key") != "pitcher_outs":
+                continue
+            for outcome in market.get("outcomes", []):
+                desc = str(outcome.get("description") or outcome.get("name") or "").strip().lower()
+                point = outcome.get("point")
+                if desc and point is not None and (desc in name or name in desc):
+                    return float(point)
+        return None
 
     def _lineup_swing_alignment(
         self,
