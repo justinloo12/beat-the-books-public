@@ -544,6 +544,11 @@ class DailyPredictionService:
     # League-average relief-corps wOBA-against, adjusted by the pen's reliability.
     _BULLPEN_BASE_WOBA = 0.315
 
+    # Regression prior for per-batter handedness splits. A batter with this many
+    # split PA is trusted 50/50 vs. their overall season profile; fewer PA lean
+    # harder on the season number, more PA trust the split.
+    _SPLIT_PRIOR_PA = 200
+
     def _bullpen_woba_against(self, bullpen_score: float) -> float:
         """Relief corps wOBA-against. A weaker pen (low reliability score) yields
         a higher wOBA-against and therefore more runs. score 65 = neutral."""
@@ -651,10 +656,8 @@ class DailyPredictionService:
         slate_date: date,
         confirmed: bool,
     ) -> list[dict[str, Any]]:
-        # Always use leaderboard path — per-pitch statcast profiles are too
-        # noisy with sparse early-season data and hurt calibration accuracy.
-        return self._hitter_pool_matchups(lineup, slate_date)
         pitch_types = {pitch["pitch_type"] for pitch in opposing_pitcher.get("pitch_arsenal", [])}
+        pitcher_hand = opposing_pitcher.get("handedness")
         reports = []
         sample_start = slate_date - timedelta(days=365)
         for slot, batter in enumerate(lineup, start=1):
@@ -669,20 +672,43 @@ class DailyPredictionService:
             batter_id = batter.get("id") or batter.get("person", {}).get("id")
             if not batter_id:
                 continue
+
+            # Overall season leaderboard profile — regression anchor for thin splits.
+            summary = self.baseball.build_batter_summary_profile(int(batter_id), slate_date.year)
+
+            # Per-batter Statcast profile filtered to opposing pitcher's handedness.
             profile = self.baseball.build_batter_matchup_profile(
                 int(batter_id),
-                pitcher_hand=opposing_pitcher.get("handedness"),
+                pitcher_hand=pitcher_hand,
                 pitch_types=pitch_types,
                 start_date=sample_start,
                 end_date=slate_date,
             )
-            # Fill missing stats from leaderboard summary when statcast data is absent or sparse
-            if not profile.get("xwoba") and not profile.get("hard_hit_pct"):
-                summary = self.baseball.build_batter_summary_profile(int(batter_id), slate_date.year)
-                for key, val in summary.items():
-                    if profile.get(key) is None:
-                        profile[key] = val
-            # use handedness-specific pitcher profile for more accurate matchup scoring
+
+            # Backfill fields that the split profile may not carry (handedness, swing metrics).
+            for key, val in summary.items():
+                if profile.get(key) is None:
+                    profile[key] = val
+
+            # Sample-size regression: blend split stats toward the overall season profile.
+            # With fewer than _SPLIT_PRIOR_PA PA in the split, we lean on the season number.
+            split_pa = int(profile.get("sample_pa") or 0)
+            w = split_pa / (split_pa + self._SPLIT_PRIOR_PA)
+            _LG_DEFAULTS = {
+                "xwoba": 0.318,
+                "k_pct": 0.228,
+                "bb_pct": 0.076,
+                "hard_hit_pct": 0.375,
+            }
+            for stat_key, default in _LG_DEFAULTS.items():
+                split_val = profile.get(stat_key)
+                overall_val = float(summary.get(stat_key) or default)
+                if split_val is not None:
+                    profile[stat_key] = round(w * float(split_val) + (1.0 - w) * overall_val, 4)
+                else:
+                    profile[stat_key] = overall_val
+
+            # Use handedness-specific pitcher profile for matchup scoring.
             batter_hand = profile.get("handedness")
             if batter_hand == "L" and opposing_pitcher_vs_l.get("pitch_arsenal"):
                 pitcher_for_matchup = opposing_pitcher_vs_l
@@ -690,6 +716,7 @@ class DailyPredictionService:
                 pitcher_for_matchup = opposing_pitcher_vs_r
             else:
                 pitcher_for_matchup = opposing_pitcher
+
             matchup = self.matchups.score_batter_vs_pitcher(profile, pitcher_for_matchup, lineup_slot=slot)
             pitch_matchup = self.baseball.compute_pitcher_matchup(
                 profile.get("pitch_profiles", []),
@@ -703,7 +730,7 @@ class DailyPredictionService:
                     "profile": profile,
                     "matchup": matchup,
                     "pitch_matchup": pitch_matchup,
-                    "pitcher_hand": opposing_pitcher.get("handedness"),
+                    "pitcher_hand": pitcher_hand,
                 }
             )
         return reports
