@@ -8,6 +8,7 @@ from typing import Any
 
 from mlb_model.config import get_settings
 from mlb_model.services.odds_engine import american_to_decimal, classify_edge, implied_probability_from_american, no_vig_two_sided
+from mlb_model.services.run_distribution import RunDistributionService
 from mlb_model.utils import clamp
 
 
@@ -66,6 +67,15 @@ class SimulationModelService:
     def __init__(self, trials: int = 10000) -> None:
         self.trials = trials
         self.random = random.Random(42)
+        # All betting-market probabilities (moneyline / total / run line) are
+        # derived deterministically from the two team totals by this engine.
+        # The Monte-Carlo loop below survives only to produce per-player stat
+        # projections for the props display — it no longer drives any price.
+        run_cfg = getattr(model_settings, "run_model", {}) or {}
+        self.run_dist = RunDistributionService(
+            variance_to_mean=float(run_cfg.get("variance_to_mean", 1.28)),
+            home_extra_inning_edge=float(run_cfg.get("home_extra_inning_edge", 0.52)),
+        )
 
     def simulate_game(
         self,
@@ -116,59 +126,33 @@ class SimulationModelService:
             away_runs.append(away_score)
             home_runs.append(home_score)
 
+        # Scale the raw Monte-Carlo runs so the player-stat projections (the only
+        # thing the loop still feeds) stay consistent with the team totals.
         raw_home_mean = sum(home_runs) / len(home_runs) if home_runs else 0.0
         raw_away_mean = sum(away_runs) / len(away_runs) if away_runs else 0.0
         home_scale = clamp(home_target_runs / max(raw_home_mean, 0.1), 0.45, 1.0)
         away_scale = clamp(away_target_runs / max(raw_away_mean, 0.1), 0.45, 1.0)
-        adjusted_home_runs = [score * home_scale for score in home_runs]
-        adjusted_away_runs = [score * away_scale for score in away_runs]
-        over_counts = {line: 0 for line in total_lines}
-        team_totals = {
-            "home": {line / 2.0: 0 for line in total_lines},
-            "away": {line / 2.0: 0 for line in total_lines},
-        }
-        home_wins = 0.0
-        away_wins = 0.0
-        home_cover = 0
-        away_cover = 0
 
-        for home_score, away_score in zip(adjusted_home_runs, adjusted_away_runs):
-            total = home_score + away_score
-            for line in total_lines:
-                if total > line:
-                    over_counts[line] += 1
-                if home_score > (line / 2.0):
-                    team_totals["home"][line / 2.0] += 1
-                if away_score > (line / 2.0):
-                    team_totals["away"][line / 2.0] += 1
-            if home_score > away_score:
-                home_wins += 1
-            elif away_score > home_score:
-                away_wins += 1
-            else:
-                if self.random.random() < 0.53:
-                    home_wins += 1
-                else:
-                    away_wins += 1
-            if (home_score - away_score) >= 2:
-                home_cover += 1
-            if (away_score - home_score) >= 2:
-                away_cover += 1
-
-        home_mean = sum(adjusted_home_runs) / len(adjusted_home_runs) if adjusted_home_runs else 0.0
-        away_mean = sum(adjusted_away_runs) / len(adjusted_away_runs) if adjusted_away_runs else 0.0
+        # Every betting-market probability comes from the deterministic
+        # distribution of the two team totals — no random draws, no per-market
+        # coefficients. Change a team total and every price below moves with it.
+        markets = self.run_dist.derive(
+            home_runs=home_target_runs,
+            away_runs=away_target_runs,
+            total_lines=total_lines,
+        )
         return SimulationSummary(
-            home_runs_mean=round(home_mean, 3),
-            away_runs_mean=round(away_mean, 3),
-            total_mean=round(home_mean + away_mean, 3),
-            home_win_prob=round(home_wins / self.trials, 4),
-            away_win_prob=round(away_wins / self.trials, 4),
-            runline_home_cover_prob=round(home_cover / self.trials, 4),
-            runline_away_cover_prob=round(away_cover / self.trials, 4),
-            total_over_probabilities={line: round(count / self.trials, 4) for line, count in over_counts.items()},
+            home_runs_mean=markets.home_runs_mean,
+            away_runs_mean=markets.away_runs_mean,
+            total_mean=markets.total_mean,
+            home_win_prob=round(markets.home_win_prob, 4),
+            away_win_prob=round(markets.away_win_prob, 4),
+            runline_home_cover_prob=round(markets.runline_home_cover_prob, 4),
+            runline_away_cover_prob=round(markets.runline_away_cover_prob, 4),
+            total_over_probabilities={line: round(p, 4) for line, p in markets.total_over_probabilities.items()},
             team_total_over_probabilities={
-                side: {line: round(count / self.trials, 4) for line, count in counts.items()}
-                for side, counts in team_totals.items()
+                side: {line: round(p, 4) for line, p in lines.items()}
+                for side, lines in markets.team_total_over_probabilities.items()
             },
             player_projections={
                 "home": self._finalize_player_stats(player_accumulators["home"], home_scale),

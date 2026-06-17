@@ -348,26 +348,35 @@ class DailyPredictionService:
         sweep_bonus = self.settings.load_model_settings().situational_factors.get("sweep_avoidance_run_bonus", 0.0)
         home_sweep_runs = sweep_bonus if home_facing_sweep else 0.0
         away_sweep_runs = sweep_bonus if away_facing_sweep else 0.0
+        deviation_cap = float(
+            (getattr(self.settings.load_model_settings(), "run_model", {}) or {}).get("market_deviation_cap", 1.0)
+        )
+
+        # Opposing pitcher's wOBA-against, handedness-weighted by the lineup it
+        # faces. Falls back to the overall profile when splits are too thin.
+        away_woba_against = self._pitcher_woba_against(
+            away_profile_for_runs, away_pitcher_vs_l, away_pitcher_vs_r, home_matchups
+        )
+        home_woba_against = self._pitcher_woba_against(
+            home_profile_for_runs, home_pitcher_vs_l, home_pitcher_vs_r, away_matchups
+        )
 
         home_runs = self.runs.expected_runs(
             team=home_team,
-            pitcher_xba=float(away_profile_for_runs.get("xba") or 0.255),
-            pitcher_k_pct=float(away_profile_for_runs.get("weighted_k_pct") or 0.228),
-            pitcher_bb_pct=float(away_profile_for_runs.get("weighted_bb_pct") or 0.076),
-            pitcher_hard_hit_pct=float(away_profile_for_runs.get("hard_hit_pct") or 0.375),
-            pitcher_barrel_pct=float(away_profile_for_runs.get("barrel_pct") or 0.080),
             lineup_xwoba=home_lineup_avgs["xwoba"],
-            lineup_k_pct=home_lineup_avgs["k_pct"],
-            lineup_bb_pct=home_lineup_avgs["bb_pct"],
-            lineup_hard_hit_pct=home_lineup_avgs["hard_hit_pct"],
+            pitcher_woba_against=away_woba_against,
             weather_multiplier=float(weather.get("weather_multiplier", 1.0)),
             park_factor=park_factor,
             bullpen_score=float(away_bullpen.get("bullpen_score", 65.0)),
             starter_ip_projection=away_pitcher_score["starter_ip_projection"],
+            swing_alignment=self._lineup_swing_alignment(home_matchups, away_pitcher_profile),
             pitcher_sample_pitches=int(away_profile_for_runs.get("sample_pitches") or 0),
             lineup_avg_pa=int(home_lineup_avgs.get("avg_pa") or 0),
+            lineup_confirmed=home_lineup_confirmed,
             market_team_total=home_market_runs,
+            deviation_cap=deviation_cap,
             sweep_avoidance_runs=home_sweep_runs,
+            pitcher_xba=float(away_profile_for_runs.get("xba") or 0.255),
             top_features=self._top_run_features_direct(
                 pitcher_xba=float(away_profile_for_runs.get("xba") or 0.255),
                 pitcher_k_pct=float(away_profile_for_runs.get("weighted_k_pct") or 0.228),
@@ -379,23 +388,20 @@ class DailyPredictionService:
         )
         away_runs = self.runs.expected_runs(
             team=away_team,
-            pitcher_xba=float(home_profile_for_runs.get("xba") or 0.255),
-            pitcher_k_pct=float(home_profile_for_runs.get("weighted_k_pct") or 0.228),
-            pitcher_bb_pct=float(home_profile_for_runs.get("weighted_bb_pct") or 0.076),
-            pitcher_hard_hit_pct=float(home_profile_for_runs.get("hard_hit_pct") or 0.375),
-            pitcher_barrel_pct=float(home_profile_for_runs.get("barrel_pct") or 0.080),
             lineup_xwoba=away_lineup_avgs["xwoba"],
-            lineup_k_pct=away_lineup_avgs["k_pct"],
-            lineup_bb_pct=away_lineup_avgs["bb_pct"],
-            lineup_hard_hit_pct=away_lineup_avgs["hard_hit_pct"],
+            pitcher_woba_against=home_woba_against,
             weather_multiplier=float(weather.get("weather_multiplier", 1.0)),
             park_factor=park_factor,
             bullpen_score=float(home_bullpen.get("bullpen_score", 65.0)),
             starter_ip_projection=home_pitcher_score["starter_ip_projection"],
+            swing_alignment=self._lineup_swing_alignment(away_matchups, home_pitcher_profile),
             pitcher_sample_pitches=int(home_profile_for_runs.get("sample_pitches") or 0),
             lineup_avg_pa=int(away_lineup_avgs.get("avg_pa") or 0),
+            lineup_confirmed=away_lineup_confirmed,
             market_team_total=away_market_runs,
+            deviation_cap=deviation_cap,
             sweep_avoidance_runs=away_sweep_runs,
+            pitcher_xba=float(home_profile_for_runs.get("xba") or 0.255),
             top_features=self._top_run_features_direct(
                 pitcher_xba=float(home_profile_for_runs.get("xba") or 0.255),
                 pitcher_k_pct=float(home_profile_for_runs.get("weighted_k_pct") or 0.228),
@@ -472,6 +478,59 @@ class DailyPredictionService:
         if facing_sweep:
             features.append({"feature": "Avoiding sweep", "value": "yes"})
         return features
+
+    def _pitcher_woba_against(
+        self,
+        profile: dict[str, Any],
+        vs_l: dict[str, Any] | None,
+        vs_r: dict[str, Any] | None,
+        opposing_matchups: list[dict[str, Any]] | None,
+    ) -> float:
+        """Opposing pitcher's expected wOBA-against, weighted by the handedness
+        mix of the lineup it faces.
+
+        Uses the vs-L / vs-R split profiles when the lineup's handedness is known
+        and the splits have data; otherwise falls back to the overall profile.
+        This makes the pitcher handedness split active wherever real handedness
+        data is present and a safe no-op where it isn't.
+        """
+        overall = self.runs.pitcher_woba_against_from_xba(float(profile.get("xba") or 0.255))
+        lefties = righties = 0
+        for rep in opposing_matchups or []:
+            hand = (rep.get("profile") or {}).get("handedness")
+            if hand == "L":
+                lefties += 1
+            elif hand == "R":
+                righties += 1
+        total = lefties + righties
+        if total < 5:
+            return overall
+        vl_xba = float((vs_l or {}).get("xba") or 0.0)
+        vr_xba = float((vs_r or {}).get("xba") or 0.0)
+        if vl_xba <= 0.0 or vr_xba <= 0.0:
+            return overall
+        woba_l = self.runs.pitcher_woba_against_from_xba(vl_xba)
+        woba_r = self.runs.pitcher_woba_against_from_xba(vr_xba)
+        frac_l = lefties / total
+        return frac_l * woba_l + (1.0 - frac_l) * woba_r
+
+    def _lineup_swing_alignment(
+        self,
+        matchups: list[dict[str, Any]],
+        pitcher_profile: dict[str, Any],
+    ) -> float:
+        """Average swing-path / pitch-movement alignment across the lineup (0-100,
+        50 neutral). Returns neutral when swing data is absent so it can never
+        nudge the projection without real Statcast swing inputs."""
+        fits: list[float] = []
+        for rep in matchups or []:
+            prof = rep.get("profile") or {}
+            if not (prof.get("swing_path_score") or prof.get("attack_angle")):
+                continue
+            fits.append(self.matchups._swing_fit(prof, pitcher_profile, None))
+        if not fits:
+            return 50.0
+        return sum(fits) / len(fits)
 
     def _lineup_averages(self, matchup_reports: list[dict[str, Any]]) -> dict[str, float | int]:
         if not matchup_reports:
