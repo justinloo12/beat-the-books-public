@@ -50,7 +50,9 @@ class DailyPredictionService:
         board = await self.daily_board(slate_date)
         return {"date": board["date"], "picks": board["picks"], "skipped": board["skipped"]}
 
-    async def daily_board(self, slate_date: date) -> dict[str, Any]:
+    async def daily_board(self, slate_date: date, skip_started_games: bool = True) -> dict[str, Any]:
+        # skip_started_games=False is used by the historical backtest, where every
+        # game is already in the past and must still be projected from pre-game data.
         try:
             games = await self.stats.fetch_slate(slate_date)
         except Exception as exc:
@@ -78,7 +80,7 @@ class DailyPredictionService:
             # Skip games that have already started (5-min grace window) so a
             # late manual re-run never overwrites picks with mid-game data.
             game_date_str = game.get("gameDate")
-            if game_date_str:
+            if skip_started_games and game_date_str:
                 try:
                     game_start = datetime.fromisoformat(game_date_str.replace("Z", "+00:00"))
                     if game_start.astimezone(ZoneInfo("America/New_York")) < now_et - timedelta(minutes=5):
