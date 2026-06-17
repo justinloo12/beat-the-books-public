@@ -71,15 +71,21 @@ class RunExpectationService:
         deviation_cap: float = 1.0,
         sweep_avoidance_runs: float = 0.0,
         pitcher_xba: float = _LG_XBA_AGAINST,
+        park_hit_woba: float = 0.0,
         top_features: list[dict] | None = None,
     ) -> TeamRunContext:
         # 1. Log5-style rate matchup: a strong lineup against a strong pitcher
         #    lands between the two, scaled by league average.
         matchup_woba = lineup_xwoba * (pitcher_woba_against / _LG_WOBA)
 
-        # 2. Bounded swing-path / pitch-movement alignment nudge.
+        # 2. Bounded secondary wOBA nudges, all on the same scale as the rate
+        #    matchup above so they cooperate instead of competing:
+        #      * swing-path / pitch-movement geometry alignment,
+        #      * hit-type x handedness park geometry (the Green Monster turning
+        #        fly balls into doubles, a short porch into homers), already
+        #        weather-scaled on its air-dependent components upstream.
         swing_nudge = ((swing_alignment - 50.0) / 50.0) * _MAX_SWING_WOBA
-        matchup_woba = clamp(matchup_woba + swing_nudge, 0.180, 0.520)
+        matchup_woba = clamp(matchup_woba + swing_nudge + park_hit_woba, 0.180, 0.520)
 
         # 3. wOBA -> runs (the grounded conversion).
         offense_runs = _LG_TEAM_RUNS + ((matchup_woba - _LG_WOBA) / _WOBA_SCALE) * _PA_PER_GAME

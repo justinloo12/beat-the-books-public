@@ -11,6 +11,7 @@ from zoneinfo import ZoneInfo
 _SLOT_PA_WEIGHTS = [0.129, 0.124, 0.120, 0.115, 0.111, 0.107, 0.102, 0.098, 0.093]
 
 from mlb_model.config import get_settings
+from mlb_model.park_factors import batter_park_woba_delta
 from mlb_model.utils import clamp, safe_mean
 from mlb_model.providers.baseball import BaseballSavantProvider
 from mlb_model.providers.market import MarketProvider
@@ -400,6 +401,9 @@ class DailyPredictionService:
             deviation_cap=deviation_cap,
             sweep_avoidance_runs=home_sweep_runs,
             pitcher_xba=float(away_profile_for_runs.get("xba") or 0.255),
+            park_hit_woba=self._lineup_park_woba(
+                home_matchups, venue, float(weather.get("weather_multiplier", 1.0))
+            ),
             top_features=self._top_run_features_direct(
                 pitcher_xba=float(away_profile_for_runs.get("xba") or 0.255),
                 pitcher_k_pct=float(away_profile_for_runs.get("weighted_k_pct") or 0.228),
@@ -425,6 +429,9 @@ class DailyPredictionService:
             deviation_cap=deviation_cap,
             sweep_avoidance_runs=away_sweep_runs,
             pitcher_xba=float(home_profile_for_runs.get("xba") or 0.255),
+            park_hit_woba=self._lineup_park_woba(
+                away_matchups, venue, float(weather.get("weather_multiplier", 1.0))
+            ),
             top_features=self._top_run_features_direct(
                 pitcher_xba=float(home_profile_for_runs.get("xba") or 0.255),
                 pitcher_k_pct=float(home_profile_for_runs.get("weighted_k_pct") or 0.228),
@@ -608,6 +615,40 @@ class DailyPredictionService:
         if not fits:
             return 50.0
         return sum(fits) / len(fits)
+
+    def _lineup_park_woba(
+        self,
+        matchups: list[dict[str, Any]],
+        venue: str | None,
+        weather_multiplier: float,
+    ) -> float:
+        """PA-weighted hit-type x handedness park adjustment for the lineup, in
+        wOBA points. Each batter's pull tendency and batted-ball mix decide how
+        much of the park's geometry they actually capture; the air-dependent
+        components ride the weather multiplier. Returns 0.0 (no-op) for neutral
+        parks or when batted-ball data is absent."""
+        w_delta = total_w = 0.0
+        for rep in matchups or []:
+            prof = rep.get("profile") or {}
+            hand = prof.get("handedness")
+            delta = batter_park_woba_delta(
+                venue,
+                hand,
+                prof.get("bb_rates"),
+                prof.get("pull_pct"),
+                weather_multiplier,
+            )
+            slot = rep.get("slot")
+            try:
+                idx = int(slot) - 1 if slot != "-" else None
+            except (TypeError, ValueError):
+                idx = None
+            weight = _SLOT_PA_WEIGHTS[idx] if idx is not None and 0 <= idx < 9 else (1.0 / 9.0)
+            w_delta += weight * delta
+            total_w += weight
+        if total_w <= 0:
+            return 0.0
+        return w_delta / total_w
 
     def _lineup_averages(self, matchup_reports: list[dict[str, Any]]) -> dict[str, float | int]:
         if not matchup_reports:
