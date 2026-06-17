@@ -334,7 +334,7 @@
           },
           {
             "feature": "Weather stack",
-            "value": 0.05,
+            "value": 0.65,
             "direction": "up"
           },
           {
@@ -4107,6 +4107,69 @@
                 "bb": 0.26,
                 "k": 0.92,
                 "rbi": 0.55,
+                "tb": 0.88,
+                "hit_prob": 0.125,
+                "hr_prob": 0.017
+              }
+            },
+            {
+              "slot": "DH",
+              "name": "Randal Grichuk",
+              "handedness": "R",
+              "xwoba": 0.384,
+              "hard_hit_pct": 0.441,
+              "bb_pct": 0.042105263157894736,
+              "k_pct": 0.23157894736842105,
+              "has_pitch_matchup": false,
+              "pitcher_hand": null,
+              "matchup_score": 53.28,
+              "handedness_bonus": null,
+              "pitch_scores": [],
+              "best_pitch_matches": [],
+              "pitch_profiles": [],
+              "pitch_vs_starter": [
+                {
+                  "pitch_type": "FF",
+                  "pitch_name": "4-Seam Fastball",
+                  "usage_pct": 0.44,
+                  "pitcher_xba": 0.184,
+                  "pitcher_k_pct": 0.208,
+                  "batter_xwoba": null,
+                  "batter_k_pct": null,
+                  "batter_bb_pct": null,
+                  "has_batter_data": false
+                },
+                {
+                  "pitch_type": "SL",
+                  "pitch_name": "Slider",
+                  "usage_pct": 0.258,
+                  "pitcher_xba": 0.169,
+                  "pitcher_k_pct": 0.424,
+                  "batter_xwoba": null,
+                  "batter_k_pct": null,
+                  "batter_bb_pct": null,
+                  "has_batter_data": false
+                },
+                {
+                  "pitch_type": "SI",
+                  "pitch_name": "Sinker",
+                  "usage_pct": 0.163,
+                  "pitcher_xba": 0.199,
+                  "pitcher_k_pct": 0.125,
+                  "batter_xwoba": null,
+                  "batter_k_pct": null,
+                  "batter_bb_pct": null,
+                  "has_batter_data": false
+                }
+              ],
+              "simulation": {
+                "pa": 4.38,
+                "ab": 4.09,
+                "hits": 0.54,
+                "hr": 0.07,
+                "bb": 0.23,
+                "k": 1.01,
+                "rbi": 0.53,
                 "tb": 0.89,
                 "hit_prob": 0.126,
                 "hr_prob": 0.017
@@ -11061,11 +11124,11 @@
         "lineup_status": "confirmed",
         "weather_stack_score": 0.02,
         "weather": {
-          "temperature_f": 72.0,
-          "wind_speed_mph": 0.0,
-          "wind_direction": "neutral",
-          "humidity": 50.0,
-          "weather_missing": true
+          "temperature_f": 86.9,
+          "wind_speed_mph": 12.3,
+          "wind_direction": 201,
+          "humidity": 29,
+          "weather_missing": false
         },
         "projected_total": 11.5,
         "simulated_total": 11.5,
@@ -11096,7 +11159,7 @@
               },
               {
                 "feature": "Weather stack",
-                "value": 0.02,
+                "value": 0.64,
                 "direction": "up"
               },
               {
@@ -11133,7 +11196,7 @@
               },
               {
                 "feature": "Weather stack",
-                "value": 0.02,
+                "value": 0.64,
                 "direction": "up"
               },
               {
@@ -11170,7 +11233,7 @@
               },
               {
                 "feature": "Weather stack",
-                "value": 0.02,
+                "value": 0.64,
                 "direction": "up"
               },
               {
@@ -11207,7 +11270,7 @@
               },
               {
                 "feature": "Weather stack",
-                "value": 0.02,
+                "value": 0.64,
                 "direction": "up"
               },
               {
@@ -11244,7 +11307,7 @@
               },
               {
                 "feature": "Weather stack",
-                "value": 0.02,
+                "value": 0.64,
                 "direction": "up"
               },
               {
