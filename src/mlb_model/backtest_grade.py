@@ -81,9 +81,11 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Grade backtest boards against actual results.")
     parser.add_argument("--start", required=True)
     parser.add_argument("--end", required=True)
+    parser.add_argument("--out", default=None, help="Output path (default: backtest/results.json)")
     args = parser.parse_args()
     start = date.fromisoformat(args.start)
     end = date.fromisoformat(args.end)
+    out_path = Path(args.out) if args.out else RESULTS_PATH
 
     all_rows: list[dict] = []
     for slate_date in _daterange(start, end):
@@ -93,10 +95,10 @@ def main() -> None:
             print(f"{slate_date}: {graded}/{len(rows)} graded")
         all_rows.extend(rows)
 
-    RESULTS_PATH.parent.mkdir(parents=True, exist_ok=True)
-    RESULTS_PATH.write_text(json.dumps(all_rows, indent=2), encoding="utf-8")
-    print(f"\nWrote {len(all_rows)} rows to {RESULTS_PATH}")
-    print("Next: python -m mlb_model.backtest_report")
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    out_path.write_text(json.dumps(all_rows, indent=2), encoding="utf-8")
+    print(f"\nWrote {len(all_rows)} rows to {out_path}")
+    print("Next: python -m mlb_model.backtest_report --results", out_path)
 
 
 if __name__ == "__main__":
