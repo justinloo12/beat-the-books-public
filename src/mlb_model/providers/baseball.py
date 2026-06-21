@@ -6,6 +6,7 @@ from pathlib import Path
 import re
 from typing import Any
 
+import numpy as np
 import pandas as pd
 from pandas.errors import EmptyDataError
 from pybaseball import pitching_stats
@@ -186,6 +187,40 @@ class BaseballSavantProvider:
         if values.empty:
             return 0.0
         return float(values.mean())
+
+    def _pull_pct(self, frame: pd.DataFrame, hand: str | None) -> float | None:
+        """Fraction of batted balls the hitter pulls, from Statcast hit coords.
+
+        Spray angle is computed from (hc_x, hc_y) with the standard home-plate
+        origin (125.42, 198.27); the sign is flipped for left-handed batters so
+        that a positive angle means 'pulled' for everyone. Pull = beyond +15 deg.
+        Returns None when coordinates are unavailable or the sample is too thin.
+        """
+        if "hc_x" not in frame.columns or "hc_y" not in frame.columns:
+            return None
+        hc_x = pd.to_numeric(frame.get("hc_x"), errors="coerce")
+        hc_y = pd.to_numeric(frame.get("hc_y"), errors="coerce")
+        mask = hc_x.notna() & hc_y.notna()
+        if int(mask.sum()) < 10:
+            return None
+        # Angle in degrees: 0 = up the middle, negative = LF (3B side), positive = RF.
+        angle = np.degrees(np.arctan2(hc_x[mask] - 125.42, 198.27 - hc_y[mask]))
+        if hand == "L":
+            angle = -angle  # flip so positive = pull side for left-handed hitters
+        return float((angle > 15.0).mean())
+
+    def _hit_type_rates(self, terminal_frame: pd.DataFrame) -> dict[str, float]:
+        """Per-PA rates of each base-hit outcome (1B/2B/3B/HR) over completed PA."""
+        n = len(terminal_frame)
+        if n == 0:
+            return {}
+        events = terminal_frame["events"].fillna("")
+        return {
+            "1B": round(float((events == "single").mean()), 4),
+            "2B": round(float((events == "double").mean()), 4),
+            "3B": round(float((events == "triple").mean()), 4),
+            "HR": round(float((events == "home_run").mean()), 4),
+        }
 
     def _recent_window(self, frame: pd.DataFrame, end_date: date | None, days: int = 30) -> pd.DataFrame:
         if frame.empty or "game_date" not in frame.columns:
@@ -569,6 +604,8 @@ class BaseballSavantProvider:
             "swing_path_tilt": round(self._nan_to_zero(pd.to_numeric(batter_frame.get("swing_path_tilt"), errors="coerce").mean()), 3),
             "attack_angle": round(self._nan_to_zero(pd.to_numeric(batter_frame.get("attack_angle"), errors="coerce").mean()), 3),
             "swing_length": round(self._nan_to_zero(pd.to_numeric(batter_frame.get("swing_length"), errors="coerce").mean()), 3),
+            "pull_pct": self._pull_pct(batter_frame, self._player_handedness(batter_frame, "stand")),
+            "bb_rates": self._hit_type_rates(terminal_frame),
             "pitch_profiles": profiles,
         }
 

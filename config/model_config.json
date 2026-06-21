@@ -104,5 +104,10 @@
   },
   "situational_factors": {
     "sweep_avoidance_run_bonus": 0.08
+  },
+  "run_model": {
+    "market_deviation_cap": 1.0,
+    "variance_to_mean": 1.28,
+    "home_extra_inning_edge": 0.52
   }
 }

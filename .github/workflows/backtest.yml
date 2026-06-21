@@ -1,0 +1,141 @@
+name: Backtest Model (60/20/20)
+
+on:
+  workflow_dispatch:
+    inputs:
+      full_start:
+        description: "First date of full backtest range (YYYY-MM-DD)"
+        default: "2025-06-01"
+      full_end:
+        description: "Last date of full backtest range (YYYY-MM-DD)"
+        default: "2025-08-31"
+      train_end:
+        description: "Last date of training split (60% — Jun 1–Jul 25)"
+        default: "2025-07-25"
+      val_end:
+        description: "Last date of validation split (20% — Jul 26–Aug 13)"
+        default: "2025-08-13"
+      statcast_start:
+        description: "Statcast download start (should be ~2 weeks before full_start)"
+        default: "2025-04-01"
+      skip_existing:
+        description: "Skip board dates that are already saved (resume a partial run)"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+jobs:
+  backtest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+
+    env:
+      MLB_MODEL_ODDS_API_KEY: ${{ secrets.MLB_MODEL_ODDS_API_KEY }}
+      MLB_MODEL_TOMORROW_API_KEY: ${{ secrets.MLB_MODEL_TOMORROW_API_KEY }}
+
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .
+
+      # -----------------------------------------------------------------------
+      # Phase 0: download Statcast for the full season so per-batter split
+      # profiles and park metrics are available for every game date.
+      # -----------------------------------------------------------------------
+      - name: Download Statcast + leaderboards
+        run: |
+          python -m mlb_model.download_data \
+            --statcast-start "${{ inputs.statcast_start }}" \
+            --statcast-end   "${{ inputs.full_end }}" \
+            --seasons 2025 \
+            --odds-date "${{ inputs.full_start }}" \
+            --odds-only
+
+      # -----------------------------------------------------------------------
+      # Phase 1: simulate daily boards for every date in the full range.
+      # One board file per day saved to backtest/data/<date>.json.
+      # -----------------------------------------------------------------------
+      - name: Run model over full date range
+        run: |
+          SKIP_FLAG=""
+          if [ "${{ inputs.skip_existing }}" = "true" ]; then
+            SKIP_FLAG="--skip-existing"
+          fi
+          python -m mlb_model.backtest_run \
+            --start "${{ inputs.full_start }}" \
+            --end   "${{ inputs.full_end }}" \
+            $SKIP_FLAG
+
+      # -----------------------------------------------------------------------
+      # Phase 2: grade every board against MLB Stats API real scores.
+      # -----------------------------------------------------------------------
+      - name: Grade full range
+        run: |
+          python -m mlb_model.backtest_grade \
+            --start "${{ inputs.full_start }}" \
+            --end   "${{ inputs.full_end }}"
+
+      # -----------------------------------------------------------------------
+      # Phase 3: produce split reports — train / validate / test.
+      # We grade each split separately so metrics are fully isolated.
+      # -----------------------------------------------------------------------
+      - name: Grade training split (60% — Jun 1–Jul 25)
+        run: |
+          python -m mlb_model.backtest_grade \
+            --start "${{ inputs.full_start }}" \
+            --end   "${{ inputs.train_end }}" \
+            --out   backtest/results_train.json
+
+      - name: Grade validation split (20% — Jul 26–Aug 13)
+        run: |
+          python -m mlb_model.backtest_grade \
+            --start "$(date -d '${{ inputs.train_end }} + 1 day' +%F)" \
+            --end   "${{ inputs.val_end }}" \
+            --out   backtest/results_val.json
+
+      - name: Grade test split (20% — Aug 14–Aug 31)
+        run: |
+          python -m mlb_model.backtest_grade \
+            --start "$(date -d '${{ inputs.val_end }} + 1 day' +%F)" \
+            --end   "${{ inputs.full_end }}" \
+            --out   backtest/results_test.json
+
+      # -----------------------------------------------------------------------
+      # Phase 4: print reports for each split to the job log.
+      # -----------------------------------------------------------------------
+      - name: Report — full range
+        run: python -m mlb_model.backtest_report --results backtest/results.json
+
+      - name: Report — training split (60%)
+        run: python -m mlb_model.backtest_report --results backtest/results_train.json
+
+      - name: Report — validation split (20%)
+        run: python -m mlb_model.backtest_report --results backtest/results_val.json
+
+      - name: Report — test/holdout split (20%)
+        run: python -m mlb_model.backtest_report --results backtest/results_test.json
+
+      # -----------------------------------------------------------------------
+      # Phase 5: upload all result files as artifacts for offline analysis.
+      # -----------------------------------------------------------------------
+      - name: Upload backtest results
+        uses: actions/upload-artifact@v4
+        with:
+          name: backtest-results-${{ inputs.full_start }}-${{ inputs.full_end }}
+          path: |
+            backtest/results.json
+            backtest/results_train.json
+            backtest/results_val.json
+            backtest/results_test.json
+          retention-days: 90

@@ -11,7 +11,8 @@ from zoneinfo import ZoneInfo
 _SLOT_PA_WEIGHTS = [0.129, 0.124, 0.120, 0.115, 0.111, 0.107, 0.102, 0.098, 0.093]
 
 from mlb_model.config import get_settings
-from mlb_model.utils import safe_mean
+from mlb_model.park_factors import batter_park_woba_delta
+from mlb_model.utils import clamp, safe_mean
 from mlb_model.providers.baseball import BaseballSavantProvider
 from mlb_model.providers.market import MarketProvider
 from mlb_model.providers.mlb_stats import MLBStatsProvider
@@ -50,7 +51,9 @@ class DailyPredictionService:
         board = await self.daily_board(slate_date)
         return {"date": board["date"], "picks": board["picks"], "skipped": board["skipped"]}
 
-    async def daily_board(self, slate_date: date) -> dict[str, Any]:
+    async def daily_board(self, slate_date: date, skip_started_games: bool = True) -> dict[str, Any]:
+        # skip_started_games=False is used by the historical backtest, where every
+        # game is already in the past and must still be projected from pre-game data.
         try:
             games = await self.stats.fetch_slate(slate_date)
         except Exception as exc:
@@ -78,7 +81,7 @@ class DailyPredictionService:
             # Skip games that have already started (5-min grace window) so a
             # late manual re-run never overwrites picks with mid-game data.
             game_date_str = game.get("gameDate")
-            if game_date_str:
+            if skip_started_games and game_date_str:
                 try:
                     game_start = datetime.fromisoformat(game_date_str.replace("Z", "+00:00"))
                     if game_start.astimezone(ZoneInfo("America/New_York")) < now_et - timedelta(minutes=5):
@@ -348,26 +351,59 @@ class DailyPredictionService:
         sweep_bonus = self.settings.load_model_settings().situational_factors.get("sweep_avoidance_run_bonus", 0.0)
         home_sweep_runs = sweep_bonus if home_facing_sweep else 0.0
         away_sweep_runs = sweep_bonus if away_facing_sweep else 0.0
+        deviation_cap = float(
+            (getattr(self.settings.load_model_settings(), "run_model", {}) or {}).get("market_deviation_cap", 1.0)
+        )
+
+        # Opposing STARTER's wOBA-against, handedness-weighted by the lineup it
+        # faces. Falls back to the overall profile when splits are too thin.
+        away_starter_woba = self._pitcher_woba_against(
+            away_profile_for_runs, away_pitcher_vs_l, away_pitcher_vs_r, home_matchups
+        )
+        home_starter_woba = self._pitcher_woba_against(
+            home_profile_for_runs, home_pitcher_vs_l, home_pitcher_vs_r, away_matchups
+        )
+        # Starter's projected outs: the sportsbook pitcher-outs line when available
+        # (market anchor), else the model's IP projection x3. This sets how much of
+        # the game the bullpen covers.
+        away_starter_outs = self._market_pitcher_outs(odds_game, away_pitcher) or (
+            float(away_pitcher_score["starter_ip_projection"]) * 3.0
+        )
+        home_starter_outs = self._market_pitcher_outs(odds_game, home_pitcher) or (
+            float(home_pitcher_score["starter_ip_projection"]) * 3.0
+        )
+        # Blend starter + bullpen wOBA-against by their share of the game's 27 outs.
+        # The HOME lineup faces the AWAY starter then the AWAY bullpen, and vice versa.
+        away_woba_against = self._blended_pitching_woba(
+            away_starter_woba,
+            self._bullpen_woba_against(float(away_bullpen.get("bullpen_score", 65.0))),
+            away_starter_outs,
+        )
+        home_woba_against = self._blended_pitching_woba(
+            home_starter_woba,
+            self._bullpen_woba_against(float(home_bullpen.get("bullpen_score", 65.0))),
+            home_starter_outs,
+        )
 
         home_runs = self.runs.expected_runs(
             team=home_team,
-            pitcher_xba=float(away_profile_for_runs.get("xba") or 0.255),
-            pitcher_k_pct=float(away_profile_for_runs.get("weighted_k_pct") or 0.228),
-            pitcher_bb_pct=float(away_profile_for_runs.get("weighted_bb_pct") or 0.076),
-            pitcher_hard_hit_pct=float(away_profile_for_runs.get("hard_hit_pct") or 0.375),
-            pitcher_barrel_pct=float(away_profile_for_runs.get("barrel_pct") or 0.080),
             lineup_xwoba=home_lineup_avgs["xwoba"],
-            lineup_k_pct=home_lineup_avgs["k_pct"],
-            lineup_bb_pct=home_lineup_avgs["bb_pct"],
-            lineup_hard_hit_pct=home_lineup_avgs["hard_hit_pct"],
+            pitcher_woba_against=away_woba_against,
             weather_multiplier=float(weather.get("weather_multiplier", 1.0)),
             park_factor=park_factor,
             bullpen_score=float(away_bullpen.get("bullpen_score", 65.0)),
             starter_ip_projection=away_pitcher_score["starter_ip_projection"],
+            swing_alignment=self._lineup_swing_alignment(home_matchups, away_pitcher_profile),
             pitcher_sample_pitches=int(away_profile_for_runs.get("sample_pitches") or 0),
             lineup_avg_pa=int(home_lineup_avgs.get("avg_pa") or 0),
+            lineup_confirmed=home_lineup_confirmed,
             market_team_total=home_market_runs,
+            deviation_cap=deviation_cap,
             sweep_avoidance_runs=home_sweep_runs,
+            pitcher_xba=float(away_profile_for_runs.get("xba") or 0.255),
+            park_hit_woba=self._lineup_park_woba(
+                home_matchups, venue, float(weather.get("weather_multiplier", 1.0))
+            ),
             top_features=self._top_run_features_direct(
                 pitcher_xba=float(away_profile_for_runs.get("xba") or 0.255),
                 pitcher_k_pct=float(away_profile_for_runs.get("weighted_k_pct") or 0.228),
@@ -379,23 +415,23 @@ class DailyPredictionService:
         )
         away_runs = self.runs.expected_runs(
             team=away_team,
-            pitcher_xba=float(home_profile_for_runs.get("xba") or 0.255),
-            pitcher_k_pct=float(home_profile_for_runs.get("weighted_k_pct") or 0.228),
-            pitcher_bb_pct=float(home_profile_for_runs.get("weighted_bb_pct") or 0.076),
-            pitcher_hard_hit_pct=float(home_profile_for_runs.get("hard_hit_pct") or 0.375),
-            pitcher_barrel_pct=float(home_profile_for_runs.get("barrel_pct") or 0.080),
             lineup_xwoba=away_lineup_avgs["xwoba"],
-            lineup_k_pct=away_lineup_avgs["k_pct"],
-            lineup_bb_pct=away_lineup_avgs["bb_pct"],
-            lineup_hard_hit_pct=away_lineup_avgs["hard_hit_pct"],
+            pitcher_woba_against=home_woba_against,
             weather_multiplier=float(weather.get("weather_multiplier", 1.0)),
             park_factor=park_factor,
             bullpen_score=float(home_bullpen.get("bullpen_score", 65.0)),
             starter_ip_projection=home_pitcher_score["starter_ip_projection"],
+            swing_alignment=self._lineup_swing_alignment(away_matchups, home_pitcher_profile),
             pitcher_sample_pitches=int(home_profile_for_runs.get("sample_pitches") or 0),
             lineup_avg_pa=int(away_lineup_avgs.get("avg_pa") or 0),
+            lineup_confirmed=away_lineup_confirmed,
             market_team_total=away_market_runs,
+            deviation_cap=deviation_cap,
             sweep_avoidance_runs=away_sweep_runs,
+            pitcher_xba=float(home_profile_for_runs.get("xba") or 0.255),
+            park_hit_woba=self._lineup_park_woba(
+                away_matchups, venue, float(weather.get("weather_multiplier", 1.0))
+            ),
             top_features=self._top_run_features_direct(
                 pitcher_xba=float(home_profile_for_runs.get("xba") or 0.255),
                 pitcher_k_pct=float(home_profile_for_runs.get("weighted_k_pct") or 0.228),
@@ -419,6 +455,10 @@ class DailyPredictionService:
             "away_bulk_pitcher_name": away_bulk_name,
             "home_bullpen": home_bullpen,
             "away_bullpen": away_bullpen,
+            "home_starter_outs": round(home_starter_outs, 1),
+            "away_starter_outs": round(away_starter_outs, 1),
+            "home_bullpen_out_share": round(1.0 - clamp(home_starter_outs, 3.0, 27.0) / 27.0, 3),
+            "away_bullpen_out_share": round(1.0 - clamp(away_starter_outs, 3.0, 27.0) / 27.0, 3),
             "home_pitcher_profile": home_pitcher_profile,
             "away_pitcher_profile": away_pitcher_profile,
             "home_pitcher_vs_l": home_pitcher_vs_l,
@@ -473,6 +513,143 @@ class DailyPredictionService:
             features.append({"feature": "Avoiding sweep", "value": "yes"})
         return features
 
+    def _pitcher_woba_against(
+        self,
+        profile: dict[str, Any],
+        vs_l: dict[str, Any] | None,
+        vs_r: dict[str, Any] | None,
+        opposing_matchups: list[dict[str, Any]] | None,
+    ) -> float:
+        """Opposing pitcher's expected wOBA-against, weighted by the handedness
+        mix of the lineup it faces.
+
+        Uses the vs-L / vs-R split profiles when the lineup's handedness is known
+        and the splits have data; otherwise falls back to the overall profile.
+        This makes the pitcher handedness split active wherever real handedness
+        data is present and a safe no-op where it isn't.
+        """
+        overall = self.runs.pitcher_woba_against_from_xba(float(profile.get("xba") or 0.255))
+        lefties = righties = 0
+        for rep in opposing_matchups or []:
+            hand = (rep.get("profile") or {}).get("handedness")
+            if hand == "L":
+                lefties += 1
+            elif hand == "R":
+                righties += 1
+        total = lefties + righties
+        if total < 5:
+            return overall
+        vl_xba = float((vs_l or {}).get("xba") or 0.0)
+        vr_xba = float((vs_r or {}).get("xba") or 0.0)
+        if vl_xba <= 0.0 or vr_xba <= 0.0:
+            return overall
+        woba_l = self.runs.pitcher_woba_against_from_xba(vl_xba)
+        woba_r = self.runs.pitcher_woba_against_from_xba(vr_xba)
+        frac_l = lefties / total
+        return frac_l * woba_l + (1.0 - frac_l) * woba_r
+
+    # League-average relief-corps wOBA-against, adjusted by the pen's reliability.
+    _BULLPEN_BASE_WOBA = 0.315
+
+    # Regression prior for per-batter handedness splits. A batter with this many
+    # split PA is trusted 50/50 vs. their overall season profile; fewer PA lean
+    # harder on the season number, more PA trust the split.
+    _SPLIT_PRIOR_PA = 200
+
+    def _bullpen_woba_against(self, bullpen_score: float) -> float:
+        """Relief corps wOBA-against. A weaker pen (low reliability score) yields
+        a higher wOBA-against and therefore more runs. score 65 = neutral."""
+        adj = (65.0 - bullpen_score) / 65.0 * 0.06
+        return clamp(self._BULLPEN_BASE_WOBA + adj, 0.270, 0.380)
+
+    def _blended_pitching_woba(
+        self,
+        starter_woba: float,
+        bullpen_woba: float,
+        starter_outs: float,
+    ) -> float:
+        """Blend the starter's and bullpen's wOBA-against by their share of the
+        game's 27 outs. A 5-inning starter (15 outs) gives the bullpen ~44% of
+        the game; a 7-inning starter (21 outs) only ~22%."""
+        starter_outs = clamp(starter_outs, 3.0, 27.0)
+        starter_share = starter_outs / 27.0
+        return starter_share * starter_woba + (1.0 - starter_share) * bullpen_woba
+
+    def _market_pitcher_outs(
+        self,
+        odds_game: dict[str, Any] | None,
+        pitcher: dict[str, Any],
+    ) -> float | None:
+        """Sportsbook pitcher-outs line for this starter, if present in the odds
+        bundle. Returns None until the per-event 'pitcher_outs' prop market is
+        fetched, so the model falls back to its own IP projection gracefully."""
+        if not odds_game:
+            return None
+        name = str(pitcher.get("fullName") or pitcher.get("name") or "").strip().lower()
+        if not name:
+            return None
+        for market in odds_game.get("markets", []):
+            if market.get("market_key") != "pitcher_outs":
+                continue
+            for outcome in market.get("outcomes", []):
+                desc = str(outcome.get("description") or outcome.get("name") or "").strip().lower()
+                point = outcome.get("point")
+                if desc and point is not None and (desc in name or name in desc):
+                    return float(point)
+        return None
+
+    def _lineup_swing_alignment(
+        self,
+        matchups: list[dict[str, Any]],
+        pitcher_profile: dict[str, Any],
+    ) -> float:
+        """Average swing-path / pitch-movement alignment across the lineup (0-100,
+        50 neutral). Returns neutral when swing data is absent so it can never
+        nudge the projection without real Statcast swing inputs."""
+        fits: list[float] = []
+        for rep in matchups or []:
+            prof = rep.get("profile") or {}
+            if not (prof.get("swing_path_score") or prof.get("attack_angle")):
+                continue
+            fits.append(self.matchups._swing_fit(prof, pitcher_profile, None))
+        if not fits:
+            return 50.0
+        return sum(fits) / len(fits)
+
+    def _lineup_park_woba(
+        self,
+        matchups: list[dict[str, Any]],
+        venue: str | None,
+        weather_multiplier: float,
+    ) -> float:
+        """PA-weighted hit-type x handedness park adjustment for the lineup, in
+        wOBA points. Each batter's pull tendency and batted-ball mix decide how
+        much of the park's geometry they actually capture; the air-dependent
+        components ride the weather multiplier. Returns 0.0 (no-op) for neutral
+        parks or when batted-ball data is absent."""
+        w_delta = total_w = 0.0
+        for rep in matchups or []:
+            prof = rep.get("profile") or {}
+            hand = prof.get("handedness")
+            delta = batter_park_woba_delta(
+                venue,
+                hand,
+                prof.get("bb_rates"),
+                prof.get("pull_pct"),
+                weather_multiplier,
+            )
+            slot = rep.get("slot")
+            try:
+                idx = int(slot) - 1 if slot != "-" else None
+            except (TypeError, ValueError):
+                idx = None
+            weight = _SLOT_PA_WEIGHTS[idx] if idx is not None and 0 <= idx < 9 else (1.0 / 9.0)
+            w_delta += weight * delta
+            total_w += weight
+        if total_w <= 0:
+            return 0.0
+        return w_delta / total_w
+
     def _lineup_averages(self, matchup_reports: list[dict[str, Any]]) -> dict[str, float | int]:
         if not matchup_reports:
             return {"xwoba": 0.318, "k_pct": 0.228, "bb_pct": 0.076, "hard_hit_pct": 0.375, "avg_pa": 0}
@@ -520,10 +697,8 @@ class DailyPredictionService:
         slate_date: date,
         confirmed: bool,
     ) -> list[dict[str, Any]]:
-        # Always use leaderboard path — per-pitch statcast profiles are too
-        # noisy with sparse early-season data and hurt calibration accuracy.
-        return self._hitter_pool_matchups(lineup, slate_date)
         pitch_types = {pitch["pitch_type"] for pitch in opposing_pitcher.get("pitch_arsenal", [])}
+        pitcher_hand = opposing_pitcher.get("handedness")
         reports = []
         sample_start = slate_date - timedelta(days=365)
         for slot, batter in enumerate(lineup, start=1):
@@ -538,20 +713,43 @@ class DailyPredictionService:
             batter_id = batter.get("id") or batter.get("person", {}).get("id")
             if not batter_id:
                 continue
+
+            # Overall season leaderboard profile — regression anchor for thin splits.
+            summary = self.baseball.build_batter_summary_profile(int(batter_id), slate_date.year)
+
+            # Per-batter Statcast profile filtered to opposing pitcher's handedness.
             profile = self.baseball.build_batter_matchup_profile(
                 int(batter_id),
-                pitcher_hand=opposing_pitcher.get("handedness"),
+                pitcher_hand=pitcher_hand,
                 pitch_types=pitch_types,
                 start_date=sample_start,
                 end_date=slate_date,
             )
-            # Fill missing stats from leaderboard summary when statcast data is absent or sparse
-            if not profile.get("xwoba") and not profile.get("hard_hit_pct"):
-                summary = self.baseball.build_batter_summary_profile(int(batter_id), slate_date.year)
-                for key, val in summary.items():
-                    if profile.get(key) is None:
-                        profile[key] = val
-            # use handedness-specific pitcher profile for more accurate matchup scoring
+
+            # Backfill fields that the split profile may not carry (handedness, swing metrics).
+            for key, val in summary.items():
+                if profile.get(key) is None:
+                    profile[key] = val
+
+            # Sample-size regression: blend split stats toward the overall season profile.
+            # With fewer than _SPLIT_PRIOR_PA PA in the split, we lean on the season number.
+            split_pa = int(profile.get("sample_pa") or 0)
+            w = split_pa / (split_pa + self._SPLIT_PRIOR_PA)
+            _LG_DEFAULTS = {
+                "xwoba": 0.318,
+                "k_pct": 0.228,
+                "bb_pct": 0.076,
+                "hard_hit_pct": 0.375,
+            }
+            for stat_key, default in _LG_DEFAULTS.items():
+                split_val = profile.get(stat_key)
+                overall_val = float(summary.get(stat_key) or default)
+                if split_val is not None:
+                    profile[stat_key] = round(w * float(split_val) + (1.0 - w) * overall_val, 4)
+                else:
+                    profile[stat_key] = overall_val
+
+            # Use handedness-specific pitcher profile for matchup scoring.
             batter_hand = profile.get("handedness")
             if batter_hand == "L" and opposing_pitcher_vs_l.get("pitch_arsenal"):
                 pitcher_for_matchup = opposing_pitcher_vs_l
@@ -559,6 +757,7 @@ class DailyPredictionService:
                 pitcher_for_matchup = opposing_pitcher_vs_r
             else:
                 pitcher_for_matchup = opposing_pitcher
+
             matchup = self.matchups.score_batter_vs_pitcher(profile, pitcher_for_matchup, lineup_slot=slot)
             pitch_matchup = self.baseball.compute_pitcher_matchup(
                 profile.get("pitch_profiles", []),
@@ -572,7 +771,7 @@ class DailyPredictionService:
                     "profile": profile,
                     "matchup": matchup,
                     "pitch_matchup": pitch_matchup,
-                    "pitcher_hand": opposing_pitcher.get("handedness"),
+                    "pitcher_hand": pitcher_hand,
                 }
             )
         return reports
