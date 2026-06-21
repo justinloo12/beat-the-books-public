@@ -34,6 +34,7 @@ jobs:
     env:
       MLB_MODEL_ODDS_API_KEY: ${{ secrets.MLB_MODEL_ODDS_API_KEY }}
       MLB_MODEL_TOMORROW_API_KEY: ${{ secrets.MLB_MODEL_TOMORROW_API_KEY }}
+      PYTHONUNBUFFERED: "1"
 
     steps:
       - name: Check out repo
@@ -59,8 +60,7 @@ jobs:
             --start-date "${{ inputs.statcast_start }}" \
             --end-date   "${{ inputs.full_end }}" \
             --seasons 2025 \
-            --odds-date "${{ inputs.full_start }}" \
-            --odds-only
+            --odds-date "${{ inputs.full_start }}"
 
       # -----------------------------------------------------------------------
       # Phase 1: simulate daily boards for every date in the full range.
