@@ -89,7 +89,17 @@ class BaseballSavantProvider:
         frame = pd.concat(frames, ignore_index=True)
         return self._normalize_frame(frame)
 
-    def load_statcast(self, start_date: date | None = None, end_date: date | None = None) -> pd.DataFrame:
+    def _prepared_statcast(self) -> pd.DataFrame:
+        """Full Statcast frame with game_date parsed and batter/pitcher ids
+        coerced to numeric — done exactly ONCE per process and memoized.
+
+        The previous load_statcast re-ran pd.to_datetime over the entire
+        multi-million-row frame on every call (once per pitcher and per batter,
+        per day). That datetime parse was the dominant backtest cost. Doing it
+        a single time and slicing cheaply afterwards is the fix.
+        """
+        if getattr(self, "_prepared", None) is not None:
+            return self._prepared
         statcast_range = re.compile(r"^statcast_\d{4}-\d{2}-\d{2}_\d{4}-\d{2}-\d{2}\.csv$")
         files = sorted(
             path.name
@@ -97,37 +107,47 @@ class BaseballSavantProvider:
             if statcast_range.match(path.name)
         )
         frame = self._load_files(tuple(files))
+        if frame.empty or "game_date" not in frame.columns:
+            self._prepared = pd.DataFrame()
+            return self._prepared
+        frame = frame.copy()
+        frame["game_date"] = pd.to_datetime(frame["game_date"]).dt.date
+        frame["_batter_id"] = pd.to_numeric(frame["batter"], errors="coerce")
+        frame["_pitcher_id"] = pd.to_numeric(frame["pitcher"], errors="coerce")
+        self._prepared = frame
+        return self._prepared
+
+    def load_statcast(self, start_date: date | None = None, end_date: date | None = None) -> pd.DataFrame:
+        frame = self._prepared_statcast()
         if frame.empty:
             return frame
-        if "game_date" in frame.columns:
-            frame["game_date"] = pd.to_datetime(frame["game_date"]).dt.date
-        else:
-            return pd.DataFrame()
         if start_date:
             frame = frame[frame["game_date"] >= start_date]
         if end_date:
             frame = frame[frame["game_date"] <= end_date]
-        return frame.copy()
+        return frame
 
     def _batter_rows(self, batter_id: int) -> pd.DataFrame:
-        """Per-batter Statcast rows, indexed once from the full dataset.
-
-        Scanning the full multi-million-row Statcast DataFrame for each batter
-        on each game day is the dominant backtest bottleneck. This method builds
-        a dict-based per-batter index the first time it is called, so the
-        expensive full-frame scan happens exactly once per process per unique
-        batter regardless of how many slate dates are processed.
-        """
+        """Per-batter Statcast rows, indexed once from the prepared dataset."""
         if not hasattr(self, "_batter_index"):
             self._batter_index: dict[int, pd.DataFrame] = {}
         if batter_id not in self._batter_index:
-            frame = self.load_statcast()  # no date filter — full dataset, already lru_cached
-            if frame.empty:
-                self._batter_index[batter_id] = pd.DataFrame()
-            else:
-                mask = pd.to_numeric(frame["batter"], errors="coerce") == batter_id
-                self._batter_index[batter_id] = frame[mask].copy()
+            frame = self._prepared_statcast()
+            self._batter_index[batter_id] = (
+                pd.DataFrame() if frame.empty else frame[frame["_batter_id"] == batter_id]
+            )
         return self._batter_index[batter_id]
+
+    def _pitcher_rows(self, pitcher_id: int) -> pd.DataFrame:
+        """Per-pitcher Statcast rows, indexed once from the prepared dataset."""
+        if not hasattr(self, "_pitcher_index"):
+            self._pitcher_index: dict[int, pd.DataFrame] = {}
+        if pitcher_id not in self._pitcher_index:
+            frame = self._prepared_statcast()
+            self._pitcher_index[pitcher_id] = (
+                pd.DataFrame() if frame.empty else frame[frame["_pitcher_id"] == pitcher_id]
+            )
+        return self._pitcher_index[pitcher_id]
 
     @lru_cache(maxsize=6)
     def _load_batter_expected_stats(self, season: int) -> pd.DataFrame:
@@ -413,14 +433,18 @@ class BaseballSavantProvider:
         end_date: date | None = None,
     ) -> dict[str, Any]:
         leaderboard_fallback = self._pitcher_profile_from_leaderboards(pitcher_id, end_date.year if end_date else None)
-        frame = self.load_statcast(start_date, end_date)
-        if frame.empty:
+        pitcher_frame = self._pitcher_rows(pitcher_id)
+        if pitcher_frame.empty:
             return leaderboard_fallback
-        pitcher_frame = frame[pd.to_numeric(frame["pitcher"], errors="coerce") == pitcher_id].copy()
+        if start_date:
+            pitcher_frame = pitcher_frame[pitcher_frame["game_date"] >= start_date]
+        if end_date:
+            pitcher_frame = pitcher_frame[pitcher_frame["game_date"] <= end_date]
         if batter_hand:
             pitcher_frame = pitcher_frame[pitcher_frame["stand"] == batter_hand]
         if pitcher_frame.empty:
             return leaderboard_fallback
+        pitcher_frame = pitcher_frame.copy()
 
         batter_frame = pitcher_frame[pitcher_frame["description"].isin(STATCAST_BATTED_BALL_DESCRIPTIONS)].copy()
         # Only include the last pitch of each PA (events set) — not intermediate pitches (events=NaN)
@@ -700,13 +724,13 @@ class BaseballSavantProvider:
     def _build_pitch_profiles_for_batter(self, batter_id: int, season: int) -> list[dict[str, Any]]:
         """Build per-pitch-type profiles for a batter using full-season Statcast data."""
         from datetime import date as _date
-        frame = self.load_statcast(
-            start_date=_date(season, 1, 1),
-            end_date=_date(season, 12, 31),
-        )
-        if frame.empty:
+        batter_frame = self._batter_rows(batter_id)
+        if batter_frame.empty:
             return []
-        batter_frame = frame[pd.to_numeric(frame["batter"], errors="coerce") == batter_id].copy()
+        batter_frame = batter_frame[
+            (batter_frame["game_date"] >= _date(season, 1, 1))
+            & (batter_frame["game_date"] <= _date(season, 12, 31))
+        ].copy()
         if batter_frame.empty:
             return []
         bbe_frame = batter_frame[batter_frame["description"].isin(STATCAST_BATTED_BALL_DESCRIPTIONS)].copy()
