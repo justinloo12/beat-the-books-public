@@ -325,7 +325,14 @@ class DailyPredictionService:
         home_lineup_avgs = self._lineup_averages(home_matchups)
         away_lineup_avgs = self._lineup_averages(away_matchups)
 
-        weather_raw = await self.weather_provider.fetch_forecast(venue, start_time=start_time)
+        # Skip live weather fetch for historical dates — forecast APIs only serve
+        # future data, so every call for a past game fails after a full timeout.
+        # Use neutral weather for backtesting; the market odds already priced it.
+        today = date.today()
+        if slate_date < today:
+            weather_raw = {}
+        else:
+            weather_raw = await self.weather_provider.fetch_forecast(venue, start_time=start_time)
         weather_projection = self._weather_projection(weather_raw, venue, start_time)
         weather = self.weather.score_weather({"ballpark": venue, "is_indoor": False}, weather_projection)
         park_factor = PARK_FACTORS.get(venue or "", 1.0)
