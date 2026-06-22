@@ -125,25 +125,31 @@ class RunDistributionService:
             for a, pa in enumerate(away_pmf):
                 total_pmf[h + a] += ph * pa
 
+        home_mean = sum(k * p for k, p in enumerate(home_pmf))
+        away_mean = sum(k * p for k, p in enumerate(away_pmf))
+        total_mean = home_mean + away_mean
+
+        # Run scoring is RIGHT-SKEWED, so the distribution's mean sits above its
+        # median: P(total > mean) is < 0.5. The market total line is effectively
+        # the 50/50 point, so pricing the over as the raw upper-tail introduces a
+        # systematic UNDER lean — the model would price every over below 50% even
+        # when its own mean equals the line. We remove that skew offset so that
+        # when the model's mean equals the line, P(over) is exactly 0.5, and only
+        # a genuine model-vs-line disagreement moves it off 50%.
+        def _over(pmf: list[float], mean: float, line: float) -> float:
+            raw = sum(prob for runs, prob in enumerate(pmf) if runs > line)
+            skew_offset = sum(prob for runs, prob in enumerate(pmf) if runs > mean)
+            return clamp(raw - skew_offset + 0.5, 0.0001, 0.9999)
+
         total_over: dict[float, float] = {}
         for line in total_lines:
-            # P(total > line): for a .5 line this is unambiguous; for an integer
-            # line a push is possible, which we exclude from "over".
-            over = sum(prob for runs, prob in enumerate(total_pmf) if runs > line)
-            total_over[line] = clamp(over, 0.0001, 0.9999)
+            total_over[line] = _over(total_pmf, total_mean, line)
 
         team_total_over: dict[str, dict[float, float]] = {"home": {}, "away": {}}
         for line in total_lines:
             half = line / 2.0
-            team_total_over["home"][half] = clamp(
-                sum(p for k, p in enumerate(home_pmf) if k > half), 0.0001, 0.9999
-            )
-            team_total_over["away"][half] = clamp(
-                sum(p for k, p in enumerate(away_pmf) if k > half), 0.0001, 0.9999
-            )
-
-        home_mean = sum(k * p for k, p in enumerate(home_pmf))
-        away_mean = sum(k * p for k, p in enumerate(away_pmf))
+            team_total_over["home"][half] = _over(home_pmf, home_mean, half)
+            team_total_over["away"][half] = _over(away_pmf, away_mean, half)
 
         return MarketProbabilities(
             home_win_prob=clamp(home_win, 0.0001, 0.9999),

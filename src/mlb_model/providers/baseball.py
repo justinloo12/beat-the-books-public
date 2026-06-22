@@ -491,6 +491,7 @@ class BaseballSavantProvider:
             "arm_angle": round(self._nan_to_zero(pd.to_numeric(pitcher_frame.get("arm_angle"), errors="coerce").mean()), 3),
             "extension": round(self._nan_to_zero(pd.to_numeric(pitcher_frame.get("release_extension"), errors="coerce").mean()), 3),
             "xba": round(self._nan_to_zero(pd.to_numeric(pitcher_overall_bbe.get("estimated_ba_using_speedangle"), errors="coerce").mean()), 4),
+            "xwoba_contact_against": round(self._nan_to_zero(pd.to_numeric(pitcher_overall_bbe.get("estimated_woba_using_speedangle"), errors="coerce").mean()), 4),
             "hard_hit_pct": round(self._nan_to_zero((pd.to_numeric(pitcher_overall_bbe.get("launch_speed"), errors="coerce") >= 95).mean()), 4),
             "barrel_pct": round(self._barrel_pct(pitcher_overall_bbe), 4),
             "ev50": round(self._ev50(pitcher_overall_bbe), 3),

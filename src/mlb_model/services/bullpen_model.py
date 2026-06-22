@@ -12,6 +12,7 @@ class BullpenModelService:
         fatigue_flags: list[str] = []
         reliability_score = 65.0
         lhp_available = False
+        xfip_values: list[float] = []
 
         for reliever in relievers:
             pitches_yesterday = int(reliever.get("pitches_yesterday", 0))
@@ -20,6 +21,8 @@ class BullpenModelService:
             days_since = int(reliever.get("days_since_last", 1))
             era = float(reliever.get("era", 4.00))
             xfip = float(reliever.get("xfip", 4.00))
+            if reliever.get("xfip") is not None:
+                xfip_values.append(xfip)
 
             fatigued = False
             if pitches_yesterday >= 20:
@@ -57,6 +60,7 @@ class BullpenModelService:
 
         return {
             "bullpen_score": round(clamp(reliability_score, 5, 95), 2),
+            "xfip_avg": round(sum(xfip_values) / len(xfip_values), 3) if xfip_values else None,
             "fresh_high_leverage_arms": fresh_high_leverage,
             "depleted": depleted,
             "closer_status": closer_status,

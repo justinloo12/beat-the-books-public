@@ -55,11 +55,23 @@ class PitcherModelService:
         elif regression_gap > 1.0 and quality > 60:
             flag = "Elite"
 
+        # Innings projection: anchor on how deep this pitcher ACTUALLY goes per
+        # start (season IP / GS) when available, blended with the quality-based
+        # estimate. Pure-quality guessing ignored pitch-count limits, openers, and
+        # short-leash arms; IP/GS is the real workload signal.
+        quality_ip = clamp(4.5 + (quality / 40), 3.5, 7.5)
+        games_started = float(stats.get("GS", 0) or 0)
+        if games_started > 0:
+            ip_per_start = clamp(innings_pitched / games_started, 3.0, 7.0)
+            starter_ip = 0.6 * ip_per_start + 0.4 * quality_ip
+        else:
+            starter_ip = quality_ip
+
         return {
             "quality_score": round(quality, 2),
             "vulnerability_flag": flag,
             "regression_gap": round(regression_gap, 2),
             "pitch_mix_entropy": round(entropy, 3),
             "manual_review": manual_review,
-            "starter_ip_projection": round(clamp(4.5 + (quality / 40), 3.5, 7.5), 2),
+            "starter_ip_projection": round(clamp(starter_ip, 3.5, 7.5), 2),
         }

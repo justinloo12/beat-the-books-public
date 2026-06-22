@@ -12,7 +12,7 @@ _SLOT_PA_WEIGHTS = [0.129, 0.124, 0.120, 0.115, 0.111, 0.107, 0.102, 0.098, 0.09
 
 from mlb_model.config import get_settings
 from mlb_model.park_factors import batter_park_woba_delta
-from mlb_model.utils import clamp, safe_mean
+from mlb_model.utils import clamp, expected_woba, safe_mean
 from mlb_model.providers.baseball import BaseballSavantProvider
 from mlb_model.providers.market import MarketProvider
 from mlb_model.providers.mlb_stats import MLBStatsProvider
@@ -372,16 +372,22 @@ class DailyPredictionService:
         home_starter_outs = self._market_pitcher_outs(odds_game, home_pitcher) or (
             float(home_pitcher_score["starter_ip_projection"]) * 3.0
         )
+        # Times-through-the-order: a starter's season wOBA-against averages all his
+        # times facing the lineup, but a deep projected start carries proportionally
+        # more punishing 3rd-time-through PAs (a quick hook, fewer). Adjust around the
+        # average start length before blending.
+        away_starter_woba = clamp(away_starter_woba + self._tto_penalty(away_starter_outs), 0.25, 0.46)
+        home_starter_woba = clamp(home_starter_woba + self._tto_penalty(home_starter_outs), 0.25, 0.46)
         # Blend starter + bullpen wOBA-against by their share of the game's 27 outs.
         # The HOME lineup faces the AWAY starter then the AWAY bullpen, and vice versa.
         away_woba_against = self._blended_pitching_woba(
             away_starter_woba,
-            self._bullpen_woba_against(float(away_bullpen.get("bullpen_score", 65.0))),
+            self._bullpen_woba_against(away_bullpen),
             away_starter_outs,
         )
         home_woba_against = self._blended_pitching_woba(
             home_starter_woba,
-            self._bullpen_woba_against(float(home_bullpen.get("bullpen_score", 65.0))),
+            self._bullpen_woba_against(home_bullpen),
             home_starter_outs,
         )
 
@@ -528,7 +534,9 @@ class DailyPredictionService:
         This makes the pitcher handedness split active wherever real handedness
         data is present and a safe no-op where it isn't.
         """
-        overall = self.runs.pitcher_woba_against_from_xba(float(profile.get("xba") or 0.255))
+        # TRUE wOBA-against: folds the pitcher's strikeout and walk rates in, not
+        # just contact quality (xBA). A high-K arm is now correctly far stingier.
+        overall = self.runs.pitcher_woba_against(profile)
         lefties = righties = 0
         for rep in opposing_matchups or []:
             hand = (rep.get("profile") or {}).get("handedness")
@@ -539,12 +547,11 @@ class DailyPredictionService:
         total = lefties + righties
         if total < 5:
             return overall
-        vl_xba = float((vs_l or {}).get("xba") or 0.0)
-        vr_xba = float((vs_r or {}).get("xba") or 0.0)
-        if vl_xba <= 0.0 or vr_xba <= 0.0:
+        # Require real contact-quality data in both splits before trusting them.
+        if not (vs_l or {}).get("xwoba_contact_against") or not (vs_r or {}).get("xwoba_contact_against"):
             return overall
-        woba_l = self.runs.pitcher_woba_against_from_xba(vl_xba)
-        woba_r = self.runs.pitcher_woba_against_from_xba(vr_xba)
+        woba_l = self.runs.pitcher_woba_against(vs_l)
+        woba_r = self.runs.pitcher_woba_against(vs_r)
         frac_l = lefties / total
         return frac_l * woba_l + (1.0 - frac_l) * woba_r
 
@@ -556,10 +563,23 @@ class DailyPredictionService:
     # harder on the season number, more PA trust the split.
     _SPLIT_PRIOR_PA = 200
 
-    def _bullpen_woba_against(self, bullpen_score: float) -> float:
-        """Relief corps wOBA-against. A weaker pen (low reliability score) yields
-        a higher wOBA-against and therefore more runs. score 65 = neutral."""
-        adj = (65.0 - bullpen_score) / 65.0 * 0.06
+    def _tto_penalty(self, starter_outs: float) -> float:
+        """Times-through-the-order wOBA adjustment around the average start length
+        (~16 outs / 5.1 IP). Deeper projected starts -> more 3rd-time-through PAs,
+        so a small upward (worse) adjustment; quick hooks get a slight discount.
+        Bounded so it never overwhelms the starter's own rate."""
+        return clamp((starter_outs - 16.0) / 9.0 * 0.012, -0.012, 0.020)
+
+    def _bullpen_woba_against(self, bullpen: dict[str, Any]) -> float:
+        """Relief corps wOBA-against. Prefers the pen's actual collective xFIP
+        (a real rate stat) converted to wOBA; falls back to the reliability score
+        only when xFIP is unavailable. Lower xFIP -> stingier pen -> fewer runs."""
+        xfip = bullpen.get("xfip_avg")
+        if xfip is not None:
+            # ~0.300 wOBA-against at a 4.00 xFIP, sliding ~0.020 wOBA per run of xFIP.
+            return clamp(0.300 + (float(xfip) - 4.00) * 0.020, 0.270, 0.380)
+        score = float(bullpen.get("bullpen_score", 65.0))
+        adj = (65.0 - score) / 65.0 * 0.06
         return clamp(self._BULLPEN_BASE_WOBA + adj, 0.270, 0.380)
 
     def _blended_pitching_woba(
@@ -664,8 +684,11 @@ class DailyPredictionService:
             weight = _SLOT_PA_WEIGHTS[idx] if idx is not None and 0 <= idx < 9 else (1.0 / 9.0)
             pm = report.get("pitch_matchup") or {}
             p = report.get("profile") or {}
-            # Prefer usage-weighted pitch matchup stats; fall back to season profile
-            xwoba = float(pm.get("matchup_xwoba") or p.get("xwoba") or 0.318)
+            # Use the batter's TRUE wOBA (K folded in). The opposing pitcher is
+            # applied separately via the Log5 rate matchup in expected_runs, so we
+            # deliberately do NOT pre-interact with the pitcher here (that would
+            # double-count the pitcher once in the lineup number and again in Log5).
+            xwoba = float(p.get("model_woba") or p.get("xwoba") or 0.318)
             k     = float(pm.get("matchup_k_risk") or p.get("k_pct") or 0.228)
             bb    = float(pm.get("matchup_bb_upside") or p.get("bb_pct") or 0.076)
             hh    = float(pm.get("matchup_hard_hit_pct") or p.get("hard_hit_pct") or 0.375)
@@ -735,13 +758,15 @@ class DailyPredictionService:
             # With fewer than _SPLIT_PRIOR_PA PA in the split, we lean on the season number.
             split_pa = int(profile.get("sample_pa") or 0)
             w = split_pa / (split_pa + self._SPLIT_PRIOR_PA)
-            _LG_DEFAULTS = {
-                "xwoba": 0.318,
-                "k_pct": 0.228,
-                "bb_pct": 0.076,
-                "hard_hit_pct": 0.375,
-            }
-            for stat_key, default in _LG_DEFAULTS.items():
+            # TRUE expected wOBA: the split's xwOBA is contact-only, so fold the
+            # split's K% (as outs) and BB% back in, then regress toward the season
+            # leaderboard xwOBA — which is ALREADY a true, strikeout-inclusive wOBA,
+            # so the two are on the same scale and blend cleanly.
+            split_true = expected_woba(profile.get("k_pct"), profile.get("bb_pct"), profile.get("xwoba"))
+            season_true = float(summary.get("xwoba") or 0.320)
+            profile["model_woba"] = round(w * split_true + (1.0 - w) * season_true, 4)
+            # Regress the remaining same-scale rate stats toward the season profile.
+            for stat_key, default in (("k_pct", 0.228), ("bb_pct", 0.076), ("hard_hit_pct", 0.375)):
                 split_val = profile.get(stat_key)
                 overall_val = float(summary.get(stat_key) or default)
                 if split_val is not None:
