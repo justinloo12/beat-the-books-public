@@ -41,14 +41,35 @@ class MarketProbabilities:
 
 
 class RunDistributionService:
-    def __init__(self, variance_to_mean: float = 1.28, home_extra_inning_edge: float = 0.52) -> None:
-        # Empirical MLB team-game variance/mean ratio. >1 because of over-dispersion
-        # (innings are not independent identical Poisson events). Tunable via the
-        # backtest rather than hard-coded by feel.
+    def __init__(
+        self,
+        variance_to_mean: float = 1.28,
+        home_extra_inning_edge: float = 0.52,
+        variance_mean_slope: float = 0.05,
+    ) -> None:
+        # Empirical MLB team-game variance/mean ratio at the league-average run
+        # environment. >1 because of over-dispersion (innings are not independent
+        # identical Poisson events). Tunable via the backtest rather than by feel.
         self.variance_to_mean = max(variance_to_mean, 1.0001)
+        # Over-dispersion is NOT constant across run environments: high-scoring
+        # games have bigger innings and fatter upper tails than pitchers' duels.
+        # This slope grows (or shrinks) the variance/mean ratio per run above (or
+        # below) the league-average team mean, so totals get the right tail
+        # thickness at both extremes instead of one global ratio for every game.
+        self.variance_mean_slope = variance_mean_slope
         # When regulation ends tied, the game goes to extra innings. The home team
         # wins extras slightly more than half the time (last at-bat / walk-off).
         self.home_extra_inning_edge = home_extra_inning_edge
+
+    # League-average team runs/9; the anchor around which over-dispersion scales.
+    _VTM_ANCHOR_RUNS = 4.5
+
+    def _variance_to_mean(self, mean_runs: float) -> float:
+        """Run-environment-dependent variance/mean ratio. Bounded so a blowout or
+        a shutout projection can never push the Negative Binomial into a
+        degenerate shape."""
+        c = self.variance_to_mean + self.variance_mean_slope * (mean_runs - self._VTM_ANCHOR_RUNS)
+        return clamp(c, 1.10, 1.55)
 
     # ------------------------------------------------------------------ #
     # Negative-binomial PMF for a single team's run total                  #
@@ -56,11 +77,13 @@ class RunDistributionService:
     def _team_pmf(self, mean_runs: float) -> list[float]:
         """Return P(team scores k runs) for k = 0.._MAX_RUNS as a list.
 
-        Negative Binomial parameterised by mean (mu) and a fixed variance/mean
-        ratio c: var = c * mu = mu + mu^2 / r  =>  r = mu / (c - 1).
+        Negative Binomial parameterised by mean (mu) and a variance/mean ratio c
+        that scales with the run environment: var = c * mu = mu + mu^2 / r
+        =>  r = mu / (c - 1).
         """
         mu = max(mean_runs, 0.05)
-        r = mu / (self.variance_to_mean - 1.0)
+        c = self._variance_to_mean(mu)
+        r = mu / (c - 1.0)
         # p = probability of "success"; mean = r*p/(1-p)  =>  p = mu/(mu+r)
         p = mu / (mu + r)
         log_1_minus_p = log(1.0 - p)

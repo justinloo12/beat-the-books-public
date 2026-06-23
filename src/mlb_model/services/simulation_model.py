@@ -75,6 +75,7 @@ class SimulationModelService:
         self.run_dist = RunDistributionService(
             variance_to_mean=float(run_cfg.get("variance_to_mean", 1.28)),
             home_extra_inning_edge=float(run_cfg.get("home_extra_inning_edge", 0.52)),
+            variance_mean_slope=float(run_cfg.get("variance_mean_slope", 0.05)),
         )
 
     def simulate_game(

@@ -108,6 +108,16 @@
   "run_model": {
     "market_deviation_cap": 1.0,
     "variance_to_mean": 1.28,
+    "variance_mean_slope": 0.05,
     "home_extra_inning_edge": 0.52
+  },
+  "run_environment": {
+    "lg_woba": 0.32,
+    "woba_scale": 1.24,
+    "pa_per_game": 37.8,
+    "lg_team_runs": 4.4
+  },
+  "split_priors": {
+    "batter_handedness_pa": 200
   }
 }

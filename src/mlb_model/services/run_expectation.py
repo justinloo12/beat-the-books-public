@@ -54,6 +54,17 @@ class RunExpectationService:
          configured cap allow.
     """
 
+    def __init__(self, run_environment: dict[str, float] | None = None) -> None:
+        # The wOBA->runs conversion constants ARE the run environment for the
+        # season being modelled. They drift year to year (2025 scored a touch
+        # lower than 2024), so they live in config and are injected here instead
+        # of being frozen module constants. Defaults reproduce the prior values.
+        env = run_environment or {}
+        self.lg_woba = float(env.get("lg_woba", _LG_WOBA))
+        self.woba_scale = float(env.get("woba_scale", _WOBA_SCALE))
+        self.pa_per_game = float(env.get("pa_per_game", _PA_PER_GAME))
+        self.lg_team_runs = float(env.get("lg_team_runs", _LG_TEAM_RUNS))
+
     def expected_runs(
         self,
         team: str,
@@ -76,7 +87,7 @@ class RunExpectationService:
     ) -> TeamRunContext:
         # 1. Log5-style rate matchup: a strong lineup against a strong pitcher
         #    lands between the two, scaled by league average.
-        matchup_woba = lineup_xwoba * (pitcher_woba_against / _LG_WOBA)
+        matchup_woba = lineup_xwoba * (pitcher_woba_against / self.lg_woba)
 
         # 2. Bounded secondary wOBA nudges, all on the same scale as the rate
         #    matchup above so they cooperate instead of competing:
@@ -88,7 +99,7 @@ class RunExpectationService:
         matchup_woba = clamp(matchup_woba + swing_nudge + park_hit_woba, 0.180, 0.520)
 
         # 3. wOBA -> runs (the grounded conversion).
-        offense_runs = _LG_TEAM_RUNS + ((matchup_woba - _LG_WOBA) / _WOBA_SCALE) * _PA_PER_GAME
+        offense_runs = self.lg_team_runs + ((matchup_woba - self.lg_woba) / self.woba_scale) * self.pa_per_game
 
         # 4. Context effects in run units. Park and weather factors are already
         #    published as full-game team-scoring multipliers (a 1.15 park means a
@@ -113,8 +124,15 @@ class RunExpectationService:
             confidence = clamp(confidence + 0.15, 0.0, 1.0)
 
         if market_team_total is not None:
+            # The cap itself scales with confidence. A thin-sample matchup is held
+            # tight to the market line (~0.5x cap); a high-confidence one (big
+            # pitcher + lineup samples, confirmed lineup) may disagree up to ~1.25x
+            # the base cap. This is what lets genuinely strong reads SEPARATE from
+            # the pack instead of every game clustering one tick off the line — the
+            # "no discrimination" failure the backtest exposed.
+            effective_cap = deviation_cap * (0.5 + 0.75 * confidence)
             deviation = clamp(
-                (model_runs - market_team_total) * confidence, -deviation_cap, deviation_cap
+                (model_runs - market_team_total) * confidence, -effective_cap, effective_cap
             )
             expected = market_team_total + deviation
         else:

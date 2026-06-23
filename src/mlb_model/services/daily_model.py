@@ -40,7 +40,14 @@ class DailyPredictionService:
         self.market = MarketProvider()
         self.pitchers = PitcherModelService()
         self.matchups = MatchupModelService()
-        self.runs = RunExpectationService()
+        _ms = self.settings.load_model_settings()
+        self.runs = RunExpectationService(run_environment=getattr(_ms, "run_environment", {}) or {})
+        # Per-batter handedness-split regression prior (PA at which the split is
+        # trusted 50/50 vs. the season profile). Config-tunable so the backtest
+        # can validate it instead of it staying a hard-coded guess.
+        self._split_prior_pa = int(
+            (getattr(_ms, "split_priors", {}) or {}).get("batter_handedness_pa", self._SPLIT_PRIOR_PA)
+        )
         self.weather_provider = TomorrowWeatherProvider()
         self.weather = WeatherModelService()
         self.bullpens = BullpenModelService()
@@ -764,7 +771,7 @@ class DailyPredictionService:
             # Sample-size regression: blend split stats toward the overall season profile.
             # With fewer than _SPLIT_PRIOR_PA PA in the split, we lean on the season number.
             split_pa = int(profile.get("sample_pa") or 0)
-            w = split_pa / (split_pa + self._SPLIT_PRIOR_PA)
+            w = split_pa / (split_pa + self._split_prior_pa)
             # TRUE expected wOBA: the split's xwOBA is contact-only, so fold the
             # split's K% (as outs) and BB% back in, then regress toward the season
             # leaderboard xwOBA — which is ALREADY a true, strikeout-inclusive wOBA,

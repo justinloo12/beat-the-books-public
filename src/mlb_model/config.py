@@ -25,6 +25,8 @@ class ModelSettings(BaseModel):
     recalibration: dict[str, int]
     situational_factors: dict[str, float] = Field(default_factory=dict)
     run_model: dict[str, float] = Field(default_factory=dict)
+    run_environment: dict[str, float] = Field(default_factory=dict)
+    split_priors: dict[str, float] = Field(default_factory=dict)
 
 
 class Settings(BaseSettings):
