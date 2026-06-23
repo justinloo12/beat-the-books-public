@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from mlb_model.schemas import TeamRunContext
-from mlb_model.utils import clamp, logistic_probability
+from mlb_model.utils import clamp, expected_woba, logistic_probability
 
 # ---------------------------------------------------------------------------
 # League baselines (grounded in published sabermetric relationships, not feel).
@@ -90,10 +90,13 @@ class RunExpectationService:
         # 3. wOBA -> runs (the grounded conversion).
         offense_runs = _LG_TEAM_RUNS + ((matchup_woba - _LG_WOBA) / _WOBA_SCALE) * _PA_PER_GAME
 
-        # 4. Context effects in run units. Park/weather act on a team that bats
-        #    half the game, so their published full-game factors are dampened.
-        offense_runs *= 1.0 + (park_factor - 1.0) * 0.5
-        offense_runs *= 1.0 + (weather_multiplier - 1.0) * 0.5
+        # 4. Context effects in run units. Park and weather factors are already
+        #    published as full-game team-scoring multipliers (a 1.15 park means a
+        #    team scores 15% more runs there over a full game), so they apply at
+        #    full strength — NOT halved. Halving them silently erased half of
+        #    every park and weather signal, including the hit-type park factors.
+        offense_runs *= park_factor
+        offense_runs *= weather_multiplier
         # The bullpen is no longer a separate flat effect. The opposing pitching
         # the lineup faces (pitcher_woba_against) is already a starter/bullpen
         # blend computed upstream, weighted by the starter's projected outs — so
@@ -129,6 +132,26 @@ class RunExpectationService:
             expected_runs=round(expected, 2),
             starter_ip_projection=starter_ip_projection,
             top_features=top_features or [],
+        )
+
+    @staticmethod
+    def pitcher_woba_against(profile: dict) -> float:
+        """A pitcher's TRUE expected wOBA-against, folding in the two skills the
+        old xBA-only proxy threw away: missing bats (K%) and free passes (BB%).
+
+        Uses the pitcher's strikeout rate, walk rate, and xwOBA-on-contact-against
+        so a high-strikeout arm is correctly rated far stingier than a
+        soft-contact innings-eater with the same xBA. Falls back to the xBA proxy
+        only when contact-quality data is missing entirely.
+        """
+        k = profile.get("k_pct")
+        bb = profile.get("bb_pct")
+        xwoba_contact = profile.get("xwoba_contact_against")
+        if xwoba_contact:
+            return expected_woba(k, bb, xwoba_contact, default_contact=0.370)
+        # No contact-quality data — fall back to the xBA ratio proxy.
+        return RunExpectationService.pitcher_woba_against_from_xba(
+            float(profile.get("xba") or _LG_XBA_AGAINST)
         )
 
     @staticmethod
