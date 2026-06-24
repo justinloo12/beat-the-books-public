@@ -228,7 +228,19 @@ async def main() -> None:
     start_date = date.fromisoformat(args.start_date)
     end_date = date.fromisoformat(args.end_date)
 
-    odds = await download_odds(odds_date, args.markets)
+    # The upfront odds fetch is a convenience seed; the backtest fetches odds
+    # per-day on its own. When NOT running odds-only, a dead/empty Odds API quota
+    # must not abort the (free) Statcast + leaderboard downloads, otherwise an
+    # exhausted quota blocks the whole pipeline — including building the cache
+    # that makes future runs free. So we swallow odds errors here unless the run
+    # is specifically an odds-only refresh, where odds are the entire point.
+    try:
+        odds = await download_odds(odds_date, args.markets)
+    except Exception as exc:  # noqa: BLE001 — degrade gracefully on quota/auth errors
+        if args.odds_only:
+            raise
+        print(f"WARNING: upfront odds fetch failed ({exc}); continuing with Statcast only.")
+        odds = DownloadSummary(files_written=[], requests_made=0, errors=[str(exc)])
     if args.odds_only:
         statcast = DownloadSummary(files_written=[], requests_made=0, errors=[])
         leaderboards = DownloadSummary(files_written=[], requests_made=0, errors=[])
