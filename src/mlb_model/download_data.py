@@ -214,8 +214,8 @@ async def main() -> None:
     parser.add_argument(
         "--markets",
         nargs="+",
-        default=["totals", "spreads"],
-        help="Odds API markets to pull for MLB.",
+        default=["totals"],
+        help="Odds API markets to pull for MLB (totals only — we no longer bet ML/runline).",
     )
     parser.add_argument(
         "--odds-only",

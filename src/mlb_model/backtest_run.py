@@ -31,7 +31,10 @@ from mlb_model.download_data import download_odds
 from mlb_model.services.daily_model import DailyPredictionService
 
 BACKTEST_DIR = Path(__file__).resolve().parents[2] / "backtest" / "data"
-MARKETS = ["h2h", "totals", "spreads"]
+# Only the totals market is needed: moneyline (h2h) is disabled and we don't bet
+# runline (spreads), so pulling either just burns Odds API credits. One market =
+# ~10 historical credits/day instead of ~30.
+MARKETS = ["totals"]
 
 
 def _daterange(start: date, end: date):
