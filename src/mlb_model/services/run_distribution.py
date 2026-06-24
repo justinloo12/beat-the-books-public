@@ -108,8 +108,23 @@ class RunDistributionService:
         total_lines: set[float] | None = None,
     ) -> MarketProbabilities:
         total_lines = total_lines or set()
-        home_pmf = self._team_pmf(home_runs)
         away_pmf = self._team_pmf(away_runs)
+
+        # Bottom-of-9th correction: when the home team leads after 8.5 innings
+        # they skip their last at-bat, so their expected runs are slightly lower
+        # than a symmetric 9-inning model predicts. Use one pass on the initial
+        # PMF to get P(home leads in regulation), then shrink home_runs by
+        # P(skip) * (home_runs / 9) before building the final PMF.
+        home_pmf_initial = self._team_pmf(home_runs)
+        home_win_reg = sum(
+            home_pmf_initial[h] * away_pmf[a]
+            for h in range(_MAX_RUNS + 1)
+            for a in range(h)
+            if a <= _MAX_RUNS
+        )
+        home_ninth_saving = home_win_reg * home_runs / 9.0
+        home_runs = max(home_runs - home_ninth_saving, 0.5)
+        home_pmf = self._team_pmf(home_runs)
 
         home_win = 0.0
         away_win = 0.0

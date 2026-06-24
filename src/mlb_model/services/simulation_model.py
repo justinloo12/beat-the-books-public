@@ -177,21 +177,7 @@ class SimulationModelService:
             if len(outcomes) != 2:
                 continue
             if market["market_key"] == "h2h":
-                home_outcome = next((o for o in outcomes if o["name"] == context["home_team"]), outcomes[0])
-                away_outcome = next((o for o in outcomes if o["name"] == context["away_team"]), outcomes[1])
-                candidates.extend(
-                    self._two_sided_candidates(
-                        context,
-                        market_type="moneyline",
-                        line=0.0,
-                        left_name=context["home_team"],
-                        left_odds=int(home_outcome["price"]),
-                        left_prob=simulation.home_win_prob,
-                        right_name=context["away_team"],
-                        right_odds=int(away_outcome["price"]),
-                        right_prob=simulation.away_win_prob,
-                    )
-                )
+                pass  # moneyline disabled — ROI was −12% and gates can't fix noise
             elif market["market_key"] == "totals":
                 first = outcomes[0]
                 second = outcomes[1]
@@ -245,7 +231,6 @@ class SimulationModelService:
             key=lambda item: (
                 item["market_type"] != "game_total",
                 item["market_type"] != "first_five_total",
-                item["market_type"] != "moneyline",
                 item["tier"] != "strong",
                 item["tier"] != "moderate",
                 -item["edge"],
@@ -274,22 +259,13 @@ class SimulationModelService:
         for pick in ranked:
             if pick["tier"] not in {"strong", "moderate"}:
                 continue
-            if pick["market_type"] not in {"game_total", "first_five_total", "moneyline"}:
+            if pick["market_type"] not in {"game_total", "first_five_total"}:
                 continue
             # Thin-data guard: if either pitcher or the lineup has too few PA/pitches,
             # the computed edge is unreliable — don't let it become a pick.
             if data_thin:
                 continue
-            if pick["market_type"] == "moneyline" and pick["edge"] < model_settings.edge_thresholds["moneyline_min"]:
-                continue
-            if pick["market_type"] == "moneyline" and not self._moneyline_qualifies(pick, context):
-                continue
-            # For totals: dedup by (market, direction, matchup) — same game/direction
-            # at different lines is still the same bet. For ML: include line (always 0).
-            if pick["market_type"] in {"game_total", "first_five_total"}:
-                dedup_key = (pick["market_type"], pick["pick"], pick.get("matchup", ""))
-            else:
-                dedup_key = (pick["market_type"], pick["pick"], pick.get("line"))
+            dedup_key = (pick["market_type"], pick["pick"], pick.get("matchup", ""))
             if dedup_key in _seen_daily:
                 continue
             _seen_daily.add(dedup_key)
@@ -320,7 +296,6 @@ class SimulationModelService:
             [pick for pick in candidates if pick["tier"] != "block"],
             key=lambda item: (
                 item["market_type"] != "game_total",
-                item["market_type"] != "moneyline",
                 item["market_type"] == "runline",
                 item["edge"] <= 0,
                 -item["model_probability"],
