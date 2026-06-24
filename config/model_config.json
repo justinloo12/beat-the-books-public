@@ -127,7 +127,7 @@
     "min_pitcher_quality_gap": 12.0
   },
   "sample_floors": {
-    "min_pitcher_pitches": 500,
+    "min_pitcher_pitches": 200,
     "min_lineup_avg_pa": 100
   }
 }

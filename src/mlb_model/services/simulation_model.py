@@ -304,7 +304,7 @@ class SimulationModelService:
         for pick in sorted(candidates, key=lambda item: -item["edge"]):
             if not (lean_min <= pick["edge"] < pass_below):
                 continue
-            if pick["market_type"] == "runline":
+            if pick["market_type"] in {"runline", "moneyline"}:
                 continue
             if pick["market_type"] in {"game_total", "first_five_total"}:
                 dedup_key = (pick["market_type"], pick["pick"], pick.get("matchup", ""))
