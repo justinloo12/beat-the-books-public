@@ -252,6 +252,22 @@ class SimulationModelService:
                 -item["model_probability"],
             ),
         )
+        # Sample-size floor: suppress to lean when the data behind the pick is too thin.
+        # High computed edge on thin samples is noise, not signal.
+        sample_cfg = getattr(model_settings, "sample_floors", {}) or {}
+        min_pitcher_pitches_pick = int(sample_cfg.get("min_pitcher_pitches", 500))
+        min_lineup_pa_pick = int(sample_cfg.get("min_lineup_avg_pa", 100))
+        home_pitches = int((context.get("home_pitcher_profile") or {}).get("sample_pitches") or 0)
+        away_pitches = int((context.get("away_pitcher_profile") or {}).get("sample_pitches") or 0)
+        home_avg_pa = int((context.get("home_run_context") or {}).get("lineup_avg_pa_used") or
+                          (context.get("simulation") or {}).get("home_runs_mean") and 0 or 0)
+        away_avg_pa = int((context.get("away_run_context") or {}).get("lineup_avg_pa_used") or 0)
+        data_thin = (
+            min(home_pitches, away_pitches) < min_pitcher_pitches_pick
+            or (home_avg_pa > 0 and home_avg_pa < min_lineup_pa_pick)
+            or (away_avg_pa > 0 and away_avg_pa < min_lineup_pa_pick)
+        )
+
         # STRONG + MODERATE (6%+) qualify as actionable daily picks; deduplicated by side/line
         _seen_daily: set[tuple] = set()
         daily: list[dict] = []
@@ -260,7 +276,13 @@ class SimulationModelService:
                 continue
             if pick["market_type"] not in {"game_total", "first_five_total", "moneyline"}:
                 continue
+            # Thin-data guard: if either pitcher or the lineup has too few PA/pitches,
+            # the computed edge is unreliable — don't let it become a pick.
+            if data_thin:
+                continue
             if pick["market_type"] == "moneyline" and pick["edge"] < model_settings.edge_thresholds["moneyline_min"]:
+                continue
+            if pick["market_type"] == "moneyline" and not self._moneyline_qualifies(pick, context):
                 continue
             # For totals: dedup by (market, direction, matchup) — same game/direction
             # at different lines is still the same bet. For ML: include line (always 0).
@@ -306,6 +328,59 @@ class SimulationModelService:
             ),
         )
         return daily, matchup_ranked[:5], leans
+
+    def _moneyline_qualifies(self, pick: dict[str, Any], context: dict[str, Any]) -> bool:
+        """Four-gate moneyline quality filter. All must pass for the bet to be
+        actionable. Designed to cut out the noise that caused −10% moneyline ROI
+        in backtests while preserving genuine pitcher-driven edges.
+
+        Gate 1 — juice cap: never bet heavy chalk. The model can't hit 60%+
+        reliably enough to profit at −150 or shorter.
+
+        Gate 2 — run differential: the model must project the pick team to score
+        ≥ min_run_diff more runs than the opponent after market anchoring.
+        Tiny differences (4.4 vs 4.2) are noise; we want real disagreements.
+
+        Gate 3 — dual sample floor: BOTH pitchers and BOTH lineups must have
+        enough data. A win/loss call is only as good as its weakest side.
+
+        Gate 4 — pitcher quality gap: only bet when starters differ meaningfully
+        in quality. Coin-flip pitcher matchups shouldn't become picks.
+        """
+        ml_cfg = (getattr(model_settings, "moneyline_filters", {}) or {})
+        max_juice = int(ml_cfg.get("max_juice", -130))
+        min_run_diff = float(ml_cfg.get("min_run_differential", 0.5))
+        min_pitcher_pitches = int(ml_cfg.get("min_pitcher_pitches", 800))
+        min_pitcher_quality_gap = float(ml_cfg.get("min_pitcher_quality_gap", 12.0))
+
+        # Gate 1 — juice cap
+        odds = int(pick.get("american_odds", 0))
+        if odds < 0 and odds < max_juice:
+            return False
+        # positive odds (underdog) always pass juice gate
+
+        # Gate 2 — run differential
+        home_runs = float((context.get("simulation") or {}).get("home_runs_mean", 0))
+        away_runs = float((context.get("simulation") or {}).get("away_runs_mean", 0))
+        pick_team = pick.get("pick", "")
+        home_team = context.get("home_team", "")
+        pick_run_diff = (home_runs - away_runs) if pick_team == home_team else (away_runs - home_runs)
+        if pick_run_diff < min_run_diff:
+            return False
+
+        # Gate 3 — dual sample floor (both pitchers must have enough data)
+        home_pitches = int((context.get("home_pitcher_profile") or {}).get("sample_pitches") or 0)
+        away_pitches = int((context.get("away_pitcher_profile") or {}).get("sample_pitches") or 0)
+        if home_pitches < min_pitcher_pitches or away_pitches < min_pitcher_pitches:
+            return False
+
+        # Gate 4 — pitcher quality gap
+        home_qs = float((context.get("home_pitcher_score") or {}).get("quality_score") or 50.0)
+        away_qs = float((context.get("away_pitcher_score") or {}).get("quality_score") or 50.0)
+        if abs(home_qs - away_qs) < min_pitcher_quality_gap:
+            return False
+
+        return True
 
     def _simulate_team_game(
         self,

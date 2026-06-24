@@ -119,5 +119,15 @@
   },
   "split_priors": {
     "batter_handedness_pa": 200
+  },
+  "moneyline_filters": {
+    "max_juice": -130,
+    "min_run_differential": 0.5,
+    "min_pitcher_pitches": 800,
+    "min_pitcher_quality_gap": 12.0
+  },
+  "sample_floors": {
+    "min_pitcher_pitches": 500,
+    "min_lineup_avg_pa": 100
   }
 }
