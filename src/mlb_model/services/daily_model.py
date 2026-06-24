@@ -79,6 +79,10 @@ class DailyPredictionService:
         leans: list[dict[str, Any]] = []
         lineup_cards: list[dict[str, Any]] = []
         skipped: list[dict[str, Any]] = []
+        # Every game_total / first_five_total candidate seen across the slate,
+        # regardless of edge tier. Used to guarantee at least one total bet per
+        # day even when nothing clears the normal pick threshold.
+        total_pool: list[dict[str, Any]] = []
         now_et = datetime.now(ZoneInfo("America/New_York"))
 
         for game in games:
@@ -169,6 +173,12 @@ class DailyPredictionService:
                     pick["lineup_status"] = lineup_status
                 for lean in game_leans:
                     lean["lineup_status"] = lineup_status
+                # Feed the slate-wide total pool from this game's full candidate
+                # set (top_game_picks = best non-block candidates, totals first).
+                for cand in top_game_picks:
+                    if cand.get("market_type") in {"game_total", "first_five_total"}:
+                        cand["lineup_status"] = lineup_status
+                        total_pool.append(cand)
                 lineup_cards.append(self._build_lineup_card(context))
                 picks.extend(game_picks)
                 leans.extend(game_leans)
@@ -191,6 +201,23 @@ class DailyPredictionService:
                 -item.get("model_probability", 0.0),
             ),
         )[:3]
+        # Guarantee at least one total bet per slate. If no game_total /
+        # first_five_total cleared the normal pick threshold, promote the single
+        # best positive-edge total from the slate as the "total of the day". It is
+        # flagged so the UI and grader can tell it apart from a threshold pick.
+        has_total_pick = any(
+            p.get("market_type") in {"game_total", "first_five_total"} for p in picks
+        )
+        if not has_total_pick and total_pool:
+            best_total = max(
+                (p for p in total_pool if p.get("edge", 0.0) > 0),
+                key=lambda p: p.get("edge", 0.0),
+                default=None,
+            )
+            if best_total is not None:
+                forced = dict(best_total)
+                forced["forced_total_of_day"] = True
+                picks = ([forced] + picks)[:3]
         leans = sorted(leans, key=lambda item: -item.get("edge", 0.0))[:8]
         lineup_cards = sorted(lineup_cards, key=lambda item: item["matchup"])
         return {"date": slate_date.isoformat(), "picks": picks, "leans": leans, "lineup_cards": lineup_cards, "skipped": skipped}
