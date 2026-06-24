@@ -51,6 +51,29 @@ jobs:
           pip install -e .
 
       # -----------------------------------------------------------------------
+      # Persist the paid historical-odds snapshots across runs. The Odds API
+      # charges ~30 credits per date, but each date's odds never change once the
+      # game is in the past — so we only ever need to pay for a date ONCE.
+      #
+      # This rolling cache restores every odds snapshot downloaded by any prior
+      # run (restore-keys prefix-match grabs the most recent cache), then saves a
+      # superset under a fresh run-scoped key at job end. download_odds skips any
+      # date whose file already exists, so cached dates cost ZERO credits. Net
+      # effect: pay once per calendar date, then re-run the backtest unlimited
+      # times for free — and if credits run out mid-run, the next run resumes
+      # from the last paid date instead of starting over.
+      # -----------------------------------------------------------------------
+      - name: Restore/rotate odds + Statcast cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            data/odds_api
+            data/baseball_savant
+          key: backtest-data-${{ github.run_id }}
+          restore-keys: |
+            backtest-data-
+
+      # -----------------------------------------------------------------------
       # Phase 0: download Statcast for the full season so per-batter split
       # profiles and park metrics are available for every game date.
       # -----------------------------------------------------------------------
