@@ -8,16 +8,16 @@ on:
         default: "2025-05-01"
       full_end:
         description: "Last date of full backtest range (YYYY-MM-DD)"
-        default: "2025-07-15"
+        default: "2025-08-31"
       train_end:
-        description: "Last date of training split (60% — May 1–Jun 15)"
-        default: "2025-06-15"
+        description: "Last date of training split (60% — May 1–Jul 13)"
+        default: "2025-07-13"
       val_end:
-        description: "Last date of validation split (20% — Jun 16–Jul 1)"
-        default: "2025-07-01"
+        description: "Last date of validation split (20% — Jul 14–Aug 7)"
+        default: "2025-08-07"
       statcast_start:
         description: "Statcast download start (should be ~2 weeks before full_start)"
-        default: "2025-03-20"
+        default: "2025-04-15"
       skip_existing:
         description: "Skip board dates that are already saved (resume a partial run)"
         type: boolean
@@ -90,21 +90,21 @@ jobs:
       # Phase 3: produce split reports — train / validate / test.
       # We grade each split separately so metrics are fully isolated.
       # -----------------------------------------------------------------------
-      - name: Grade training split (60% — May 1–Jun 15)
+      - name: Grade training split (60% — May 1–Jul 13)
         run: |
           python -m mlb_model.backtest_grade \
             --start "${{ inputs.full_start }}" \
             --end   "${{ inputs.train_end }}" \
             --out   backtest/results_train.json
 
-      - name: Grade validation split (20% — Jun 16–Jul 1)
+      - name: Grade validation split (20% — Jul 14–Aug 7)
         run: |
           python -m mlb_model.backtest_grade \
             --start "$(date -d '${{ inputs.train_end }} + 1 day' +%F)" \
             --end   "${{ inputs.val_end }}" \
             --out   backtest/results_val.json
 
-      - name: Grade test split (20% — Jul 2–Jul 15)
+      - name: Grade test split (20% — Aug 8–Aug 31)
         run: |
           python -m mlb_model.backtest_grade \
             --start "$(date -d '${{ inputs.val_end }} + 1 day' +%F)" \
