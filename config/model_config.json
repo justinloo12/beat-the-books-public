@@ -82,7 +82,9 @@
     "strong_min": 0.06,
     "strong_max": 0.10,
     "max_bet_min": 0.10,
-    "moneyline_min": 0.06
+    "moneyline_min": 0.06,
+    "mid_band_min": 0.03,
+    "mid_band_max": 0.06
   },
   "kelly_caps": {
     "strong": 0.03,

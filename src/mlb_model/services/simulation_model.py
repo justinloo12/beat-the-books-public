@@ -220,23 +220,6 @@ class SimulationModelService:
                     )
                 )
 
-        eligible = [
-            pick
-            for pick in candidates
-            if pick["edge"] > 0
-            and pick["tier"] in {"strong", "moderate", "monitor"}
-        ]
-        ranked = sorted(
-            eligible,
-            key=lambda item: (
-                item["market_type"] != "game_total",
-                item["market_type"] != "first_five_total",
-                item["tier"] != "strong",
-                item["tier"] != "moderate",
-                -item["edge"],
-                -item["model_probability"],
-            ),
-        )
         # Sample-size floor: suppress to lean when the data behind the pick is too thin.
         # High computed edge on thin samples is noise, not signal.
         sample_cfg = getattr(model_settings, "sample_floors", {}) or {}
@@ -253,16 +236,24 @@ class SimulationModelService:
             or (away_avg_pa > 0 and away_avg_pa < min_lineup_pa_pick)
         )
 
-        # STRONG + MODERATE (6%+) qualify as actionable daily picks; deduplicated by side/line
+        # PRINCIPLED STRATEGY (Option B): bet ONLY the productive mid-edge band.
+        # Across three backtests the model's biggest disagreements with the line
+        # (>=6% "picks") were coin flips or net losers, and the smallest (<3%,
+        # including the forced daily total) lost money — the classic signature of
+        # a naive model vs an efficient market: the tails are model error, the
+        # middle is signal. Only the 3-6% band showed a repeatable positive. So
+        # the sole actionable output is now mid-band totals; the high-edge and
+        # low-edge tiers are dropped entirely, and there is no separate lean tier.
+        mid_min = model_settings.edge_thresholds.get("mid_band_min", 0.03)
+        mid_max = model_settings.edge_thresholds.get("mid_band_max", 0.06)
         _seen_daily: set[tuple] = set()
         daily: list[dict] = []
-        for pick in ranked:
-            if pick["tier"] not in {"strong", "moderate"}:
-                continue
+        for pick in sorted(candidates, key=lambda item: -item["edge"]):
             if pick["market_type"] not in {"game_total", "first_five_total"}:
                 continue
-            # Thin-data guard: if either pitcher or the lineup has too few PA/pitches,
-            # the computed edge is unreliable — don't let it become a pick.
+            if not (mid_min <= pick["edge"] < mid_max):
+                continue
+            # Thin-data guard: unreliable edge on too few PA/pitches — never bet it.
             if data_thin:
                 continue
             dedup_key = (pick["market_type"], pick["pick"], pick.get("matchup", ""))
@@ -272,26 +263,9 @@ class SimulationModelService:
             daily.append(pick)
             if len(daily) == 3:
                 break
-        # Leans: 2.5%–6% edge — tracked but not actionable picks
-        lean_min = model_settings.edge_thresholds.get("lean_min", 0.025)
-        pass_below = model_settings.edge_thresholds["pass_below"]
-        _seen_leans: set[tuple] = set()
+        # No separate lean tier: the mid-band IS the strategy. Anything outside
+        # 3-6% edge is intentionally not a bet.
         leans: list[dict] = []
-        for pick in sorted(candidates, key=lambda item: -item["edge"]):
-            if not (lean_min <= pick["edge"] < pass_below):
-                continue
-            if pick["market_type"] in {"runline", "moneyline"}:
-                continue
-            if pick["market_type"] in {"game_total", "first_five_total"}:
-                dedup_key = (pick["market_type"], pick["pick"], pick.get("matchup", ""))
-            else:
-                dedup_key = (pick["market_type"], pick["pick"], pick.get("line"))
-            if dedup_key in _seen_leans:
-                continue
-            _seen_leans.add(dedup_key)
-            leans.append(pick)
-            if len(leans) == 8:
-                break
         matchup_ranked = sorted(
             [pick for pick in candidates if pick["tier"] != "block"],
             key=lambda item: (
