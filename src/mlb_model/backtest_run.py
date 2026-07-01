@@ -31,7 +31,10 @@ from mlb_model.download_data import download_odds
 from mlb_model.services.daily_model import DailyPredictionService
 
 BACKTEST_DIR = Path(__file__).resolve().parents[2] / "backtest" / "data"
-MARKETS = ["h2h", "totals", "spreads"]
+# Only the totals market is needed: moneyline (h2h) is disabled and we don't bet
+# runline (spreads), so pulling either just burns Odds API credits. One market =
+# ~10 historical credits/day instead of ~30.
+MARKETS = ["totals"]
 
 
 def _daterange(start: date, end: date):
@@ -62,14 +65,25 @@ async def main() -> None:
     parser.add_argument("--start", required=True, help="First slate date (YYYY-MM-DD)")
     parser.add_argument("--end", required=True, help="Last slate date (YYYY-MM-DD)")
     parser.add_argument("--skip-existing", action="store_true", help="Skip dates whose board file already exists")
+    parser.add_argument(
+        "--every-n-days",
+        type=int,
+        default=1,
+        help="Sample every Nth day instead of every day (e.g. 2 = every other day). "
+        "Halves/thirds Odds API credit spend while still giving a statistically "
+        "valid hit-rate sample across the same calendar span.",
+    )
     args = parser.parse_args()
 
     start = date.fromisoformat(args.start)
     end = date.fromisoformat(args.end)
     service = DailyPredictionService()
+    step = max(1, args.every_n_days)
 
     total_picks = total_leans = total_games = 0
-    for slate_date in _daterange(start, end):
+    for day_index, slate_date in enumerate(_daterange(start, end)):
+        if day_index % step != 0:
+            continue
         try:
             board = await run_day(service, slate_date, args.skip_existing)
             if board.get("skipped_existing"):

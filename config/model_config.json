@@ -75,7 +75,7 @@
     }
   },
   "edge_thresholds": {
-    "lean_min": 0.025,
+    "lean_min": 0.015,
     "pass_below": 0.06,
     "watch_min": 0.035,
     "watch_max": 0.06,
@@ -108,6 +108,26 @@
   "run_model": {
     "market_deviation_cap": 1.0,
     "variance_to_mean": 1.28,
+    "variance_mean_slope": 0.05,
     "home_extra_inning_edge": 0.52
+  },
+  "run_environment": {
+    "lg_woba": 0.32,
+    "woba_scale": 1.24,
+    "pa_per_game": 37.8,
+    "lg_team_runs": 4.4
+  },
+  "split_priors": {
+    "batter_handedness_pa": 200
+  },
+  "moneyline_filters": {
+    "max_juice": -130,
+    "min_run_differential": 0.5,
+    "min_pitcher_pitches": 800,
+    "min_pitcher_quality_gap": 12.0
+  },
+  "sample_floors": {
+    "min_pitcher_pitches": 200,
+    "min_lineup_avg_pa": 100
   }
 }
