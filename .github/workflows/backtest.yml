@@ -3,21 +3,26 @@ name: Backtest Model (60/20/20)
 on:
   workflow_dispatch:
     inputs:
+      # FRESH FINAL HOLDOUT (Option B). September 2025 was never touched by any
+      # prior run (all ended Aug 31), so it is a clean out-of-sample test of the
+      # frozen mid-band strategy. Late-season = mature pitcher/lineup samples.
+      # This is confirmatory: read the FULL-RANGE report. The train/val splits
+      # exist only so grading runs; we do NOT tune on them.
       full_start:
         description: "First date of full backtest range (YYYY-MM-DD)"
-        default: "2025-07-01"
+        default: "2025-09-01"
       full_end:
         description: "Last date of full backtest range (YYYY-MM-DD)"
-        default: "2025-08-31"
+        default: "2025-09-28"
       train_end:
-        description: "Last date of training split (short — Jul 1–14; model has no fitted params)"
-        default: "2025-07-14"
+        description: "Split boundary (grading only — do NOT tune on this)"
+        default: "2025-09-10"
       val_end:
-        description: "Last date of validation split (Jul 15–28; used by the sweep)"
-        default: "2025-07-28"
+        description: "Split boundary (grading only — do NOT tune on this)"
+        default: "2025-09-19"
       statcast_start:
         description: "Statcast download start (should be ~2 weeks before full_start)"
-        default: "2025-06-15"
+        default: "2025-08-15"
       sample_every_n_days:
         description: "Sample every Nth day to save Odds API credits (1 = every day, 2 = every other, 3 = every third)"
         default: "1"
