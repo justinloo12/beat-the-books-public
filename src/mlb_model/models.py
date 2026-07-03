@@ -54,6 +54,9 @@ class MarketSnapshot(SQLModel, table=True):
     no_vig_probability: float | None = None
     public_bet_percentage: float | None = None
     opening_line: float | None = None
+    # Marks the last snapshot captured before first pitch — the closing-line
+    # proxy used for CLV grading. Set by ClosingLineService, never at ingest.
+    is_closing_line: bool = Field(default=False, index=True)
     captured_at: datetime = Field(default_factory=datetime.utcnow, index=True)
 
 

@@ -13,6 +13,7 @@ from mlb_model.providers.weather import TomorrowWeatherProvider
 from mlb_model.schemas import DashboardResponse
 from mlb_model.services.bullpen_model import BullpenModelService
 from mlb_model.services.calibration import CalibrationService
+from mlb_model.services.closing_line import ClosingLineService
 from mlb_model.services.history_model import HistoryModelService
 from mlb_model.services.lineup_model import LineupModelService
 from mlb_model.services.market_model import MarketSignalService
@@ -48,6 +49,7 @@ class ModelOrchestrator:
         self.market_model = MarketSignalService()
         self.runs = RunExpectationService()
         self.calibration = CalibrationService()
+        self.closing = ClosingLineService()
         self.repo = ModelRepository()
 
     async def rebuild_slate(self, slate_date: date) -> dict[str, Any]:
@@ -276,6 +278,7 @@ class ModelOrchestrator:
 
     async def dashboard(self, slate_date: date) -> DashboardResponse:
         with session_scope() as session:
+            self.closing.run(session)
             picks = self.repo.get_today_picks(session, slate_date)
             last_50 = self.repo.recent_clv(session, 50)
             last_200 = self.repo.recent_clv(session, 200)

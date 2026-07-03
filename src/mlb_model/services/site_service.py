@@ -4,6 +4,7 @@ from datetime import date, datetime
 from typing import Any
 
 from mlb_model.db import init_db, session_scope
+from mlb_model.services.closing_line import ClosingLineService
 from mlb_model.services.daily_model import DailyPredictionService
 from mlb_model.services.repository import ModelRepository
 
@@ -12,11 +13,15 @@ class SiteService:
     def __init__(self) -> None:
         self.repo = ModelRepository()
         self.daily = DailyPredictionService()
+        self.closing = ClosingLineService()
 
     async def site_payload(self, slate_date: date) -> dict[str, Any]:
         init_db()
         board = await self.daily.daily_board(slate_date)
         with session_scope() as session:
+            # Capture closing-line proxies for any game that has started since
+            # the last run, then grade CLV on picks that now have a close.
+            self.closing.run(session)
             performance = self.repo.performance_summary(session)
             recent_picks = self.repo.get_recent_picks(session, limit=100)
             last_50_clv = self.repo.recent_clv(session, 50)

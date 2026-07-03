@@ -9,6 +9,7 @@ import pytest
 
 from mlb_model.grade_picks import (
     _american_to_decimal,
+    _closing_info,
     _find_game,
     _grade,
     _pnl,
@@ -140,6 +141,113 @@ class TestTeamMatching:
 
     def test_non_matching_teams(self) -> None:
         assert not _teams_match("New York Yankees", "Boston Red Sox")
+
+
+def make_closing_game(
+    *,
+    away_odds: int = -136,
+    home_odds: int = 113,
+    total_point: float = 9.0,
+    over_price: int = -103,
+    under_price: int = -117,
+) -> dict:
+    away_p = odds_engine.implied_probability_from_american(away_odds)
+    home_p = odds_engine.implied_probability_from_american(home_odds)
+    away_nv, home_nv = odds_engine.no_vig_two_sided(away_p, home_p)
+    return {
+        "away_team": "New York Yankees",
+        "home_team": "Boston Red Sox",
+        "moneyline": {
+            "away_odds": away_odds,
+            "home_odds": home_odds,
+            "away_no_vig": round(away_nv, 4),
+            "home_no_vig": round(home_nv, 4),
+        },
+        "totals": [
+            {"name": "Over", "point": total_point, "price": over_price},
+            {"name": "Under", "point": total_point, "price": under_price},
+        ],
+    }
+
+
+class TestClosingInfo:
+    MATCHUP = "New York Yankees @ Boston Red Sox"
+
+    def test_moneyline_clv_positive_when_market_moves_toward_pick(self) -> None:
+        # Pick at no-vig 0.50; away side closes -136 (no-vig ~0.564).
+        pick = {
+            "matchup": self.MATCHUP,
+            "market_type": "moneyline",
+            "pick": "New York Yankees",
+            "no_vig_probability": 0.50,
+        }
+        closing_odds, closing_line, clv = _closing_info(pick, [make_closing_game()])
+        assert closing_odds == -136
+        assert closing_line == 0.0
+        assert clv is not None and clv > 0
+
+    def test_moneyline_clv_negative_when_market_moves_away(self) -> None:
+        pick = {
+            "matchup": self.MATCHUP,
+            "market_type": "moneyline",
+            "pick": "Boston Red Sox",
+            "no_vig_probability": 0.50,
+        }
+        _, _, clv = _closing_info(pick, [make_closing_game()])
+        assert clv is not None and clv < 0
+
+    def test_total_clv_same_line(self) -> None:
+        pick = {
+            "matchup": self.MATCHUP,
+            "market_type": "game_total",
+            "pick": "Over",
+            "line": 9.0,
+            "no_vig_probability": 0.48,
+        }
+        closing_odds, closing_line, clv = _closing_info(pick, [make_closing_game()])
+        assert closing_odds == -103
+        assert closing_line == 9.0
+        over_p = odds_engine.implied_probability_from_american(-103)
+        under_p = odds_engine.implied_probability_from_american(-117)
+        expected, _ = odds_engine.no_vig_two_sided(over_p, under_p)
+        assert clv == pytest.approx(round(expected - 0.48, 4))
+
+    def test_total_line_moved_records_close_but_no_clv(self) -> None:
+        pick = {
+            "matchup": self.MATCHUP,
+            "market_type": "game_total",
+            "pick": "Over",
+            "line": 8.5,
+            "no_vig_probability": 0.50,
+        }
+        closing_odds, closing_line, clv = _closing_info(pick, [make_closing_game(total_point=9.0)])
+        assert closing_odds == -103
+        assert closing_line == 9.0
+        assert clv is None
+
+    def test_no_vig_falls_back_to_model_probability_minus_edge(self) -> None:
+        pick = {
+            "matchup": self.MATCHUP,
+            "market_type": "moneyline",
+            "pick": "New York Yankees",
+            "model_probability": 0.55,
+            "edge": 0.05,
+        }
+        _, _, clv = _closing_info(pick, [make_closing_game()])
+        game = make_closing_game()
+        assert clv == pytest.approx(round(game["moneyline"]["away_no_vig"] - 0.50, 4))
+
+    def test_unmatched_game_returns_nothing(self) -> None:
+        pick = {"matchup": "Chicago Cubs @ St. Louis Cardinals", "market_type": "moneyline", "pick": "Chicago Cubs"}
+        assert _closing_info(pick, [make_closing_game()]) == (None, None, None)
+
+    def test_runline_has_no_closing_source(self) -> None:
+        pick = {"matchup": self.MATCHUP, "market_type": "runline", "pick": "Boston Red Sox", "line": -1.5}
+        assert _closing_info(pick, [make_closing_game()]) == (None, None, None)
+
+    def test_empty_closing_games(self) -> None:
+        pick = {"matchup": self.MATCHUP, "market_type": "moneyline", "pick": "Boston Red Sox"}
+        assert _closing_info(pick, []) == (None, None, None)
 
 
 class TestFindGame:

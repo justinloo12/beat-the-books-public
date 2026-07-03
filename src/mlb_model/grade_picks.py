@@ -13,8 +13,14 @@ import urllib.request
 from datetime import date, timedelta
 from pathlib import Path
 
+from mlb_model.services.odds_engine import (
+    implied_probability_from_american,
+    no_vig_two_sided,
+)
+
 DOCS_DATA = Path(__file__).resolve().parents[2] / "docs" / "data"
 PICK_HISTORY_PATH = DOCS_DATA / "pick_history.json"
+LIVE_ODDS_PATH = DOCS_DATA / "live_odds.json"
 
 # Partial-name aliases so "Athletics" matches "Athletics" from the API
 _ALIASES: dict[str, str] = {
@@ -129,6 +135,107 @@ def _grade(pick: dict, game: dict) -> tuple[str, float]:
     return result, _pnl(result, odds)
 
 
+# ---------------------------------------------------------------------------
+# Closing-line value (CLV)
+#
+# The refresh workflow rewrites docs/data/live_odds.json several times a day,
+# the last pass at ~6pm ET. grade_picks runs the NEXT morning (11am ET) BEFORE
+# the day's new odds download, so at grading time live_odds.json still holds
+# the final odds snapshot captured for the slate being graded. That snapshot
+# is used as the closing-line proxy. It is a proxy, not the true close: for
+# early games it may have been captured after first pitch, for late games it
+# is ~1-2 hours before it.
+# ---------------------------------------------------------------------------
+
+
+def _load_closing_games(game_date: date) -> list[dict]:
+    """Return live-odds games for game_date, or [] when no snapshot matches."""
+    if not LIVE_ODDS_PATH.exists():
+        return []
+    try:
+        data = json.loads(LIVE_ODDS_PATH.read_text(encoding="utf-8"))
+    except Exception:
+        return []
+    if data.get("date") != game_date.isoformat():
+        return []
+    return data.get("games", [])
+
+
+def _closing_info(pick: dict, closing_games: list[dict]) -> tuple[int | None, float | None, float | None]:
+    """Return (closing_odds, closing_line, clv) for a pick.
+
+    clv is the no-vig implied probability of the pick's side at the closing
+    snapshot minus the no-vig probability the pick was placed at. Positive =
+    the pick beat the close. For totals, clv is only computed when the closing
+    snapshot quotes the same total line the pick was made at — comparing
+    implied probabilities across different points is not like-for-like.
+    """
+    matchup = pick.get("matchup", "")
+    if " @ " not in matchup:
+        return None, None, None
+    away_pick, home_pick = (s.strip() for s in matchup.split(" @ ", 1))
+    game = next(
+        (
+            g
+            for g in closing_games
+            if _teams_match(away_pick, g.get("away_team", "")) and _teams_match(home_pick, g.get("home_team", ""))
+        ),
+        None,
+    )
+    if game is None:
+        return None, None, None
+
+    pick_no_vig = pick.get("no_vig_probability")
+    if pick_no_vig is None and pick.get("model_probability") is not None and pick.get("edge") is not None:
+        pick_no_vig = float(pick["model_probability"]) - float(pick["edge"])
+
+    market = pick.get("market_type", "")
+    side = pick.get("pick", "")
+
+    if market in ("moneyline", "h2h"):
+        ml = game.get("moneyline") or {}
+        if "away_odds" not in ml or "home_odds" not in ml:
+            return None, None, None
+        if _teams_match(side, game.get("away_team", "")):
+            close_odds, close_nv = int(ml["away_odds"]), ml.get("away_no_vig")
+        elif _teams_match(side, game.get("home_team", "")):
+            close_odds, close_nv = int(ml["home_odds"]), ml.get("home_no_vig")
+        else:
+            return None, None, None
+        if close_nv is None:
+            away_p = implied_probability_from_american(int(ml["away_odds"]))
+            home_p = implied_probability_from_american(int(ml["home_odds"]))
+            away_nv, home_nv = no_vig_two_sided(away_p, home_p)
+            close_nv = away_nv if _teams_match(side, game.get("away_team", "")) else home_nv
+        clv = round(float(close_nv) - float(pick_no_vig), 4) if pick_no_vig is not None else None
+        return close_odds, 0.0, clv
+
+    if market == "game_total":
+        totals = game.get("totals") or []
+        over = next((o for o in totals if o.get("name") == "Over"), None)
+        under = next((o for o in totals if o.get("name") == "Under"), None)
+        if not over or not under:
+            return None, None, None
+        side_out = over if side.lower() == "over" else under
+        other_out = under if side.lower() == "over" else over
+        close_odds = int(side_out["price"])
+        close_line = side_out.get("point")
+        pick_line = pick.get("line")
+        same_line = (
+            close_line is not None and pick_line is not None and abs(float(close_line) - float(pick_line)) < 1e-9
+        )
+        clv = None
+        if same_line and pick_no_vig is not None:
+            side_p = implied_probability_from_american(close_odds)
+            other_p = implied_probability_from_american(int(other_out["price"]))
+            close_nv, _ = no_vig_two_sided(side_p, other_p)
+            clv = round(close_nv - float(pick_no_vig), 4)
+        return close_odds, close_line, clv
+
+    # Spreads/runlines are not part of the live-odds snapshot — no CLV proxy.
+    return None, None, None
+
+
 def _load_history() -> list[dict]:
     if PICK_HISTORY_PATH.exists():
         try:
@@ -172,6 +279,12 @@ def grade_date(game_date: date) -> int:
         return 0
     print(f"  {len(games)} finished game(s) found")
 
+    closing_games = _load_closing_games(game_date)
+    if closing_games:
+        print(f"  closing-line proxy available for {len(closing_games)} game(s)")
+    else:
+        print("  no closing-line snapshot available for this date (CLV will be null)")
+
     history = _load_history()
     prior_count = len(history)
     # Build a set of already-graded (date, matchup, market, pick) tuples to avoid duplicates
@@ -192,6 +305,11 @@ def grade_date(game_date: date) -> int:
         else:
             result, pnl_val = _grade(pk, game)
 
+        try:
+            closing_odds, closing_line, clv = _closing_info(pk, closing_games)
+        except Exception:
+            closing_odds, closing_line, clv = None, None, None
+
         entry: dict = {
             "date": game_date.isoformat(),
             "matchup": pk["matchup"],
@@ -202,6 +320,10 @@ def grade_date(game_date: date) -> int:
             "edge": pk.get("edge"),
             "tier": pk.get("tier"),
             "model_probability": pk.get("model_probability"),
+            "no_vig_probability": pk.get("no_vig_probability"),
+            "closing_odds": closing_odds,
+            "closing_line": closing_line,
+            "clv": clv,
             "legacy_edge": pk.get("legacy_edge"),
             "legacy_tier": pk.get("legacy_tier"),
             "legacy_model_probability": pk.get("legacy_model_probability"),
@@ -219,7 +341,8 @@ def grade_date(game_date: date) -> int:
         new_count += 1
         label = "✓" if result == "win" else ("✗" if result == "loss" else "~")
         kind = "lean" if is_lean else "pick"
-        print(f"  {label} [{kind}] {pk['matchup']} | {pk['market_type']} {pk['pick']} → {result} ({pnl_val:+.2f})")
+        clv_note = f" clv {clv:+.4f}" if clv is not None else ""
+        print(f"  {label} [{kind}] {pk['matchup']} | {pk['market_type']} {pk['pick']} → {result} ({pnl_val:+.2f}){clv_note}")
 
     _save_history(history, prior_count)
     print(f"Saved {new_count} new grade(s) to {PICK_HISTORY_PATH}")
