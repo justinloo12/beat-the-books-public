@@ -686,6 +686,18 @@ class SimulationModelService:
                 "legacy_edge": round(legacy_decision.edge, 4),
                 "legacy_tier": legacy_decision.tier.value,
             }
+        # Raw module outputs recorded per pick so the stacked meta-model can be
+        # trained retrospectively once enough graded picks accumulate.
+        module_signals = {
+            "pitcher_home": round(float((context.get("home_pitcher_score") or {}).get("quality_score", 50.0)), 4),
+            "pitcher_away": round(float((context.get("away_pitcher_score") or {}).get("quality_score", 50.0)), 4),
+            "bullpen_home": round(float((context.get("home_bullpen") or {}).get("bullpen_score", 65.0)), 4),
+            "bullpen_away": round(float((context.get("away_bullpen") or {}).get("bullpen_score", 65.0)), 4),
+            "offense_home": round(float((context.get("home_offense") or {}).get("offense_score", 50.0)), 4),
+            "offense_away": round(float((context.get("away_offense") or {}).get("offense_score", 50.0)), 4),
+            "weather_stack": round(float((context.get("weather") or {}).get("weather_stack_score", 0.0)), 4),
+            "model_total_mean": round(float((context.get("simulation") or {}).get("total_mean", 0.0)), 4),
+        }
         return {
             "matchup": context["matchup"],
             "market_type": market_type,
@@ -697,6 +709,7 @@ class SimulationModelService:
             "edge": round(decision.edge, 4),
             "tier": decision.tier.value,
             "bankroll_fraction": round(decision.bankroll_fraction, 4),
+            "module_signals": module_signals,
             **legacy_fields,
             "top_features": [
                 {"feature": "Simulated total", "value": context["simulation"]["total_mean"], "direction": "up"},
