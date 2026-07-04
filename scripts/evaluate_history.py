@@ -204,6 +204,13 @@ def build_report() -> str:
         "Nothing is filtered or cherry-picked: every archived, graded bet is included."
     )
     add("")
+    add(
+        "> **Superseded for headline conclusions by [backtest.md](backtest.md)** "
+        "(`scripts/backtest.py`), which covers the full recovered April→July archive and adds "
+        "Wilson intervals, model-vs-market Brier scores, drawdown analysis and a zero-edge "
+        "bootstrap p-value. This file remains the day-by-day view of the archive."
+    )
+    add("")
 
     # ------------------------------------------------------------- inventory
     add("## 1. Archive inventory")
