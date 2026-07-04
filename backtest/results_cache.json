@@ -1,0 +1,832 @@
+{
+ "2026-04-25": [
+  {
+   "away_team": "Boston Red Sox",
+   "home_team": "Baltimore Orioles",
+   "away_score": 17,
+   "home_score": 1
+  },
+  {
+   "away_team": "Seattle Mariners",
+   "home_team": "St. Louis Cardinals",
+   "away_score": 11,
+   "home_score": 9
+  },
+  {
+   "away_team": "Cleveland Guardians",
+   "home_team": "Toronto Blue Jays",
+   "away_score": 3,
+   "home_score": 5
+  },
+  {
+   "away_team": "Miami Marlins",
+   "home_team": "San Francisco Giants",
+   "away_score": 2,
+   "home_score": 6
+  },
+  {
+   "away_team": "Minnesota Twins",
+   "home_team": "Tampa Bay Rays",
+   "away_score": 1,
+   "home_score": 6
+  },
+  {
+   "away_team": "Washington Nationals",
+   "home_team": "Chicago White Sox",
+   "away_score": 6,
+   "home_score": 3
+  },
+  {
+   "away_team": "San Diego Padres",
+   "home_team": "Arizona Diamondbacks",
+   "away_score": 6,
+   "home_score": 4
+  },
+  {
+   "away_team": "Athletics",
+   "home_team": "Texas Rangers",
+   "away_score": 3,
+   "home_score": 4
+  },
+  {
+   "away_team": "Los Angeles Angels",
+   "home_team": "Kansas City Royals",
+   "away_score": 1,
+   "home_score": 12
+  },
+  {
+   "away_team": "New York Yankees",
+   "home_team": "Houston Astros",
+   "away_score": 8,
+   "home_score": 3
+  },
+  {
+   "away_team": "Pittsburgh Pirates",
+   "home_team": "Milwaukee Brewers",
+   "away_score": 6,
+   "home_score": 3
+  },
+  {
+   "away_team": "Detroit Tigers",
+   "home_team": "Cincinnati Reds",
+   "away_score": 2,
+   "home_score": 9
+  },
+  {
+   "away_team": "Chicago Cubs",
+   "home_team": "Los Angeles Dodgers",
+   "away_score": 4,
+   "home_score": 12
+  },
+  {
+   "away_team": "Philadelphia Phillies",
+   "home_team": "Atlanta Braves",
+   "away_score": 8,
+   "home_score": 5
+  }
+ ],
+ "2026-04-26": [
+  {
+   "away_team": "Boston Red Sox",
+   "home_team": "Baltimore Orioles",
+   "away_score": 5,
+   "home_score": 3
+  },
+  {
+   "away_team": "Philadelphia Phillies",
+   "home_team": "Atlanta Braves",
+   "away_score": 2,
+   "home_score": 6
+  },
+  {
+   "away_team": "Cleveland Guardians",
+   "home_team": "Toronto Blue Jays",
+   "away_score": 2,
+   "home_score": 4
+  },
+  {
+   "away_team": "Detroit Tigers",
+   "home_team": "Cincinnati Reds",
+   "away_score": 8,
+   "home_score": 3
+  },
+  {
+   "away_team": "Colorado Rockies",
+   "home_team": "New York Mets",
+   "away_score": 3,
+   "home_score": 1
+  },
+  {
+   "away_team": "Colorado Rockies",
+   "home_team": "New York Mets",
+   "away_score": 3,
+   "home_score": 0
+  },
+  {
+   "away_team": "Minnesota Twins",
+   "home_team": "Tampa Bay Rays",
+   "away_score": 2,
+   "home_score": 4
+  },
+  {
+   "away_team": "Washington Nationals",
+   "home_team": "Chicago White Sox",
+   "away_score": 2,
+   "home_score": 1
+  },
+  {
+   "away_team": "New York Yankees",
+   "home_team": "Houston Astros",
+   "away_score": 4,
+   "home_score": 7
+  },
+  {
+   "away_team": "Pittsburgh Pirates",
+   "home_team": "Milwaukee Brewers",
+   "away_score": 0,
+   "home_score": 5
+  },
+  {
+   "away_team": "Seattle Mariners",
+   "home_team": "St. Louis Cardinals",
+   "away_score": 3,
+   "home_score": 2
+  },
+  {
+   "away_team": "Athletics",
+   "home_team": "Texas Rangers",
+   "away_score": 2,
+   "home_score": 1
+  },
+  {
+   "away_team": "San Diego Padres",
+   "home_team": "Arizona Diamondbacks",
+   "away_score": 7,
+   "home_score": 12
+  },
+  {
+   "away_team": "Miami Marlins",
+   "home_team": "San Francisco Giants",
+   "away_score": 3,
+   "home_score": 6
+  },
+  {
+   "away_team": "Los Angeles Angels",
+   "home_team": "Kansas City Royals",
+   "away_score": 9,
+   "home_score": 11
+  },
+  {
+   "away_team": "Chicago Cubs",
+   "home_team": "Los Angeles Dodgers",
+   "away_score": 0,
+   "home_score": 6
+  }
+ ],
+ "2026-04-27": [
+  {
+   "away_team": "Tampa Bay Rays",
+   "home_team": "Cleveland Guardians",
+   "away_score": 3,
+   "home_score": 2
+  },
+  {
+   "away_team": "St. Louis Cardinals",
+   "home_team": "Pittsburgh Pirates",
+   "away_score": 4,
+   "home_score": 2
+  },
+  {
+   "away_team": "Boston Red Sox",
+   "home_team": "Toronto Blue Jays",
+   "away_score": 5,
+   "home_score": 0
+  },
+  {
+   "away_team": "Seattle Mariners",
+   "home_team": "Minnesota Twins",
+   "away_score": 4,
+   "home_score": 11
+  },
+  {
+   "away_team": "Los Angeles Angels",
+   "home_team": "Chicago White Sox",
+   "away_score": 7,
+   "home_score": 8
+  },
+  {
+   "away_team": "New York Yankees",
+   "home_team": "Texas Rangers",
+   "away_score": 4,
+   "home_score": 2
+  },
+  {
+   "away_team": "Chicago Cubs",
+   "home_team": "San Diego Padres",
+   "away_score": 7,
+   "home_score": 9
+  },
+  {
+   "away_team": "Miami Marlins",
+   "home_team": "Los Angeles Dodgers",
+   "away_score": 4,
+   "home_score": 5
+  }
+ ],
+ "2026-04-28": [
+  {
+   "away_team": "Tampa Bay Rays",
+   "home_team": "Cleveland Guardians",
+   "away_score": 1,
+   "home_score": 0
+  },
+  {
+   "away_team": "Houston Astros",
+   "home_team": "Baltimore Orioles",
+   "away_score": 3,
+   "home_score": 5
+  },
+  {
+   "away_team": "Colorado Rockies",
+   "home_team": "Cincinnati Reds",
+   "away_score": 2,
+   "home_score": 7
+  },
+  {
+   "away_team": "St. Louis Cardinals",
+   "home_team": "Pittsburgh Pirates",
+   "away_score": 11,
+   "home_score": 7
+  },
+  {
+   "away_team": "San Francisco Giants",
+   "home_team": "Philadelphia Phillies",
+   "away_score": 0,
+   "home_score": 7
+  },
+  {
+   "away_team": "Boston Red Sox",
+   "home_team": "Toronto Blue Jays",
+   "away_score": 0,
+   "home_score": 3
+  },
+  {
+   "away_team": "Washington Nationals",
+   "home_team": "New York Mets",
+   "away_score": 0,
+   "home_score": 8
+  },
+  {
+   "away_team": "Detroit Tigers",
+   "home_team": "Atlanta Braves",
+   "away_score": 2,
+   "home_score": 5
+  },
+  {
+   "away_team": "Seattle Mariners",
+   "home_team": "Minnesota Twins",
+   "away_score": 7,
+   "home_score": 1
+  },
+  {
+   "away_team": "Los Angeles Angels",
+   "home_team": "Chicago White Sox",
+   "away_score": 2,
+   "home_score": 5
+  },
+  {
+   "away_team": "Arizona Diamondbacks",
+   "home_team": "Milwaukee Brewers",
+   "away_score": 2,
+   "home_score": 13
+  },
+  {
+   "away_team": "New York Yankees",
+   "home_team": "Texas Rangers",
+   "away_score": 3,
+   "home_score": 2
+  },
+  {
+   "away_team": "Kansas City Royals",
+   "home_team": "Athletics",
+   "away_score": 4,
+   "home_score": 1
+  },
+  {
+   "away_team": "Chicago Cubs",
+   "home_team": "San Diego Padres",
+   "away_score": 8,
+   "home_score": 3
+  },
+  {
+   "away_team": "Miami Marlins",
+   "home_team": "Los Angeles Dodgers",
+   "away_score": 2,
+   "home_score": 1
+  }
+ ],
+ "2026-04-29": [
+  {
+   "away_team": "Tampa Bay Rays",
+   "home_team": "Cleveland Guardians",
+   "away_score": 1,
+   "home_score": 3
+  },
+  {
+   "away_team": "Los Angeles Angels",
+   "home_team": "Chicago White Sox",
+   "away_score": 2,
+   "home_score": 3
+  },
+  {
+   "away_team": "Seattle Mariners",
+   "home_team": "Minnesota Twins",
+   "away_score": 5,
+   "home_score": 3
+  },
+  {
+   "away_team": "New York Yankees",
+   "home_team": "Texas Rangers",
+   "away_score": 0,
+   "home_score": 3
+  },
+  {
+   "away_team": "Boston Red Sox",
+   "home_team": "Toronto Blue Jays",
+   "away_score": 1,
+   "home_score": 8
+  },
+  {
+   "away_team": "Miami Marlins",
+   "home_team": "Los Angeles Dodgers",
+   "away_score": 3,
+   "home_score": 2
+  },
+  {
+   "away_team": "Chicago Cubs",
+   "home_team": "San Diego Padres",
+   "away_score": 5,
+   "home_score": 4
+  },
+  {
+   "away_team": "Colorado Rockies",
+   "home_team": "Cincinnati Reds",
+   "away_score": 13,
+   "home_score": 2
+  },
+  {
+   "away_team": "St. Louis Cardinals",
+   "home_team": "Pittsburgh Pirates",
+   "away_score": 5,
+   "home_score": 4
+  },
+  {
+   "away_team": "Washington Nationals",
+   "home_team": "New York Mets",
+   "away_score": 14,
+   "home_score": 2
+  },
+  {
+   "away_team": "Detroit Tigers",
+   "home_team": "Atlanta Braves",
+   "away_score": 3,
+   "home_score": 4
+  },
+  {
+   "away_team": "Arizona Diamondbacks",
+   "home_team": "Milwaukee Brewers",
+   "away_score": 6,
+   "home_score": 2
+  },
+  {
+   "away_team": "Kansas City Royals",
+   "home_team": "Athletics",
+   "away_score": 2,
+   "home_score": 5
+  }
+ ],
+ "2026-05-01": [
+  {
+   "away_team": "Arizona Diamondbacks",
+   "home_team": "Chicago Cubs",
+   "away_score": 5,
+   "home_score": 6
+  },
+  {
+   "away_team": "Texas Rangers",
+   "home_team": "Detroit Tigers",
+   "away_score": 5,
+   "home_score": 4
+  },
+  {
+   "away_team": "Cincinnati Reds",
+   "home_team": "Pittsburgh Pirates",
+   "away_score": 1,
+   "home_score": 9
+  },
+  {
+   "away_team": "Milwaukee Brewers",
+   "home_team": "Washington Nationals",
+   "away_score": 6,
+   "home_score": 1
+  },
+  {
+   "away_team": "Baltimore Orioles",
+   "home_team": "New York Yankees",
+   "away_score": 2,
+   "home_score": 7
+  },
+  {
+   "away_team": "Houston Astros",
+   "home_team": "Boston Red Sox",
+   "away_score": 1,
+   "home_score": 3
+  },
+  {
+   "away_team": "San Francisco Giants",
+   "home_team": "Tampa Bay Rays",
+   "away_score": 0,
+   "home_score": 3
+  },
+  {
+   "away_team": "Philadelphia Phillies",
+   "home_team": "Miami Marlins",
+   "away_score": 6,
+   "home_score": 5
+  },
+  {
+   "away_team": "Toronto Blue Jays",
+   "home_team": "Minnesota Twins",
+   "away_score": 7,
+   "home_score": 3
+  },
+  {
+   "away_team": "Los Angeles Dodgers",
+   "home_team": "St. Louis Cardinals",
+   "away_score": 2,
+   "home_score": 7
+  },
+  {
+   "away_team": "Atlanta Braves",
+   "home_team": "Colorado Rockies",
+   "away_score": 8,
+   "home_score": 6
+  },
+  {
+   "away_team": "New York Mets",
+   "home_team": "Los Angeles Angels",
+   "away_score": 4,
+   "home_score": 3
+  },
+  {
+   "away_team": "Cleveland Guardians",
+   "home_team": "Athletics",
+   "away_score": 8,
+   "home_score": 5
+  },
+  {
+   "away_team": "Chicago White Sox",
+   "home_team": "San Diego Padres",
+   "away_score": 8,
+   "home_score": 2
+  },
+  {
+   "away_team": "Kansas City Royals",
+   "home_team": "Seattle Mariners",
+   "away_score": 7,
+   "home_score": 6
+  }
+ ],
+ "2026-06-14": [
+  {
+   "away_team": "Miami Marlins",
+   "home_team": "Pittsburgh Pirates",
+   "away_score": 4,
+   "home_score": 2
+  },
+  {
+   "away_team": "San Diego Padres",
+   "home_team": "Baltimore Orioles",
+   "away_score": 5,
+   "home_score": 2
+  },
+  {
+   "away_team": "Seattle Mariners",
+   "home_team": "Washington Nationals",
+   "away_score": 1,
+   "home_score": 10
+  },
+  {
+   "away_team": "New York Yankees",
+   "home_team": "Toronto Blue Jays",
+   "away_score": 8,
+   "home_score": 3
+  },
+  {
+   "away_team": "Arizona Diamondbacks",
+   "home_team": "Cincinnati Reds",
+   "away_score": 5,
+   "home_score": 3
+  },
+  {
+   "away_team": "Atlanta Braves",
+   "home_team": "New York Mets",
+   "away_score": 1,
+   "home_score": 8
+  },
+  {
+   "away_team": "Houston Astros",
+   "home_team": "Kansas City Royals",
+   "away_score": 0,
+   "home_score": 4
+  },
+  {
+   "away_team": "St. Louis Cardinals",
+   "home_team": "Minnesota Twins",
+   "away_score": 4,
+   "home_score": 5
+  },
+  {
+   "away_team": "Los Angeles Dodgers",
+   "home_team": "Chicago White Sox",
+   "away_score": 4,
+   "home_score": 6
+  },
+  {
+   "away_team": "Philadelphia Phillies",
+   "home_team": "Milwaukee Brewers",
+   "away_score": 0,
+   "home_score": 4
+  },
+  {
+   "away_team": "Colorado Rockies",
+   "home_team": "Athletics",
+   "away_score": 23,
+   "home_score": 9
+  },
+  {
+   "away_team": "Chicago Cubs",
+   "home_team": "San Francisco Giants",
+   "away_score": 1,
+   "home_score": 5
+  },
+  {
+   "away_team": "Tampa Bay Rays",
+   "home_team": "Los Angeles Angels",
+   "away_score": 8,
+   "home_score": 3
+  },
+  {
+   "away_team": "Texas Rangers",
+   "home_team": "Boston Red Sox",
+   "away_score": 6,
+   "home_score": 4
+  }
+ ],
+ "2026-06-15": [
+  {
+   "away_team": "Miami Marlins",
+   "home_team": "Philadelphia Phillies",
+   "away_score": 0,
+   "home_score": 7
+  },
+  {
+   "away_team": "Kansas City Royals",
+   "home_team": "Washington Nationals",
+   "away_score": 3,
+   "home_score": 7
+  },
+  {
+   "away_team": "New York Mets",
+   "home_team": "Cincinnati Reds",
+   "away_score": 0,
+   "home_score": 12
+  },
+  {
+   "away_team": "San Diego Padres",
+   "home_team": "St. Louis Cardinals",
+   "away_score": 0,
+   "home_score": 3
+  },
+  {
+   "away_team": "Colorado Rockies",
+   "home_team": "Chicago Cubs",
+   "away_score": 4,
+   "home_score": 5
+  },
+  {
+   "away_team": "Minnesota Twins",
+   "home_team": "Texas Rangers",
+   "away_score": 4,
+   "home_score": 2
+  },
+  {
+   "away_team": "Detroit Tigers",
+   "home_team": "Houston Astros",
+   "away_score": 9,
+   "home_score": 3
+  },
+  {
+   "away_team": "Los Angeles Angels",
+   "home_team": "Arizona Diamondbacks",
+   "away_score": 3,
+   "home_score": 4
+  },
+  {
+   "away_team": "Pittsburgh Pirates",
+   "home_team": "Athletics",
+   "away_score": 2,
+   "home_score": 11
+  },
+  {
+   "away_team": "Tampa Bay Rays",
+   "home_team": "Los Angeles Dodgers",
+   "away_score": 3,
+   "home_score": 4
+  }
+ ],
+ "2026-06-16": [
+  {
+   "away_team": "Miami Marlins",
+   "home_team": "Philadelphia Phillies",
+   "away_score": 2,
+   "home_score": 8
+  },
+  {
+   "away_team": "Kansas City Royals",
+   "home_team": "Washington Nationals",
+   "away_score": 4,
+   "home_score": 6
+  },
+  {
+   "away_team": "Toronto Blue Jays",
+   "home_team": "Boston Red Sox",
+   "away_score": 6,
+   "home_score": 1
+  },
+  {
+   "away_team": "Chicago White Sox",
+   "home_team": "New York Yankees",
+   "away_score": 2,
+   "home_score": 12
+  },
+  {
+   "away_team": "New York Mets",
+   "home_team": "Cincinnati Reds",
+   "away_score": 3,
+   "home_score": 5
+  },
+  {
+   "away_team": "San Francisco Giants",
+   "home_team": "Atlanta Braves",
+   "away_score": 7,
+   "home_score": 2
+  },
+  {
+   "away_team": "Cleveland Guardians",
+   "home_team": "Milwaukee Brewers",
+   "away_score": 1,
+   "home_score": 2
+  },
+  {
+   "away_team": "San Diego Padres",
+   "home_team": "St. Louis Cardinals",
+   "away_score": 2,
+   "home_score": 3
+  },
+  {
+   "away_team": "Colorado Rockies",
+   "home_team": "Chicago Cubs",
+   "away_score": 5,
+   "home_score": 2
+  },
+  {
+   "away_team": "Minnesota Twins",
+   "home_team": "Texas Rangers",
+   "away_score": 12,
+   "home_score": 2
+  },
+  {
+   "away_team": "Detroit Tigers",
+   "home_team": "Houston Astros",
+   "away_score": 2,
+   "home_score": 4
+  },
+  {
+   "away_team": "Los Angeles Angels",
+   "home_team": "Arizona Diamondbacks",
+   "away_score": 7,
+   "home_score": 0
+  },
+  {
+   "away_team": "Pittsburgh Pirates",
+   "home_team": "Athletics",
+   "away_score": 6,
+   "home_score": 5
+  },
+  {
+   "away_team": "Baltimore Orioles",
+   "home_team": "Seattle Mariners",
+   "away_score": 1,
+   "home_score": 3
+  },
+  {
+   "away_team": "Tampa Bay Rays",
+   "home_team": "Los Angeles Dodgers",
+   "away_score": 0,
+   "home_score": 1
+  }
+ ],
+ "2026-06-17": [
+  {
+   "away_team": "New York Mets",
+   "home_team": "Cincinnati Reds",
+   "away_score": 9,
+   "home_score": 1
+  },
+  {
+   "away_team": "Kansas City Royals",
+   "home_team": "Washington Nationals",
+   "away_score": 6,
+   "home_score": 2
+  },
+  {
+   "away_team": "Miami Marlins",
+   "home_team": "Philadelphia Phillies",
+   "away_score": 12,
+   "home_score": 4
+  },
+  {
+   "away_team": "San Francisco Giants",
+   "home_team": "Atlanta Braves",
+   "away_score": 7,
+   "home_score": 2
+  },
+  {
+   "away_team": "Detroit Tigers",
+   "home_team": "Houston Astros",
+   "away_score": 2,
+   "home_score": 4
+  },
+  {
+   "away_team": "San Diego Padres",
+   "home_team": "St. Louis Cardinals",
+   "away_score": 6,
+   "home_score": 1
+  },
+  {
+   "away_team": "Tampa Bay Rays",
+   "home_team": "Los Angeles Dodgers",
+   "away_score": 4,
+   "home_score": 5
+  },
+  {
+   "away_team": "Los Angeles Angels",
+   "home_team": "Arizona Diamondbacks",
+   "away_score": 1,
+   "home_score": 8
+  },
+  {
+   "away_team": "Toronto Blue Jays",
+   "home_team": "Boston Red Sox",
+   "away_score": 3,
+   "home_score": 0
+  },
+  {
+   "away_team": "Chicago White Sox",
+   "home_team": "New York Yankees",
+   "away_score": 5,
+   "home_score": 10
+  },
+  {
+   "away_team": "San Francisco Giants",
+   "home_team": "Atlanta Braves",
+   "away_score": 7,
+   "home_score": 5
+  },
+  {
+   "away_team": "Cleveland Guardians",
+   "home_team": "Milwaukee Brewers",
+   "away_score": 4,
+   "home_score": 9
+  },
+  {
+   "away_team": "Colorado Rockies",
+   "home_team": "Chicago Cubs",
+   "away_score": 6,
+   "home_score": 8
+  },
+  {
+   "away_team": "Pittsburgh Pirates",
+   "home_team": "Athletics",
+   "away_score": 12,
+   "home_score": 4
+  },
+  {
+   "away_team": "Baltimore Orioles",
+   "home_team": "Seattle Mariners",
+   "away_score": 5,
+   "home_score": 3
+  }
+ ]
+}
