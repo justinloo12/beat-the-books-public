@@ -1,14 +1,14 @@
 {
-  "generated_at": "2026-07-03T22:57:59Z",
+  "generated_at": "2026-07-04T02:10:47Z",
   "small_sample_threshold": 100,
   "overall": {
-    "n": 22,
-    "wins": 12,
-    "losses": 10,
-    "pushes": 0,
-    "hit_rate": 0.5455,
-    "profit_units": 2.5739,
-    "roi": 0.117,
+    "n": 50,
+    "wins": 24,
+    "losses": 24,
+    "pushes": 2,
+    "hit_rate": 0.5,
+    "profit_units": 1.9989,
+    "roi": 0.04,
     "reliable": false
   },
   "official_picks": {
@@ -22,24 +22,34 @@
     "reliable": false
   },
   "leans": {
-    "n": 22,
-    "wins": 12,
-    "losses": 10,
-    "pushes": 0,
-    "hit_rate": 0.5455,
-    "profit_units": 2.5739,
-    "roi": 0.117,
+    "n": 50,
+    "wins": 24,
+    "losses": 24,
+    "pushes": 2,
+    "hit_rate": 0.5,
+    "profit_units": 1.9989,
+    "roi": 0.04,
     "reliable": false
   },
   "by_tier": {
-    "monitor": {
-      "n": 10,
-      "wins": 4,
-      "losses": 6,
+    "moderate": {
+      "n": 8,
+      "wins": 3,
+      "losses": 5,
       "pushes": 0,
-      "hit_rate": 0.4,
-      "profit_units": -1.9894,
-      "roi": -0.1989,
+      "hit_rate": 0.375,
+      "profit_units": -0.7109,
+      "roi": -0.0889,
+      "reliable": false
+    },
+    "monitor": {
+      "n": 27,
+      "wins": 12,
+      "losses": 13,
+      "pushes": 2,
+      "hit_rate": 0.48,
+      "profit_units": -0.7307,
+      "roi": -0.0271,
       "reliable": false
     },
     "pass": {
@@ -51,54 +61,88 @@
       "profit_units": 4.5633,
       "roi": 0.3803,
       "reliable": false
+    },
+    "strong": {
+      "n": 3,
+      "wins": 1,
+      "losses": 2,
+      "pushes": 0,
+      "hit_rate": 0.3333,
+      "profit_units": -1.1228,
+      "roi": -0.3743,
+      "reliable": false
     }
   },
   "by_market": {
     "game_total": {
-      "n": 1,
-      "wins": 0,
-      "losses": 1,
-      "pushes": 0,
-      "hit_rate": 0.0,
-      "profit_units": -1.0,
-      "roi": -1.0,
+      "n": 16,
+      "wins": 6,
+      "losses": 8,
+      "pushes": 2,
+      "hit_rate": 0.4286,
+      "profit_units": -2.6525,
+      "roi": -0.1658,
       "reliable": false
     },
     "moneyline": {
-      "n": 21,
-      "wins": 12,
-      "losses": 9,
+      "n": 34,
+      "wins": 18,
+      "losses": 16,
       "pushes": 0,
-      "hit_rate": 0.5714,
-      "profit_units": 3.5739,
-      "roi": 0.1702,
+      "hit_rate": 0.5294,
+      "profit_units": 4.6514,
+      "roi": 0.1368,
       "reliable": false
     }
   },
   "daily": [
     {
+      "date": "2026-04-25",
+      "n": 10,
+      "profit_units": 2.7925,
+      "cum_units": 2.7925
+    },
+    {
+      "date": "2026-04-26",
+      "n": 11,
+      "profit_units": -4.4309,
+      "cum_units": -1.6384
+    },
+    {
+      "date": "2026-04-27",
+      "n": 1,
+      "profit_units": -1.0,
+      "cum_units": -2.6384
+    },
+    {
+      "date": "2026-04-28",
+      "n": 6,
+      "profit_units": 2.0634,
+      "cum_units": -0.575
+    },
+    {
       "date": "2026-06-14",
       "n": 8,
       "profit_units": 0.2147,
-      "cum_units": 0.2147
+      "cum_units": -0.3603
     },
     {
       "date": "2026-06-15",
       "n": 2,
       "profit_units": 0.02,
-      "cum_units": 0.2347
+      "cum_units": -0.3403
     },
     {
       "date": "2026-06-16",
       "n": 4,
       "profit_units": -0.0767,
-      "cum_units": 0.158
+      "cum_units": -0.417
     },
     {
       "date": "2026-06-17",
       "n": 8,
       "profit_units": 2.4159,
-      "cum_units": 2.5739
+      "cum_units": 1.9989
     }
   ],
   "clv": {
@@ -161,42 +205,42 @@
     "proxy_note": "CLV uses the last pre-first-pitch DraftKings snapshot as a closing proxy, not the true market close. Days with a single snapshot measure 0.0 by construction."
   },
   "calibration": {
-    "n": 22,
+    "n": 48,
     "rows": [
       {
         "bucket": "0.00-0.45",
-        "n": 1,
-        "avg_predicted": 0.4274,
-        "win_rate": 0.0,
-        "gap": -0.4274
+        "n": 6,
+        "avg_predicted": 0.3999,
+        "win_rate": 0.3333,
+        "gap": -0.0665
       },
       {
         "bucket": "0.45-0.50",
-        "n": 3,
-        "avg_predicted": 0.485,
-        "win_rate": 0.3333,
-        "gap": -0.1517
+        "n": 7,
+        "avg_predicted": 0.4843,
+        "win_rate": 0.4286,
+        "gap": -0.0557
       },
       {
         "bucket": "0.50-0.55",
-        "n": 12,
-        "avg_predicted": 0.5298,
-        "win_rate": 0.6667,
-        "gap": 0.1369
+        "n": 19,
+        "avg_predicted": 0.532,
+        "win_rate": 0.5789,
+        "gap": 0.0469
       },
       {
         "bucket": "0.55-0.60",
-        "n": 4,
-        "avg_predicted": 0.575,
+        "n": 12,
+        "avg_predicted": 0.5707,
         "win_rate": 0.5,
-        "gap": -0.075
+        "gap": -0.0707
       },
       {
         "bucket": "0.60-1.00",
-        "n": 2,
-        "avg_predicted": 0.6085,
+        "n": 4,
+        "avg_predicted": 0.6347,
         "win_rate": 0.5,
-        "gap": -0.1085
+        "gap": -0.1347
       }
     ],
     "reliable": false
