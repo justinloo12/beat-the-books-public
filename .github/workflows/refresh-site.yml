@@ -3,6 +3,14 @@ name: Refresh Site
 on:
   workflow_dispatch:
   schedule:
+    # CREDIT BUDGET (20,000 Odds API credits/month):
+    #   download_odds makes ONE combined call per run: 3 markets
+    #   (h2h,totals,spreads) x 1 region = 3 credits. 5 runs/day = 15/day
+    #   ≈ 465/month; snapshot-odds.yml adds ~8/day ≈ 248/month. Combined
+    #   ≈ 713/month — ~3.6% of budget. download_odds logs
+    #   x-requests-remaining/used to data/odds_api/quota.json and skips the
+    #   fetch below ODDS_API_MIN_REMAINING (default 500) instead of draining
+    #   the reserve (skip exits 0 — the rest of the pipeline still runs).
     # 11am ET — full run: Statcast + odds + model for the day's slate (15 UTC during EDT)
     - cron: "0 15 * * *"
     # 12:30pm ET — lineup confirmation refresh for ~1pm games, before first pitch (16:30 UTC during EDT)

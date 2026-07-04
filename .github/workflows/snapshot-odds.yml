@@ -8,6 +8,14 @@ name: Snapshot Odds
 on:
   workflow_dispatch:
   schedule:
+    # CREDIT BUDGET (20,000 Odds API credits/month):
+    #   Each run = ONE call, 2 markets (h2h+totals) x 1 region = 2 credits.
+    #   4 runs/day x 2 credits = 8/day ≈ 248/month from this workflow;
+    #   refresh-site.yml adds ~15/day (5 runs x 3 markets) ≈ 465/month.
+    #   Combined ≈ 713/month — ~3.6% of budget. The script additionally skips
+    #   no-game days (free MLB Stats API schedule check, 0 credits) and skips
+    #   fetching once remaining credits drop below ODDS_API_MIN_REMAINING
+    #   (default 500), so a runaway schedule can never drain the key.
     # Aligned with MLB game windows (times shown for EDT; UTC crons):
     # 12:45pm ET — before the ~1pm early games
     - cron: "45 16 * * *"

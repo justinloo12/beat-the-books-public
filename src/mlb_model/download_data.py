@@ -18,6 +18,13 @@ ROOT = Path(__file__).resolve().parents[2]
 DATA_DIR = ROOT / "data"
 ODDS_DIR = DATA_DIR / "odds_api"
 SAVANT_DIR = DATA_DIR / "baseball_savant"
+QUOTA_PATH = ODDS_DIR / "quota.json"
+
+# Credit floor: when The Odds API reports fewer remaining credits than this,
+# odds fetches are skipped (gracefully — never crash a workflow) so the last
+# credits of the month stay available for manual use. Override with
+# ODDS_API_MIN_REMAINING.
+DEFAULT_MIN_REMAINING = 500
 
 
 @dataclass(slots=True)
@@ -54,6 +61,55 @@ async def fetch_json(client: httpx.AsyncClient, url: str, params: dict[str, Any]
     return response.json()
 
 
+def _quota_floor() -> int:
+    import os
+
+    try:
+        return int(os.environ.get("ODDS_API_MIN_REMAINING", DEFAULT_MIN_REMAINING))
+    except ValueError:
+        return DEFAULT_MIN_REMAINING
+
+
+def read_last_known_quota() -> dict[str, Any]:
+    """Last x-requests-remaining/used reported by The Odds API (persisted by
+    the previous fetch). {} when never recorded."""
+    if QUOTA_PATH.exists():
+        try:
+            return json.loads(QUOTA_PATH.read_text(encoding="utf-8"))
+        except Exception:
+            pass
+    return {}
+
+
+def write_quota(headers: Any) -> dict[str, Any]:
+    """Persist the quota headers from an Odds API response and return them."""
+
+    def _int(name: str) -> int | None:
+        raw = headers.get(name)
+        try:
+            return int(float(raw)) if raw is not None else None
+        except (TypeError, ValueError):
+            return None
+
+    quota = {
+        "requests_remaining": _int("x-requests-remaining"),
+        "requests_used": _int("x-requests-used"),
+        "recorded_at": datetime.utcnow().isoformat(),
+    }
+    ensure_dirs()
+    QUOTA_PATH.write_text(json.dumps(quota, indent=2), encoding="utf-8")
+    return quota
+
+
+async def fetch_json_with_headers(
+    client: httpx.AsyncClient, url: str, params: dict[str, Any] | None = None
+) -> tuple[Any, Any]:
+    response = await client.get(url, params=params)
+    if response.is_error:
+        raise RuntimeError(f"{response.status_code} for {response.url}: {response.text[:500]}")
+    return response.json(), response.headers
+
+
 async def fetch_text(client: httpx.AsyncClient, url: str, params: dict[str, Any] | None = None) -> str:
     response = await client.get(url, params=params)
     if response.is_error:
@@ -62,45 +118,90 @@ async def fetch_text(client: httpx.AsyncClient, url: str, params: dict[str, Any]
 
 
 async def download_odds(target_date: date, markets: list[str]) -> DownloadSummary:
+    """Fetch odds for target_date with the MINIMUM Odds API usage.
+
+    Credit conservation (20k credits/month budget):
+    - ONE request per run: all markets combined (cost = #markets x #regions
+      credits either way, but no per-market/per-event fan-out), one region
+      (us), one bookmaker filter (DraftKings).
+    - The x-requests-remaining / x-requests-used response headers are
+      persisted to data/odds_api/quota.json and echoed in the logs so quota
+      burn is visible over time.
+    - Hard floor: if the API reported fewer than ODDS_API_MIN_REMAINING
+      (default 500) remaining credits on the previous call, the fetch is
+      SKIPPED gracefully instead of burning the reserve.
+    """
     settings = get_settings()
     if not settings.odds_api_key:
         raise RuntimeError("MLB_MODEL_ODDS_API_KEY is not configured.")
 
     ensure_dirs()
     files_written: list[Path] = []
-    requests_made = 0
     today_et = datetime.now().astimezone().date()
     use_current_endpoint = target_date >= today_et
+    paths = {market: ODDS_DIR / f"{target_date.isoformat()}_{market}.json" for market in markets}
+
+    # Historical dates: reuse any files already on disk, never re-fetch them.
+    if not use_current_endpoint and all(path.exists() for path in paths.values()):
+        return DownloadSummary(files_written=list(paths.values()), requests_made=0, errors=[])
+
+    floor = _quota_floor()
+    last_quota = read_last_known_quota()
+    remaining = last_quota.get("requests_remaining")
+    if remaining is not None and remaining < floor:
+        message = (
+            f"Odds fetch skipped: only {remaining} Odds API credits remaining "
+            f"(< ODDS_API_MIN_REMAINING={floor}). Preserving the reserve."
+        )
+        print(message)
+        return DownloadSummary(files_written=[], requests_made=0, errors=[message])
+
     current_url = "https://api.the-odds-api.com/v4/sports/baseball_mlb/odds"
     historical_url = "https://api.the-odds-api.com/v4/historical/sports/baseball_mlb/odds"
+    params = {
+        "apiKey": settings.odds_api_key,
+        "regions": "us",
+        "markets": ",".join(markets),  # single combined call — no fan-out
+        "oddsFormat": "american",
+        "dateFormat": "iso",
+        "bookmakers": "draftkings",
+    }
     async with httpx.AsyncClient(timeout=60.0) as client:
-        for market in markets:
-            path = ODDS_DIR / f"{target_date.isoformat()}_{market}.json"
-            if path.exists() and not use_current_endpoint:
-                # Only skip re-fetching for historical dates; always refresh today's odds
-                files_written.append(path)
-                continue
-            params = {
-                "apiKey": settings.odds_api_key,
-                "regions": "us",
-                "markets": market,
-                "oddsFormat": "american",
-                "dateFormat": "iso",
-                "bookmakers": "draftkings",
-            }
-            if use_current_endpoint:
-                payload = await fetch_json(client, current_url, params=params)
-                payload = {"timestamp": datetime.utcnow().isoformat(), "data": payload}
-            else:
-                historical_params = {
-                    **params,
-                    "date": f"{target_date.isoformat()}T12:00:00Z",
-                }
-                payload = await fetch_json(client, historical_url, params=historical_params)
-            requests_made += 1
-            path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
-            files_written.append(path)
-    return DownloadSummary(files_written=files_written, requests_made=requests_made, errors=[])
+        if use_current_endpoint:
+            raw, headers = await fetch_json_with_headers(client, current_url, params=params)
+            payload = {"timestamp": datetime.utcnow().isoformat(), "data": raw}
+        else:
+            payload, headers = await fetch_json_with_headers(
+                client, historical_url, params={**params, "date": f"{target_date.isoformat()}T12:00:00Z"}
+            )
+    quota = write_quota(headers)
+    print(
+        f"Odds API quota: used={quota.get('requests_used')} "
+        f"remaining={quota.get('requests_remaining')}"
+    )
+
+    # The combined response carries every requested market per game. Split it
+    # back into the per-market files downstream consumers expect (each file
+    # keeps ONLY its own market so MarketProvider's file merge stays
+    # duplicate-free).
+    for market, path in paths.items():
+        path.write_text(json.dumps(_filter_payload_market(payload, market), indent=2), encoding="utf-8")
+        files_written.append(path)
+    return DownloadSummary(files_written=files_written, requests_made=1, errors=[])
+
+
+def _filter_payload_market(payload: dict[str, Any], market_key: str) -> dict[str, Any]:
+    """Copy of an Odds API payload with each bookmaker's markets filtered to
+    market_key only (games without that market are kept, with empty markets)."""
+    filtered_games = []
+    for game in payload.get("data", []) or []:
+        game_copy = dict(game)
+        game_copy["bookmakers"] = [
+            {**book, "markets": [m for m in book.get("markets", []) if m.get("key") == market_key]}
+            for book in game.get("bookmakers", []) or []
+        ]
+        filtered_games.append(game_copy)
+    return {**payload, "data": filtered_games}
 
 
 def write_csv(path: Path, rows: list[dict[str, Any]]) -> None:
