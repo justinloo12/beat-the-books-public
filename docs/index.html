@@ -3,123 +3,195 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Beat The Books</title>
+    <title>Beat the Books — MLB Model Research</title>
+    <meta name="description" content="An open MLB betting model tracked honestly: closing line value, calibration, and record — with sample sizes on every number." />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
 
-    <aside class="sidebar">
-      <div class="sidebar-brand">
-        <div class="brand-icon">⚾</div>
-        <div class="brand-text">
-          <div class="brand-name">Beat The Books</div>
-          <div class="brand-sub">MLB Analytics</div>
-        </div>
+    <header class="topnav">
+      <div class="topnav-inner">
+        <a class="brand" href="#performance">
+          <span class="brand-mark">⌁</span>
+          <span class="brand-name">beat-the-books</span>
+          <span class="brand-tag">MLB model research</span>
+        </a>
+        <nav class="nav-links" id="nav-links">
+          <a href="#performance" class="active">Performance</a>
+          <a href="#board">Today</a>
+          <a href="#archive">Archive</a>
+          <a href="#history">History</a>
+          <a href="#methodology">Methodology</a>
+        </nav>
       </div>
+    </header>
 
-      <nav class="sidebar-nav">
-        <a class="nav-item active" data-section="dashboard" href="#">
-          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
-          <span>Dashboard</span>
-        </a>
-        <a class="nav-item" data-section="gameboard" href="#">
-          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-          <span>Game Board</span>
-        </a>
-        <a class="nav-item" data-section="archive" href="#">
-          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="4" rx="1"/><path d="M4 7v13a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1V7"/><line x1="9" y1="12" x2="15" y2="12"/></svg>
-          <span>Daily Archive</span>
-        </a>
-        <a class="nav-item" data-section="history" href="#">
-          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v5h5"/><path d="M3.05 13A9 9 0 1 0 6 5.3L3 8"/><polyline points="12 7 12 12 15 15"/></svg>
-          <span>History</span>
-        </a>
-      </nav>
+    <main class="page">
 
-      <div class="sidebar-footer" id="hero-meta"></div>
-    </aside>
-
-    <div class="main-wrap">
-      <header class="topbar">
-        <div class="topbar-left">
-          <div class="page-eyebrow">MLB Betting Analytics</div>
-          <h1 class="page-title" id="page-title">Dashboard</h1>
+      <!-- ============================ PERFORMANCE ============================ -->
+      <section id="performance" class="section">
+        <div class="section-head">
+          <h1>Model Performance</h1>
+          <p class="section-sub" id="perf-asof">Loading…</p>
         </div>
-        <div id="hero-pills" class="hero-pills"></div>
-      </header>
 
-      <main class="main-content">
+        <div id="sample-warning" class="callout callout-warn hidden"></div>
 
-        <div id="summary-grid" class="summary-grid"></div>
-        <div id="pick-split-row"></div>
+        <div class="stat-grid" id="perf-stats"></div>
 
-        <section class="content-section" id="section-dashboard">
-          <div class="section-head">
-            <h2>Daily Picks</h2>
-            <p id="daily-meta"></p>
-          </div>
-          <div id="daily-picks" class="picks-grid"></div>
-        </section>
-
-        <section class="content-section" id="section-leans">
-          <div class="section-head">
-            <h2>Leans</h2>
-            <p id="leans-meta"></p>
-          </div>
-          <div id="lean-summary-grid" class="summary-grid" style="margin-bottom:1rem"></div>
-          <div id="lean-split-row"></div>
-          <div id="daily-leans" class="picks-grid"></div>
-        </section>
-
-        <section class="content-section" id="section-gameboard">
-          <div class="section-head">
-            <h2>Game Board</h2>
-            <p>Select a matchup to inspect starters, lineups, pitch data, and run projections.</p>
-          </div>
-          <div class="gameboard-layout">
-            <div id="game-list" class="game-list"></div>
-            <div id="game-detail" class="game-detail-panel"></div>
-          </div>
-        </section>
-
-        <section class="content-section hidden" id="section-archive">
-          <div class="section-head">
-            <h2>Daily Archive</h2>
-            <p>Top 10 model picks from each day.</p>
-          </div>
-          <div class="archive-layout">
-            <div class="archive-dates" id="archive-dates"></div>
-            <div class="archive-picks" id="archive-picks">
-              <div class="empty-state">Select a date to view that day's picks.</div>
+        <div class="panel-grid">
+          <div class="panel">
+            <div class="panel-head">
+              <h2>Closing Line Value</h2>
+              <span class="panel-n" id="clv-n"></span>
             </div>
+            <div class="chart-wrap" id="clv-chart"></div>
+            <p class="panel-note" id="clv-note"></p>
           </div>
-        </section>
+          <div class="panel">
+            <div class="panel-head">
+              <h2>Cumulative P&amp;L</h2>
+              <span class="panel-n" id="pnl-n"></span>
+            </div>
+            <div class="chart-wrap" id="pnl-chart"></div>
+            <p class="panel-note">Flat 1u per graded entry at archived odds. Not adjusted for tier sizing.</p>
+          </div>
+        </div>
 
-        <section class="content-section hidden" id="section-history">
-          <div class="section-head">
-            <h2>Pick History</h2>
-            <p>Graded picks — $100 per bet.</p>
+        <div class="panel-grid">
+          <div class="panel">
+            <div class="panel-head"><h2>Record by tier</h2></div>
+            <div class="table-scroll"><table id="tier-table"></table></div>
           </div>
-          <div id="history-summary" class="history-summary"></div>
-          <div class="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>Date</th><th>Matchup</th><th>Market</th><th>Pick</th>
-                  <th>Odds</th><th>Edge</th><th>Result</th><th>P&amp;L</th>
-                </tr>
-              </thead>
-              <tbody id="history-table"></tbody>
-            </table>
+          <div class="panel">
+            <div class="panel-head"><h2>Record by market</h2></div>
+            <div class="table-scroll"><table id="market-table"></table></div>
           </div>
-          <ul id="skipped-list" style="display:none"></ul>
-        </section>
+        </div>
 
-      </main>
-    </div>
+        <div class="panel-grid">
+          <div class="panel">
+            <div class="panel-head">
+              <h2>Calibration</h2>
+              <span class="panel-n" id="cal-n"></span>
+            </div>
+            <div class="table-scroll"><table id="calibration-table"></table></div>
+            <p class="panel-note">Predicted probability vs realized win rate. A bucket needs ~100+ decided bets before its gap means anything.</p>
+          </div>
+          <div class="panel">
+            <div class="panel-head"><h2>Stacked meta-model</h2></div>
+            <div id="meta-model-card"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================ TODAY'S BOARD ============================ -->
+      <section id="board" class="section section-secondary">
+        <div class="section-head">
+          <h1>Today's Board</h1>
+          <p class="section-sub" id="board-date"></p>
+        </div>
+        <div id="board-picks" class="cards"></div>
+        <div id="board-leans-wrap" class="hidden">
+          <h3 class="subhead">Leans <span class="muted">(informational — below the betting threshold)</span></h3>
+          <div id="board-leans" class="cards"></div>
+        </div>
+        <h3 class="subhead">Slate</h3>
+        <div class="table-scroll"><table id="slate-table"></table></div>
+      </section>
+
+      <!-- ============================ ARCHIVE ============================ -->
+      <section id="archive" class="section section-secondary">
+        <div class="section-head">
+          <h1>Daily Archive</h1>
+          <p class="section-sub">Every published board, as it was exported. Nothing edited after the fact.</p>
+        </div>
+        <div class="archive-layout">
+          <div id="archive-dates" class="archive-dates"></div>
+          <div id="archive-detail" class="archive-detail">
+            <div class="empty">Select a date.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================ HISTORY ============================ -->
+      <section id="history" class="section section-secondary">
+        <div class="section-head">
+          <h1>Graded History</h1>
+          <p class="section-sub" id="history-sub"></p>
+        </div>
+        <div class="table-scroll"><table id="history-table"></table></div>
+      </section>
+
+      <!-- ============================ METHODOLOGY ============================ -->
+      <section id="methodology" class="section">
+        <div class="section-head">
+          <h1>Methodology &amp; Honesty Notes</h1>
+        </div>
+        <div class="prose">
+          <h3>What this is</h3>
+          <p>
+            A fully automated MLB totals model, published daily and graded against real results.
+            The point of this page is not to sell picks — it is to measure, in public, whether the
+            model has any edge at all. The only metric that can establish that quickly is
+            <strong>closing line value (CLV)</strong>: whether the prices the model bets at are
+            consistently better than the prices available at first pitch.
+          </p>
+
+          <h3>How the model works</h3>
+          <p>Each game is scored by independent modules, blended with hand-set config weights:</p>
+          <ul>
+            <li><strong>Pitcher</strong> — Statcast expected stats, contact quality allowed, arsenal run values for both starters.</li>
+            <li><strong>Offense / lineup</strong> — lineup-vs-arsenal matchups, handedness splits, confirmed vs projected lineups.</li>
+            <li><strong>Bullpen</strong> — availability, recent usage, and quality of each relief corps.</li>
+            <li><strong>Context</strong> — park factors, weather (wind, temperature, air density), and umpire tendencies.</li>
+          </ul>
+          <p>
+            The blended run projections drive a deterministic run-distribution engine that prices
+            totals; edge is the model's probability minus the no-vig market probability from
+            DraftKings quotes. Only mid-band edges (3–6%) become picks — repeated backtests showed the
+            model's biggest disagreements with the market are model error, not market error.
+          </p>
+          <p>
+            A <strong>stacked meta-model</strong> (logistic regression over the raw module signals plus
+            the market's no-vig probability) is wired into the pipeline but deliberately inert: it
+            trains only once <em>150+ graded picks with stored module signals</em> exist. Until then
+            every number here comes from the hand-set blend, and the status card above says so.
+          </p>
+
+          <h3>How CLV is measured — and its limits</h3>
+          <ul>
+            <li>An intraday workflow snapshots DraftKings odds ~4×/day, timed just before the main MLB game windows.</li>
+            <li>For each pick, the <em>last snapshot captured before that game's first pitch</em> is used as the closing price.</li>
+            <li>CLV = (no-vig probability of the pick's side at close) − (no-vig probability at pick time). Positive means the market moved toward the pick.</li>
+            <li><strong>This is a proxy, not the true close</strong>: one book, and up to a few hours before first pitch depending on snapshot timing. Totals CLV is only computed when the closing snapshot quotes the same line the pick was made at.</li>
+            <li>Early archive days had a single daily snapshot, so their measured CLV is 0.0 by construction — those entries prove nothing in either direction.</li>
+          </ul>
+
+          <h3>Read the numbers honestly</h3>
+          <ul>
+            <li><strong>Anything under ~100 graded bets is noise.</strong> Every table on this page carries its sample size; below n=100 a coin-flipping bettor would frequently produce the same record, good or bad.</li>
+            <li>ROI on a few dozen bets can swing ±30 points on variance alone. CLV converges faster than ROI, which is why it is the centerpiece metric here.</li>
+            <li>The archive only contains days the pipeline ran and validated — failed days are absent, which is itself a mild survivorship bias.</li>
+            <li>Grading uses flat 1u stakes at the archived odds. No bankroll heroics, no cherry-picked windows.</li>
+          </ul>
+
+          <p class="fine">
+            Source, pipeline, and full pick history:
+            <a href="https://github.com/justinloo12/beat-the-books-public">github.com/justinloo12/beat-the-books-public</a>.
+            Nothing here is betting advice.
+          </p>
+        </div>
+      </section>
+
+      <footer class="footer">
+        <span id="footer-asof"></span>
+        <span>Built for research, graded in public.</span>
+      </footer>
+    </main>
 
     <script src="app.js" defer></script>
   </body>

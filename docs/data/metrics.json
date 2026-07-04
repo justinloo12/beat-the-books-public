@@ -1,0 +1,212 @@
+{
+  "generated_at": "2026-07-03T22:57:59Z",
+  "small_sample_threshold": 100,
+  "overall": {
+    "n": 22,
+    "wins": 12,
+    "losses": 10,
+    "pushes": 0,
+    "hit_rate": 0.5455,
+    "profit_units": 2.5739,
+    "roi": 0.117,
+    "reliable": false
+  },
+  "official_picks": {
+    "n": 0,
+    "wins": 0,
+    "losses": 0,
+    "pushes": 0,
+    "hit_rate": null,
+    "profit_units": 0.0,
+    "roi": null,
+    "reliable": false
+  },
+  "leans": {
+    "n": 22,
+    "wins": 12,
+    "losses": 10,
+    "pushes": 0,
+    "hit_rate": 0.5455,
+    "profit_units": 2.5739,
+    "roi": 0.117,
+    "reliable": false
+  },
+  "by_tier": {
+    "monitor": {
+      "n": 10,
+      "wins": 4,
+      "losses": 6,
+      "pushes": 0,
+      "hit_rate": 0.4,
+      "profit_units": -1.9894,
+      "roi": -0.1989,
+      "reliable": false
+    },
+    "pass": {
+      "n": 12,
+      "wins": 8,
+      "losses": 4,
+      "pushes": 0,
+      "hit_rate": 0.6667,
+      "profit_units": 4.5633,
+      "roi": 0.3803,
+      "reliable": false
+    }
+  },
+  "by_market": {
+    "game_total": {
+      "n": 1,
+      "wins": 0,
+      "losses": 1,
+      "pushes": 0,
+      "hit_rate": 0.0,
+      "profit_units": -1.0,
+      "roi": -1.0,
+      "reliable": false
+    },
+    "moneyline": {
+      "n": 21,
+      "wins": 12,
+      "losses": 9,
+      "pushes": 0,
+      "hit_rate": 0.5714,
+      "profit_units": 3.5739,
+      "roi": 0.1702,
+      "reliable": false
+    }
+  },
+  "daily": [
+    {
+      "date": "2026-06-14",
+      "n": 8,
+      "profit_units": 0.2147,
+      "cum_units": 0.2147
+    },
+    {
+      "date": "2026-06-15",
+      "n": 2,
+      "profit_units": 0.02,
+      "cum_units": 0.2347
+    },
+    {
+      "date": "2026-06-16",
+      "n": 4,
+      "profit_units": -0.0767,
+      "cum_units": 0.158
+    },
+    {
+      "date": "2026-06-17",
+      "n": 8,
+      "profit_units": 2.4159,
+      "cum_units": 2.5739
+    }
+  ],
+  "clv": {
+    "n": 8,
+    "mean_clv": 0.0,
+    "positive": 0,
+    "negative": 0,
+    "zero": 8,
+    "cumulative": [
+      {
+        "date": "2026-06-17",
+        "clv": 0.0,
+        "cum_avg_clv": 0.0,
+        "n": 1
+      },
+      {
+        "date": "2026-06-17",
+        "clv": 0.0,
+        "cum_avg_clv": 0.0,
+        "n": 2
+      },
+      {
+        "date": "2026-06-17",
+        "clv": 0.0,
+        "cum_avg_clv": 0.0,
+        "n": 3
+      },
+      {
+        "date": "2026-06-17",
+        "clv": 0.0,
+        "cum_avg_clv": 0.0,
+        "n": 4
+      },
+      {
+        "date": "2026-06-17",
+        "clv": 0.0,
+        "cum_avg_clv": 0.0,
+        "n": 5
+      },
+      {
+        "date": "2026-06-17",
+        "clv": 0.0,
+        "cum_avg_clv": 0.0,
+        "n": 6
+      },
+      {
+        "date": "2026-06-17",
+        "clv": 0.0,
+        "cum_avg_clv": 0.0,
+        "n": 7
+      },
+      {
+        "date": "2026-06-17",
+        "clv": 0.0,
+        "cum_avg_clv": 0.0,
+        "n": 8
+      }
+    ],
+    "reliable": false,
+    "proxy_note": "CLV uses the last pre-first-pitch DraftKings snapshot as a closing proxy, not the true market close. Days with a single snapshot measure 0.0 by construction."
+  },
+  "calibration": {
+    "n": 22,
+    "rows": [
+      {
+        "bucket": "0.00-0.45",
+        "n": 1,
+        "avg_predicted": 0.4274,
+        "win_rate": 0.0,
+        "gap": -0.4274
+      },
+      {
+        "bucket": "0.45-0.50",
+        "n": 3,
+        "avg_predicted": 0.485,
+        "win_rate": 0.3333,
+        "gap": -0.1517
+      },
+      {
+        "bucket": "0.50-0.55",
+        "n": 12,
+        "avg_predicted": 0.5298,
+        "win_rate": 0.6667,
+        "gap": 0.1369
+      },
+      {
+        "bucket": "0.55-0.60",
+        "n": 4,
+        "avg_predicted": 0.575,
+        "win_rate": 0.5,
+        "gap": -0.075
+      },
+      {
+        "bucket": "0.60-1.00",
+        "n": 2,
+        "avg_predicted": 0.6085,
+        "win_rate": 0.5,
+        "gap": -0.1085
+      }
+    ],
+    "reliable": false
+  },
+  "meta_model": {
+    "state": "fallback",
+    "message": "insufficient data (n=0/150)",
+    "n_samples": 0,
+    "threshold": 150,
+    "coefficients": null,
+    "trained_at": null
+  }
+}

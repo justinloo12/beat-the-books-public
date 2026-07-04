@@ -6,6 +6,8 @@ import json
 from datetime import date
 from pathlib import Path
 
+from mlb_model.metrics import build_metrics, write_metrics
+from mlb_model.services.meta_model import MetaModel
 from mlb_model.services.site_service import SiteService
 
 _PICK_HISTORY_PATH = Path(__file__).resolve().parents[2] / "docs" / "data" / "pick_history.json"
@@ -130,6 +132,16 @@ async def main() -> None:
     if graded_history:
         payload["history"] = list(reversed(graded_history))
         payload["summary"].update(_history_summary(graded_history))
+
+    # Meta-model: retrain (or arm the fallback) from the graded history and
+    # surface the status in the payload so the dashboard can display it.
+    meta = MetaModel()
+    meta_status = meta.train_from_history(graded_history)
+    payload["meta_model"] = meta_status
+
+    # Performance metrics for the dashboard's Model Performance section.
+    write_metrics(build_metrics(graded_history, meta_status))
+
     dated_path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
     latest_path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
 

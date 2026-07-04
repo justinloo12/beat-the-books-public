@@ -1,1116 +1,438 @@
-/* ── State ── */
-let currentCards = [];
-let activeMatchup = null;
-let activeArsenalSplit = {}; // matchup -> "overall"|"vs_l"|"vs_r"
-let _liveOddsPayload = null; // cached live odds for re-renders
+/* Beat the Books — quant research dashboard.
+   Vanilla JS, no build step, no CDN dependencies. Charts are hand-rolled SVG. */
 
-/* ── DOM refs ── */
-const $summaryGrid = document.getElementById("summary-grid");
-const $dailyPicks  = document.getElementById("daily-picks");
-const $dailyMeta   = document.getElementById("daily-meta");
-const $dailyLeans  = document.getElementById("daily-leans");
-const $leansMeta   = document.getElementById("leans-meta");
-const $historyTbl  = document.getElementById("history-table");
-const $gameDetail  = document.getElementById("game-detail");
-const $skippedList = document.getElementById("skipped-list");
-const $heroPills   = document.getElementById("hero-pills");
-const $heroMeta    = document.getElementById("hero-meta");
+"use strict";
 
-/* ── Formatters ── */
+/* ────────────────────────── formatters ────────────────────────── */
+
 const fmt = {
-  pct:  (v, d=1) => v == null ? "—" : `${(+v*100).toFixed(d)}%`,
-  pctS: (v, d=1) => `${+(v||0)>=0?"+":""}${(+(v||0)*100).toFixed(d)}%`,
-  num:  (v, d=2) => v == null ? "—" : `${(+v).toFixed(d)}`,
-  sign: (v, d=2) => `${+(v||0)>=0?"+":""}${(+(v||0)).toFixed(d)}`,
-  money: (v, d=2) => v == null ? "—" : `${+(v||0)>=0?"+":"-"}$${Math.abs(+(v||0)).toFixed(d)}`,
-  odds: (v) => `${+(v||0)>0?"+":""}${+(v||0)}`,
-  date: (v) => new Intl.DateTimeFormat("en-US",{weekday:"long",month:"long",day:"numeric",year:"numeric"}).format(new Date(`${v}T12:00:00`)),
-  time: (v) => new Intl.DateTimeFormat("en-US",{hour:"numeric",minute:"2-digit",timeZone:"America/New_York"}).format(new Date(v)),
+  pct: (v, d = 1) => (v == null ? "—" : `${(v * 100).toFixed(d)}%`),
+  spct: (v, d = 1) => (v == null ? "—" : `${v >= 0 ? "+" : ""}${(v * 100).toFixed(d)}%`),
+  pp: (v, d = 2) => (v == null ? "—" : `${v >= 0 ? "+" : ""}${(v * 100).toFixed(d)} pp`),
+  units: (v, d = 2) => (v == null ? "—" : `${v >= 0 ? "+" : ""}${v.toFixed(d)}u`),
+  odds: (v) => (v == null ? "—" : `${v > 0 ? "+" : ""}${v}`),
+  num: (v, d = 2) => (v == null ? "—" : (+v).toFixed(d)),
+  date: (v) =>
+    v == null
+      ? "—"
+      : new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric" }).format(
+          new Date(`${v}T12:00:00`)
+        ),
+  dateLong: (v) =>
+    v == null
+      ? "—"
+      : new Intl.DateTimeFormat("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" }).format(
+          new Date(`${v}T12:00:00`)
+        ),
 };
 
-function windLabel(weather) {
-  const spd = +(weather?.wind_speed_mph||0);
-  const dirs = ["N","NE","E","SE","S","SW","W","NW"];
-  const dir = weather?.wind_direction != null
-    ? dirs[Math.round(+weather.wind_direction/45)%8]
-    : "calm";
-  return spd < 2 ? "Calm" : `${spd.toFixed(0)} mph ${dir}`;
+const esc = (s) =>
+  String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+const el = (id) => document.getElementById(id);
+
+function nBadge(n, reliable) {
+  const cls = reliable ? "n-ok" : "n-small";
+  return `<span class="n-badge ${cls}" title="${reliable ? "Sample size" : "Small sample — treat as noise"}">n=${n}</span>`;
 }
 
-function tierBadge(tier) {
-  const map = { strong:"strong", moderate:"moderate", monitor:"monitor", pass:"pass", block:"block" };
-  const cls = map[tier?.toLowerCase()] || "neutral";
-  return `<span class="badge badge-${cls}">${tier||"—"}</span>`;
+function signClass(v) {
+  if (v == null || v === 0) return "flat";
+  return v > 0 ? "pos" : "neg";
 }
 
-let _gradeThresholds = { a: 58, b: 50, c: 44, d: 38 };
+/* ────────────────────────── SVG line chart ────────────────────────── */
 
-function computeGradeThresholds(cards) {
-  const scores = [];
-  for (const card of (cards || [])) {
-    for (const lineup of [card.away_lineup, card.home_lineup]) {
-      for (const p of (lineup?.players || [])) {
-        const s = +(p.matchup_score || 0);
-        if (s > 0) scores.push(s);
-      }
-    }
+function lineChart({ points, yLabel, yFormat = (v) => v.toFixed(2), zeroLine = true, width = 640, height = 240 }) {
+  if (!points || points.length === 0) {
+    return `<div class="empty">No data yet.</div>`;
   }
-  if (scores.length < 5) return;
-  scores.sort((a, b) => a - b);
-  const n = scores.length;
-  _gradeThresholds = {
-    a: scores[Math.floor(n * 0.80)],
-    b: scores[Math.floor(n * 0.60)],
-    c: scores[Math.floor(n * 0.40)],
-    d: scores[Math.floor(n * 0.20)],
-  };
-}
+  const pad = { top: 14, right: 14, bottom: 26, left: 56 };
+  const w = width - pad.left - pad.right;
+  const h = height - pad.top - pad.bottom;
 
-function matchupGrade(score) {
-  const n = +(score||0);
-  if (n >= _gradeThresholds.a) return ["A", "grade-a"];
-  if (n >= _gradeThresholds.b) return ["B", "grade-b"];
-  if (n >= _gradeThresholds.c) return ["C", "grade-c"];
-  if (n >= _gradeThresholds.d) return ["D", "grade-d"];
-  return ["F", "grade-f"];
-}
-function matchupScoreBadge(score) {
-  const [letter, cls] = matchupGrade(score);
-  return `<span class="matchup-score-badge ${cls}">${letter}</span>`;
-}
-function pitcherVsLineupGrade(avgScore) {
-  // Lower avg matchup score = pitcher dominates = better grade
-  if (avgScore <= _gradeThresholds.d) return ["A", "grade-a"];
-  if (avgScore <= _gradeThresholds.c) return ["B", "grade-b"];
-  if (avgScore <= _gradeThresholds.b) return ["C", "grade-c"];
-  if (avgScore <= _gradeThresholds.a) return ["D", "grade-d"];
-  return ["F", "grade-f"];
-}
-
-function pitchMatchClass(score) {
-  const n = +(score||0);
-  return n>=62?"pm-good": n>=48?"pm-mid":"pm-bad";
-}
-
-function valClass(v, goodHigh=true, goodThr=0.36, badThr=0.44) {
-  const n = +(v||0);
-  if (goodHigh) return n >= goodThr ? "val-good" : n >= badThr * 0.85 ? "val-warn" : "val-bad";
-  return n <= goodThr ? "val-good" : n <= badThr ? "val-warn" : "val-bad";
-}
-
-function stuffBadgeClass(sp) {
-  if (sp == null) return "badge-neutral";
-  if (sp >= 120) return "badge-elite";
-  if (sp >= 108) return "badge-strong";
-  if (sp >= 93)  return "badge-moderate";
-  return "badge-pass";
-}
-
-function stuffCellClass(sp) {
-  if (sp == null) return "";
-  if (sp >= 120) return "val-good";
-  if (sp >= 108) return "val-good";
-  if (sp >= 93)  return "val-warn";
-  return "val-bad";
-}
-
-/* ── Data Fetch ── */
-async function fetchPayload() {
-  try {
-    const r = await fetch("/api/site/today");
-    if (r.ok) return r.json();
-    throw new Error("api");
-  } catch {
-    const r = await fetch(`data/latest.json?ts=${Date.now()}`);
-    if (!r.ok) throw new Error("no snapshot");
-    return r.json();
+  const ys = points.map((p) => p.y);
+  let yMin = Math.min(...ys, zeroLine ? 0 : Infinity);
+  let yMax = Math.max(...ys, zeroLine ? 0 : -Infinity);
+  if (yMin === yMax) {
+    yMin -= 1;
+    yMax += 1;
   }
-}
+  const spanPad = (yMax - yMin) * 0.12;
+  yMin -= spanPad;
+  yMax += spanPad;
 
-/* ── Render Hero ── */
-function renderHero(payload) {
-  const cards = payload.daily.lineup_cards || [];
-  const picks = payload.daily.picks || [];
-  const leans = payload.daily.leans || [];
-  const strongWind = cards.slice().sort((a,b)=>+(b.weather?.wind_speed_mph||0)-+(a.weather?.wind_speed_mph||0))[0];
-  const strongCount = picks.filter(p=>p.tier==="strong").length;
+  const x = (i) => pad.left + (points.length === 1 ? w / 2 : (i / (points.length - 1)) * w);
+  const y = (v) => pad.top + h - ((v - yMin) / (yMax - yMin)) * h;
 
-  $heroPills.innerHTML = [
-    `<span class="pill accent">${cards.length} games on board</span>`,
-    picks.length ? `<span class="pill">${picks.length} pick${picks.length!==1?"s":""} posted</span>` : "",
-    leans.length ? `<span class="pill">${leans.length} lean${leans.length!==1?"s":""}</span>` : "",
-    strongCount ? `<span class="pill">${strongCount} strong edge${strongCount>1?"s":""}</span>` : "",
-    strongWind ? `<span class="pill">${strongWind.matchup}: ${windLabel(strongWind.weather)}</span>` : "",
-  ].filter(Boolean).join("");
-
-  $heroMeta.innerHTML = `
-    <div class="hero-date">${fmt.date(payload.date)}</div>
-    <div class="hero-updated">Updated ${fmt.time(payload.as_of)} ET</div>
-  `;
-}
-
-/* ── Render Summary ── */
-function mkSplitRow(mlW, mlL, mlP, mlRoi, totW, totL, totP, totRoi) {
-  const roiCls = r => +(r||0) >= 0 ? "split-good" : "split-bad";
-  const rec = (w,l,p) => `${w}-${l}${p ? `-${p}` : ""}`;
-  return `
-  <div class="split-row">
-    <div class="split-cell">
-      <span class="split-label">Moneyline</span>
-      <span class="split-record">${rec(mlW,mlL,mlP)}</span>
-      <span class="split-roi ${roiCls(mlRoi)}">${fmt.pct(mlRoi)} ROI</span>
-    </div>
-    <div class="split-divider"></div>
-    <div class="split-cell">
-      <span class="split-label">Totals</span>
-      <span class="split-record">${rec(totW,totL,totP)}</span>
-      <span class="split-roi ${roiCls(totRoi)}">${fmt.pct(totRoi)} ROI</span>
-    </div>
-  </div>`;
-}
-
-function renderSummary(s) {
-  const dollarsWon = (+(s.units_profit || 0)) * 100;
-  const dollarsRisked = (+(s.units_risked || 0)) * 100;
-  const pickCards = [
-    ["Won/Lost",    fmt.money(dollarsWon),            `${fmt.money(dollarsRisked,0).replace("+","") } risked at $100 per bet`],
-    ["ROI",         fmt.pct(s.roi),                   `${fmt.sign(s.units_profit)} units`],
-    ["Record",      `${s.wins}-${s.losses}`,          `${s.pushes ? s.pushes + " push · " : ""}graded picks`],
-    ["Hit Rate",    fmt.pct(s.hit_rate),               "picks only"],
-    ["Today",       s.lineup_card_count,               `${s.daily_pick_count ?? 0} pick${(s.daily_pick_count??0)!==1?"s":""} · ${s.daily_lean_count ?? 0} lean${(s.daily_lean_count??0)!==1?"s":""}`],
-  ];
-  const mkCard = ([l,v,d]) => `
-    <div class="stat-card">
-      <div class="label">${l}</div>
-      <div class="value">${v}</div>
-      <div class="detail">${d}</div>
-    </div>`;
-  $summaryGrid.innerHTML = pickCards.map(mkCard).join("");
-
-  const $pickSplit = document.getElementById("pick-split-row");
-  if ($pickSplit) {
-    $pickSplit.innerHTML = mkSplitRow(
-      s.pick_ml_wins ?? 0, s.pick_ml_losses ?? 0, s.pick_ml_pushes ?? 0, s.pick_ml_roi ?? 0,
-      s.pick_total_wins ?? 0, s.pick_total_losses ?? 0, s.pick_total_pushes ?? 0, s.pick_total_roi ?? 0,
-    );
+  let grid = "";
+  const ticks = 4;
+  for (let t = 0; t <= ticks; t++) {
+    const v = yMin + ((yMax - yMin) * t) / ticks;
+    const yy = y(v);
+    grid += `<line x1="${pad.left}" y1="${yy}" x2="${pad.left + w}" y2="${yy}" class="grid-line"/>`;
+    grid += `<text x="${pad.left - 8}" y="${yy + 4}" class="tick-label" text-anchor="end">${yFormat(v)}</text>`;
+  }
+  if (zeroLine && yMin < 0 && yMax > 0) {
+    grid += `<line x1="${pad.left}" y1="${y(0)}" x2="${pad.left + w}" y2="${y(0)}" class="zero-line"/>`;
   }
 
-  const $leanGrid = document.getElementById("lean-summary-grid");
-  if ($leanGrid) {
-    const lw = s.lean_wins ?? 0, ll = s.lean_losses ?? 0, lp = s.lean_pushes ?? 0;
-    const lDollarsWon = (+(s.lean_units_profit || 0)) * 100;
-    const lDollarsRisked = (+(s.lean_units_risked || 0)) * 100;
-    const leanCards = [
-      ["Won/Lost",    fmt.money(lDollarsWon),          `${fmt.money(lDollarsRisked,0).replace("+","") } risked at $100 per lean`],
-      ["ROI",         fmt.pct(s.lean_roi ?? 0),        `${fmt.sign(s.lean_units_profit ?? 0)} units`],
-      ["Record",      `${lw}-${ll}`,                   `${lp ? lp + " push · " : ""}graded leans`],
-      ["Hit Rate",    fmt.pct(s.lean_hit_rate ?? 0),   "leans only"],
-    ];
-    $leanGrid.innerHTML = leanCards.map(mkCard).join("");
-  }
+  const path = points.map((p, i) => `${i === 0 ? "M" : "L"}${x(i).toFixed(1)},${y(p.y).toFixed(1)}`).join(" ");
+  const last = points[points.length - 1];
+  const lastCls = signClass(last.y);
 
-  const $leanSplit = document.getElementById("lean-split-row");
-  if ($leanSplit) {
-    $leanSplit.innerHTML = mkSplitRow(
-      s.lean_ml_wins ?? 0, s.lean_ml_losses ?? 0, s.lean_ml_pushes ?? 0, s.lean_ml_roi ?? 0,
-      s.lean_total_wins ?? 0, s.lean_total_losses ?? 0, s.lean_total_pushes ?? 0, s.lean_total_roi ?? 0,
-    );
-  }
-}
+  const baseY = y(Math.max(Math.min(0, yMax), yMin));
+  const area =
+    `M${x(0).toFixed(1)},${baseY.toFixed(1)} ` +
+    points.map((p, i) => `L${x(i).toFixed(1)},${y(p.y).toFixed(1)}`).join(" ") +
+    ` L${x(points.length - 1).toFixed(1)},${baseY.toFixed(1)} Z`;
 
-/* ── Render Picks ── */
-function renderPicks(picks) {
-  if (!picks.length) {
-    $dailyPicks.innerHTML = `<div class="empty-state">No picks cleared the threshold today — picks are only generated before game time.</div>`;
-    $dailyMeta.textContent = "";
-    return;
-  }
-  $dailyMeta.textContent = `${picks.length} simulation-screened pick${picks.length!==1?"s":""} from today's full slate`;
-
-  $dailyPicks.innerHTML = picks.map((pick, i) => {
-    const tier = (pick.tier||"").toLowerCase();
-    return `
-    <article class="pick-card tier-${tier}">
-      <div class="pick-header">
-        <div class="pick-rank">#${i+1}</div>
-        <div class="pick-main">
-          <div class="pick-matchup">${pick.matchup}</div>
-          <div class="pick-meta">
-            ${tierBadge(pick.tier)}
-            <span class="pick-market">${fmtMarketType(pick.market_type)} · ${pick.pick}${pick.line ? ` ${pick.line}` : ""} · ${pick.start_time??"TBD"}</span>
-          </div>
-        </div>
-        <div class="pick-right">
-          <div class="edge-value">${fmt.pctS(pick.edge)}</div>
-          <div class="pick-odds-line">${fmt.odds(pick.american_odds)} · ${(+(pick.simulation_trials||0)).toLocaleString()} trials</div>
-        </div>
-      </div>
-      <div class="pick-body">
-        <div class="pick-stat">
-          <div class="label">Model %</div>
-          <div class="val">${fmt.pct(pick.model_probability)}</div>
-        </div>
-        <div class="pick-stat">
-          <div class="label">No-vig %</div>
-          <div class="val">${fmt.pct(pick.no_vig_probability)}</div>
-        </div>
-        <div class="pick-stat">
-          <div class="label">Edge</div>
-          <div class="val" style="color:${tier==="strong"?"var(--green)":tier==="moderate"?"var(--gold)":"var(--blue)"}">${fmt.pctS(pick.edge)}</div>
-        </div>
-        <div class="pick-stat">
-          <div class="label">Stake</div>
-          <div class="val">${fmt.pct(pick.bankroll_fraction)}</div>
-        </div>
-        <div class="pick-stat">
-          <div class="label">Lineup</div>
-          <div class="val">${pick.lineup_status??"—"}</div>
-        </div>
-      </div>
-      <div class="pick-reasoning">${pickBlurb(pick)}</div>
-    </article>
-    `;
-  }).join("");
-}
-
-/* ── Render Leans ── */
-function renderLeans(leans) {
-  if (!$dailyLeans) return;
-  if (!leans || !leans.length) {
-    $dailyLeans.innerHTML = `<div class="empty-state">No leans today — model saw no edges between 4% and 6%.</div>`;
-    if ($leansMeta) $leansMeta.textContent = "";
-    return;
-  }
-  if ($leansMeta) $leansMeta.textContent = `${leans.length} low-confidence lean${leans.length!==1?"s":""} — not picks, for tracking only`;
-  $dailyLeans.innerHTML = leans.map(lean => `
-    <article class="pick-card tier-lean">
-      <div class="pick-header">
-        <div class="pick-main">
-          <div class="pick-matchup">${lean.matchup}</div>
-          <div class="pick-meta">
-            <span class="badge badge-neutral">lean</span>
-            <span class="pick-market">${fmtMarketType(lean.market_type)} · ${lean.pick}${lean.line ? ` ${lean.line}` : ""} · ${lean.start_time??"TBD"}</span>
-          </div>
-        </div>
-        <div class="pick-right">
-          <div class="edge-value" style="color:var(--muted)">${fmt.pctS(lean.edge)}</div>
-          <div class="pick-odds-line">${fmt.odds(lean.american_odds)}</div>
-        </div>
-      </div>
-      <div class="pick-body">
-        <div class="pick-stat"><div class="label">Model %</div><div class="val">${fmt.pct(lean.model_probability)}</div></div>
-        <div class="pick-stat"><div class="label">No-vig %</div><div class="val">${fmt.pct(lean.no_vig_probability)}</div></div>
-        <div class="pick-stat"><div class="label">Edge</div><div class="val">${fmt.pctS(lean.edge)}</div></div>
-        <div class="pick-stat"><div class="label">Lineup</div><div class="val">${lean.lineup_status??"—"}</div></div>
-      </div>
-    </article>
-  `).join("");
-}
-
-function fmtMarketType(t) {
-  const m = { game_total:"Total", first_five_total:"F5 Total", moneyline:"ML", runline:"RL", team_total:"Team Total" };
-  return m[t] || t;
-}
-
-function pickBlurb(pick) {
-  if (pick.specific_blurb) return pick.specific_blurb;
-  const card = currentCards.find(c => c.matchup === pick.matchup);
-  if (card) {
-    const homeAvg = avgMatchup(card.home_lineup?.players || []);
-    const awayAvg = avgMatchup(card.away_lineup?.players || []);
-    const homeTop = topPlayers(card.home_lineup?.players || []);
-    const awayTop = topPlayers(card.away_lineup?.players || []);
-    const weatherNote = +(card.weather?.wind_speed_mph || 0) >= 12 ? ` Wind is up at ${windLabel(card.weather)}.` : "";
-
-    if (pick.market_type === "game_total" && pick.pick === "Over") {
-      const attackingHome = homeAvg >= awayAvg;
-      const attackPlayers = attackingHome ? homeTop : awayTop;
-      const targetPitcher = attackingHome ? card.away_pitcher : card.home_pitcher;
-      return `${joinPlayers(attackPlayers)} rate as the strongest hitter-pitcher matchups on this board against ${targetPitcher?.name || "the opposing starter"}, who is allowing ${fmt.num(targetPitcher?.xba,3)} xBA and ${fmt.pct(targetPitcher?.hard_hit_pct,0)} hard-hit contact. The sim sits at ${fmt.num(card.simulated_total,1)} versus ${pick.line}.${weatherNote}`;
-    }
-
-    if (pick.market_type === "game_total" && pick.pick === "Under") {
-      const suppressHome = lowPlayers(card.home_lineup?.players || []);
-      const suppressAway = lowPlayers(card.away_lineup?.players || []);
-      return `${card.away_pitcher?.name || "Away starter"} and ${card.home_pitcher?.name || "Home starter"} both project to limit clean contact early, and the weakest matchup clusters belong to ${joinPlayers(suppressHome)} and ${joinPlayers(suppressAway)}. The sim lands at ${fmt.num(card.simulated_total,1)} against ${pick.line}.${weatherNote}`;
-    }
-
-    if (pick.market_type === "moneyline") {
-      const teamSide = pick.pick === card.home_pitcher?.team || pick.pick === card.home_lineup?.team;
-      const teamPlayers = teamSide ? homeTop : awayTop;
-      const starter = teamSide ? card.home_pitcher : card.away_pitcher;
-      const oppStarter = teamSide ? card.away_pitcher : card.home_pitcher;
-      const teamRuns = teamSide ? card.simulated_home_runs : card.simulated_away_runs;
-      const oppRuns = teamSide ? card.simulated_away_runs : card.simulated_home_runs;
-      return `${starter?.name || pick.pick} gives this side the cleaner starter setup over ${oppStarter?.name || "the opponent"}, while ${joinPlayers(teamPlayers)} own the best arsenal matchups in the lineup. The sim has it ${fmt.num(teamRuns,1)} to ${fmt.num(oppRuns,1)}.${weatherNote}`;
-    }
-  }
-  const market = fmtMarketType(pick.market_type);
-  const lineup = pick.lineup_status === "confirmed" ? "confirmed lineups" : "projected lineups";
-  const top = (pick.top_features || [])[0];
-  const featureText = top ? `${top.feature} is a key driver` : "the simulation is pricing this side above market";
-  return `${market} ${pick.pick}${pick.line ? ` ${pick.line}` : ""} cleared the board with a ${fmt.pctS(pick.edge)} edge. ${featureText}, and this card is still using ${lineup}.`;
-}
-
-function avgMatchup(players) {
-  if (!players.length) return 0;
-  return players.reduce((sum, player) => sum + (+(player.matchup_score || 0)), 0) / players.length;
-}
-
-function topPlayers(players) {
-  return players.slice().sort((a, b) => (+(b.matchup_score || 0)) - (+(a.matchup_score || 0))).slice(0, 2);
-}
-
-function lowPlayers(players) {
-  return players.slice().sort((a, b) => (+(a.matchup_score || 0)) - (+(b.matchup_score || 0))).slice(0, 2);
-}
-
-function joinPlayers(players) {
-  if (!players.length) return "this lineup";
-  if (players.length === 1) return `${players[0].name} (${fmt.num(players[0].matchup_score,0)})`;
-  return `${players[0].name} and ${players[1].name} (${fmt.num(players[0].matchup_score,0)}/${fmt.num(players[1].matchup_score,0)})`;
-}
-
-/* ── Start-time parser for sorting ── */
-function parseStartMinutes(timeStr) {
-  if (!timeStr) return 9999;
-  const m = timeStr.match(/(\d+):(\d+)\s*(AM|PM)/i);
-  if (!m) return 9999;
-  let h = +m[1], min = +m[2], ampm = m[3].toUpperCase();
-  if (ampm === "PM" && h !== 12) h += 12;
-  if (ampm === "AM" && h === 12) h = 0;
-  return h * 60 + min;
-}
-
-/* ── Render Game List (left sidebar) ── */
-function renderGames(cards) {
-  const $gameList = document.getElementById("game-list");
-  currentCards = cards;
-
-  if (!cards.length) {
-    if ($gameList) $gameList.innerHTML = `<div class="empty-state">No games on the board yet.</div>`;
-    $gameDetail.innerHTML = "";
-    return;
-  }
-
-  // Sort by start time
-  const sorted = cards.slice().sort((a, b) => parseStartMinutes(a.start_time) - parseStartMinutes(b.start_time));
-
-  if (!sorted.find(c => c.matchup === activeMatchup)) activeMatchup = sorted[0].matchup;
-
-  if ($gameList) {
-    $gameList.innerHTML = sorted.map(c => {
-      const total = +(c.simulated_total || c.projected_total || 0);
-      const hasPick = (c.top_game_picks || []).some(p => p.tier === "strong" || p.tier === "moderate" || p.tier === "lean");
-      const pickBadge = hasPick ? `<span class="game-list-pick-dot"></span>` : "";
-      const confirmed = c.lineup_status === "confirmed";
-      return `
-      <button class="game-list-item ${c.matchup === activeMatchup ? "active" : ""}" data-matchup="${c.matchup}">
-        <div class="gli-time">${c.start_time ?? "TBD"}${pickBadge}</div>
-        <div class="gli-matchup">${c.matchup}</div>
-        <div class="gli-meta">
-          <span class="gli-total">${total.toFixed(1)} total</span>
-          ${confirmed ? `<span class="gli-confirmed">✓ confirmed</span>` : ""}
-        </div>
-      </button>`;
-    }).join("");
-
-    $gameList.querySelectorAll(".game-list-item").forEach(btn => {
-      btn.addEventListener("click", () => {
-        activeMatchup = btn.dataset.matchup;
-        $gameList.querySelectorAll(".game-list-item").forEach(b => b.classList.toggle("active", b === btn));
-        $gameDetail.innerHTML = renderGameCard(currentCards.find(c => c.matchup === activeMatchup));
-        wireGameDetail();
-      });
-    });
-  }
-
-  $gameDetail.innerHTML = renderGameCard(sorted.find(c => c.matchup === activeMatchup));
-  wireGameDetail();
-}
-
-function wireGameDetail() {
-  // wire arsenal tab buttons
-  document.querySelectorAll(".arsenal-tab-btn").forEach(btn => {
-    btn.addEventListener("click", () => {
-      const panel = btn.closest("[data-pitcher-panel]");
-      const split = btn.dataset.split;
-      const key = panel?.dataset.pitcherPanel || "home";
-      if (!activeArsenalSplit[activeMatchup]) activeArsenalSplit[activeMatchup] = {};
-      activeArsenalSplit[activeMatchup][key] = split;
-      const tableWrap = panel?.querySelector(".arsenal-table-wrap");
-      if (tableWrap) {
-        const pitcher = split === "vs_l"
-          ? (panel._pitcher.arsenal_vs_l || [])
-          : split === "vs_r"
-            ? (panel._pitcher.arsenal_vs_r || [])
-            : (panel._pitcher.arsenal || []);
-        tableWrap.innerHTML = arsenalTable(pitcher);
-      }
-      panel?.querySelectorAll(".arsenal-tab-btn").forEach(b => b.classList.toggle("active", b === btn));
-    });
-  });
-
-  // store pitcher refs for arsenal tabs
-  document.querySelectorAll("[data-pitcher-panel]").forEach(panel => {
-    const side = panel.dataset.pitcherPanel;
-    const card = currentCards.find(c => c.matchup === activeMatchup);
-    if (card) panel._pitcher = side === "home" ? card.home_pitcher : card.away_pitcher;
-  });
-}
-
-/* ── Game Card ── */
-function renderBullpenHealth(teamName, bullpen) {
-  if (!bullpen || bullpen.bullpen_score == null) return "";
-  const score = +(bullpen.bullpen_score || 65);
-  const cls = score >= 70 ? "val-good" : score >= 52 ? "val-warn" : "val-bad";
-  const flags = (bullpen.fatigue_flags || []).slice(0, 2);
-  const tip = [
-    `Score: ${score}`,
-    bullpen.depleted ? "DEPLETED" : "",
-    bullpen.closer_status !== "fresh" ? `Closer: ${bullpen.closer_status}` : "",
-    ...flags,
-  ].filter(Boolean).join(" · ");
-  return `<div class="weather-item" title="${tip}">
-    <span class="wlabel">${teamName??""} Pen</span>
-    <span class="wval ${cls}">${score.toFixed(0)}${bullpen.depleted?" ⚠":""}</span>
-  </div>`;
-}
-
-function renderGameCard(card) {
-  if (!card) return "";
-  const weather = card.weather || {};
-  const windHigh = +(weather.wind_speed_mph||0) >= 12;
-  const topPicks = (card.top_game_picks || []).filter(p => p.edge > 0);
-  const hp = card.home_pitcher;
-  const ap = card.away_pitcher;
-
-  return `
-  <div class="game-card">
-    <div class="game-card-header">
-      <div>
-        <div class="game-card-title">${card.matchup}</div>
-        <div class="game-card-subtitle">${card.start_time??"TBD"} · ${card.venue} · ${card.lineup_status==="confirmed"?"✓ confirmed lineups":"projected lineup"}</div>
-      </div>
-      <div class="game-stats-bar">
-        <div class="game-stat-item">
-          <div class="label">Projected Total</div>
-          <div class="val">${fmt.num(card.projected_total,2)}</div>
-        </div>
-        <div class="game-stat-item">
-          <div class="label">Sim Total</div>
-          <div class="val">${fmt.num(card.simulated_total,2)}</div>
-        </div>
-        <div class="game-stat-item">
-          <div class="label">${ap?.team??""} Win</div>
-          <div class="val">${fmt.pct(card.away_win_prob)}</div>
-        </div>
-        <div class="game-stat-item">
-          <div class="label">${hp?.team??""} Win</div>
-          <div class="val">${fmt.pct(card.home_win_prob)}</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="weather-block">
-      <div class="weather-item">
-        <span class="wlabel">Temp</span>
-        <span class="wval">${fmt.num(weather.temperature_f,0)}°F</span>
-      </div>
-      <div class="weather-item">
-        <span class="wlabel">Wind</span>
-        <span class="wval ${windHigh?"weather-wind-high":""}">${windLabel(weather)}</span>
-      </div>
-      <div class="weather-item">
-        <span class="wlabel">Humidity</span>
-        <span class="wval">${fmt.num(weather.humidity,0)}%</span>
-      </div>
-      ${renderBullpenHealth(card.home_pitcher?.team, card.home_bullpen)}
-      ${renderBullpenHealth(card.away_pitcher?.team, card.away_bullpen)}
-    </div>
-
-    ${card.game_blurb ? `<div class="game-blurb-block">${card.game_blurb}</div>` : ""}
-
-    ${topPicks.length ? `
-    <div class="game-picks-bar">
-      ${topPicks.map(p=>`
-        <div class="inline-pick tier-${(p.tier||"").toLowerCase()}">
-          <span class="ip-pick">${fmtMarketType(p.market_type)}${p.line ? ` ${p.line}` : ""} ${p.pick}</span>
-          <span class="ip-meta">${fmt.odds(p.american_odds)}</span>
-          ${tierBadge(p.tier)}
-          <span class="ip-edge">${fmt.pctS(p.edge)}</span>
-        </div>
-      `).join("")}
-    </div>
-    ` : ""}
-
-    <div class="pitcher-section">
-      ${renderPitcherPanel(ap, "away", avgMatchup(card.home_lineup?.players || []))}
-      ${renderPitcherPanel(hp, "home", avgMatchup(card.away_lineup?.players || []))}
-    </div>
-
-    <div class="lineup-grid">
-      ${renderTeamSection(card.away_lineup)}
-      ${renderTeamSection(card.home_lineup)}
-    </div>
-  </div>
-  `;
-}
-
-/* ── Pitcher Panel ── */
-function renderPitcherPanel(pitcher, side, oppAvgMatchup) {
-  if (!pitcher) return "";
-  const arsenal = pitcher.arsenal || [];
-  const vsL = pitcher.arsenal_vs_l || [];
-  const vsR = pitcher.arsenal_vs_r || [];
-  const hand = pitcher.handedness || "?";
-  const flag = pitcher.vulnerability_flag || "";
-  const flagBadge = flag==="Elite"?"badge-elite": flag==="Low"?"badge-strong": flag==="Medium"?"badge-moderate":"badge-pass";
-  const [vsGrade, vsGradeCls] = oppAvgMatchup > 0 ? pitcherVsLineupGrade(oppAvgMatchup) : ["—", "grade-c"];
-
-  return `
-  <div class="pitcher-panel" data-pitcher-panel="${side}">
-    <div class="pitcher-panel-head">
-      <div>
-        <div class="pitcher-name">${pitcher.name || "TBD"}</div>
-        <div class="pitcher-team-label">${pitcher.team}</div>
-      </div>
-      <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
-        <span class="badge ${hand==="L"?"badge-lhb":"badge-rhb"}">${hand}HP</span>
-        ${pitcher.is_opener?`<span class="badge badge-opener" title="Opener — projected ~1 IP; model blends bulk reliever stats for remaining innings">OPENER</span>`:""}
-        ${pitcher.is_opener && pitcher.bulk_pitcher_name?`<span class="badge badge-neutral" title="Identified bulk reliever following the opener">Bulk: ${pitcher.bulk_pitcher_name}</span>`:""}
-        <span class="badge ${flagBadge}">${flag||"—"}</span>
-        <span class="matchup-score-badge ${vsGradeCls}" title="Pitcher grade vs this lineup">${vsGrade}</span>
-        ${pitcher.stuff_plus!=null?`<span class="badge ${stuffBadgeClass(pitcher.stuff_plus)}">Stuff+ ${pitcher.stuff_plus}</span>`:""}
-      </div>
-    </div>
-
-    <div class="pitcher-overall">
-      ${pitcher.xba != null ? `<div class="pitcher-stat"><div class="label">xBA</div><div class="val ${valClass(pitcher.xba,false,0.240,0.270)}">${fmt.num(pitcher.xba,3)}</div></div>` : ""}
-      ${pitcher.hard_hit_pct != null ? `<div class="pitcher-stat"><div class="label">HH%</div><div class="val ${valClass(pitcher.hard_hit_pct,false,0.35,0.42)}">${fmt.pct(pitcher.hard_hit_pct)}</div></div>` : ""}
-      ${pitcher.barrel_pct != null ? `<div class="pitcher-stat"><div class="label">Barrel%</div><div class="val ${valClass(pitcher.barrel_pct,false,0.07,0.12)}">${fmt.pct(pitcher.barrel_pct)}</div></div>` : ""}
-      ${pitcher.ev50 != null ? `<div class="pitcher-stat"><div class="label">EV50</div><div class="val">${fmt.num(pitcher.ev50,1)}</div></div>` : ""}
-      ${pitcher.weighted_k_pct != null ? `<div class="pitcher-stat"><div class="label">K%</div><div class="val ${valClass(pitcher.weighted_k_pct,true,0.22,0.18)}">${fmt.pct(pitcher.weighted_k_pct)}</div></div>` : ""}
-      ${pitcher.extension != null ? `<div class="pitcher-stat"><div class="label">Ext</div><div class="val">${fmt.num(pitcher.extension,1)} ft</div></div>` : ""}
-      ${pitcher.weighted_run_value != null ? `<div class="pitcher-stat"><div class="label">Run Val</div><div class="val">${fmt.sign(pitcher.weighted_run_value,3)}</div></div>` : ""}
-    </div>
-
-    <div class="arsenal-tabs">
-      <button class="arsenal-tab-btn active" data-split="overall">Overall</button>
-      ${vsL.length ? `<button class="arsenal-tab-btn" data-split="vs_l">vs LHB</button>` : ""}
-      ${vsR.length ? `<button class="arsenal-tab-btn" data-split="vs_r">vs RHB</button>` : ""}
-    </div>
-    <div class="arsenal-table-wrap">${arsenalTable(arsenal)}</div>
-  </div>
-  `;
-}
-
-function arsenalTable(arsenal) {
-  if (!arsenal.length) return `<div class="muted" style="padding:8px;font-size:0.8rem;">No pitch data available.</div>`;
-  const hasStuff = arsenal.some(p => p.pitch_quality != null);
-  const hasBB    = arsenal.some(p => p.bb_pct != null);
-  const hasXba   = arsenal.some(p => p.xba != null);
-  return `
-  <table class="arsenal-table">
-    <thead>
-      <tr>
-        <th>Pitch</th>
-        <th>Use%</th>
-        ${hasStuff ? "<th>Stuff+</th><th>Whiff%</th>" : ""}
-        ${hasXba ? "<th>xBA</th>" : ""}
-        <th>K%</th>
-        ${hasBB ? "<th>BB%</th>" : ""}
-        <th>RV/100</th>
-      </tr>
-    </thead>
-    <tbody>
-      ${arsenal.map(p=>`
-      <tr>
-        <td><span class="pitch-type-badge" title="${p.pitch_name||p.pitch_type}">${p.pitch_type}</span></td>
-        <td>${fmt.pct(p.usage_pct,0)}</td>
-        ${hasStuff ? `
-        <td class="${stuffCellClass(p.pitch_quality)}">${p.pitch_quality != null ? p.pitch_quality : "—"}</td>
-        <td>${p.whiff_pct != null ? p.whiff_pct.toFixed(1)+"%" : "—"}</td>
-        ` : ""}
-        ${hasXba ? `<td class="${valClass(p.xba,false,0.240,0.270)}">${fmt.num(p.xba,3)}</td>` : ""}
-        <td class="${valClass(p.k_pct,true,0.22,0.18)}">${p.k_pct != null ? fmt.pct(p.k_pct) : "—"}</td>
-        ${hasBB ? `<td class="${valClass(p.bb_pct,false,0.08,0.13)}">${fmt.pct(p.bb_pct)}</td>` : ""}
-        <td class="${p.run_value_per_100!=null?(+(p.run_value_per_100)<=0?"val-good":"val-bad"):(+(p.run_value||0)>=0?"val-good":"val-bad")}">${p.run_value_per_100!=null?fmt.sign(p.run_value_per_100,1):fmt.sign(p.run_value,3)}</td>
-      </tr>
-      `).join("")}
-    </tbody>
-  </table>
-  `;
-}
-
-/* ── Team / Batter Section ── */
-function renderTeamSection(lineupCard) {
-  if (!lineupCard) return "";
-  const confirmed = lineupCard.confirmed;
-  const players = (lineupCard.players || []).slice().sort((a, b) => {
-    if (confirmed) {
-      // slot may be stored as string "1", number 1, or "-"/null
-      const aSlot = parseInt(a.slot) || parseInt(a.batting_order) || 999;
-      const bSlot = parseInt(b.slot) || parseInt(b.batting_order) || 999;
-      return aSlot - bSlot;
-    }
-    return (b.matchup_score || 0) - (a.matchup_score || 0);
-  });
-  return `
-  <div class="team-section">
-    <div class="team-head">
-      <div>
-        <div class="team-name">${lineupCard.team}</div>
-        <div class="team-label">${lineupCard.label}</div>
-      </div>
-      ${!confirmed ? `<span class="badge badge-pass">Projected</span>` : `<span class="badge badge-strong badge-confirmed-lineup">✓ Confirmed Lineup</span>`}
-    </div>
-    <div class="player-list">
-      ${players.map((p, i) => renderPlayerRow(p, confirmed, i + 1)).join("")}
-    </div>
-  </div>
-  `;
-}
-
-function matchupBlurb(player) {
-  const pm = player.pitch_matchup || {};
-  const xwoba = pm.matchup_xwoba;
-  if (!xwoba) return "";
-  const kRisk = pm.matchup_k_risk   || 0;
-  const bbUp  = pm.matchup_bb_upside || 0;
-  const hh    = pm.matchup_hard_hit_pct || 0;
-  const pHand = player.pitcher_hand || "?";
-  const bHand = player.handedness   || "?";
-  const hasPlatoon = bHand !== "?" && pHand !== "?" && bHand !== pHand;
-
-  let label, cls;
-  if      (xwoba >= 0.370) { label = "Strong batter advantage"; cls = "blurb-strong"; }
-  else if (xwoba >= 0.340) { label = "Slight batter edge";      cls = "blurb-edge";   }
-  else if (xwoba <= 0.270) { label = "Pitcher dominant";        cls = "blurb-weak";   }
-  else if (xwoba <= 0.295) { label = "Slight pitcher edge";     cls = "blurb-pitcher";}
-  else                     { label = "Neutral matchup";         cls = "blurb-neutral";}
-
-  const bits = [];
-  if (hasPlatoon)       bits.push(`${bHand} vs ${pHand}HP platoon advantage`);
-  if (hh >= 0.50)       bits.push(`elite hard contact (${fmt.pct(hh,0)} HH)`);
-  else if (hh >= 0.42)  bits.push(`above-avg hard contact (${fmt.pct(hh,0)} HH)`);
-  else if (hh > 0 && hh <= 0.28) bits.push(`weak contact (${fmt.pct(hh,0)} HH)`);
-  if (kRisk >= 0.30)    bits.push(`high K risk (${fmt.pct(kRisk,0)} K)`);
-  else if (kRisk > 0 && kRisk <= 0.17) bits.push(`low K risk (${fmt.pct(kRisk,0)} K)`);
-  if (bbUp >= 0.12)     bits.push(`strong walk upside (${fmt.pct(bbUp,0)} BB)`);
-
-  const detail = bits.length ? ` · ${bits.join(", ")}` : "";
-  return `<div class="matchup-blurb"><span class="blurb-label ${cls}">${label}</span><span class="blurb-detail">${fmt.num(xwoba,3)} xwOBA vs pitch mix${detail}.</span></div>`;
-}
-
-function renderPitchVsStarter(player) {
-  const pitches = player.pitch_vs_starter || [];
-  if (!pitches.length) {
-    const tags = (player.pitch_scores || []).slice(0, 3).map(ps => {
-      return `<span class="pitch-match-tag ${pitchMatchClass(ps.pitch_score)}">${ps.pitch_type} ${fmt.num(ps.pitch_score, 0)}</span>`;
-    }).join("");
-    return tags ? `<div class="pitch-matches">${tags}</div>` : "";
-  }
-  const rows = pitches.filter(p => p.has_batter_data).map(p => {
-    const xwobaCls = p.batter_xwoba != null ? valClass(p.batter_xwoba, true, 0.330, 0.290) : "";
-    const kCls = p.batter_k_pct != null ? (p.batter_k_pct >= 0.28 ? "val-bad" : p.batter_k_pct <= 0.18 ? "val-good" : "") : "";
-    return `
-    <div class="pitch-vs-row">
-      <span class="pitch-type-badge">${p.pitch_type}</span>
-      <span class="pitch-vs-use">${fmt.pct(p.usage_pct, 0)}</span>
-      ${p.batter_xwoba != null ? `<span class="pitch-vs-stat"><span class="pv-label">xwOBA</span> <span class="pv-val ${xwobaCls}">${fmt.num(p.batter_xwoba, 3)}</span></span>` : ""}
-      ${p.batter_k_pct != null ? `<span class="pitch-vs-stat"><span class="pv-label">K%</span> <span class="pv-val ${kCls}">${fmt.pct(p.batter_k_pct)}</span></span>` : ""}
-    </div>`;
-  }).join("");
-  return rows ? `<div class="pitch-vs-wrap"><div class="pitch-vs-header">vs starter's top pitches</div>${rows}</div>` : "";
-}
-
-function renderPlayerRow(player, confirmed = false, listIndex = null) {
-  const sim = player.simulation || {};
-  const pitchScores = player.pitch_scores || player.best_pitch_matches || [];
-  const hand = player.handedness || "?";
-  const pHand = player.pitcher_hand || "?";
-  const platoonNote = hand !== "?" && pHand !== "?" ? (hand !== pHand ? "opp-hand" : "same-hand") : "";
-  const platoonBadge = platoonNote === "opp-hand"
-    ? `<span class="badge badge-strong" title="Opposite hand matchup">OPP</span>`
-    : platoonNote === "same-hand"
-      ? `<span class="badge badge-pass" title="Same hand matchup">SAME</span>`
+  const dots =
+    points.length <= 60
+      ? points
+          .map(
+            (p, i) =>
+              `<circle cx="${x(i).toFixed(1)}" cy="${y(p.y).toFixed(1)}" r="2.6" class="dot"><title>${esc(
+                p.label
+              )}: ${yFormat(p.y)}</title></circle>`
+          )
+          .join("")
       : "";
 
-  const topPitchTags = pitchScores.slice(0,3).map(ps => {
-    const cls = pitchMatchClass(ps.pitch_score);
-    return `<span class="pitch-match-tag ${cls}">${ps.pitch_type} ${fmt.num(ps.pitch_score,0)}</span>`;
-  }).join("");
+  const xFirst = points[0].label || "";
+  const xLast = last.label || "";
 
-  const hasSim = sim.pa > 0;
+  return `<svg viewBox="0 0 ${width} ${height}" role="img" aria-label="${esc(yLabel)}" preserveAspectRatio="xMidYMid meet">
+    ${grid}
+    <path d="${area}" class="area ${lastCls}"/>
+    <path d="${path}" class="line ${lastCls}"/>
+    ${dots}
+    <text x="${pad.left}" y="${height - 6}" class="tick-label">${esc(xFirst)}</text>
+    <text x="${pad.left + w}" y="${height - 6}" class="tick-label" text-anchor="end">${esc(xLast)}</text>
+  </svg>`;
+}
 
-  // K% coloring: high K is bad for batter
-  const kCls  = player.k_pct  == null ? "" : player.k_pct  >= 0.28 ? "val-bad"  : player.k_pct  <= 0.18 ? "val-good" : "";
-  const bbCls = player.bb_pct == null ? "" : player.bb_pct >= 0.12  ? "val-good" : player.bb_pct <= 0.06  ? "val-bad"  : "";
-  const hhCls = player.hard_hit_pct == null ? "" : player.hard_hit_pct >= 0.42 ? "val-good" : player.hard_hit_pct <= 0.30 ? "val-bad" : "";
-  const srcTag = player.has_pitch_matchup
-    ? `<span class="player-src-tag">vs arsenal</span>`
-    : `<span class="player-src-tag player-src-season">season avg</span>`;
+/* ────────────────────────── performance section ────────────────────────── */
 
-  return `
-  <article class="player-row">
-    <div class="player-header">
-      <div class="player-name-block">
-        ${(() => { const n = parseInt(player.slot) || parseInt(player.batting_order) || (confirmed && listIndex ? listIndex : null); return n ? `<span class="player-batting-order">${n}</span>` : ""; })()}
-        <span class="player-name">${player.name}</span>
-        ${hand !== "?" ? `<span class="badge ${hand==="L"?"badge-lhb":"badge-rhb"}">${hand}</span>` : ""}
-        ${platoonBadge}
-        ${srcTag}
-      </div>
-      ${matchupScoreBadge(player.matchup_score)}
+function renderPerformance(metrics) {
+  const overall = metrics.overall || {};
+  const clv = metrics.clv || {};
+  const threshold = metrics.small_sample_threshold ?? 100;
+
+  const warn = el("sample-warning");
+  if ((overall.n ?? 0) < threshold) {
+    warn.classList.remove("hidden");
+    warn.innerHTML =
+      `<strong>Small-sample warning:</strong> only ${overall.n ?? 0} graded entries so far ` +
+      `(threshold for meaning: ${threshold}). Every number below is statistically indistinguishable ` +
+      `from luck. This page exists to accumulate evidence, not to claim an edge.`;
+  }
+
+  const record = `${overall.wins ?? 0}–${overall.losses ?? 0}${overall.pushes ? `–${overall.pushes}` : ""}`;
+  const stats = [
+    { label: "Graded entries", value: String(overall.n ?? 0), sub: "picks + leans", cls: "flat" },
+    { label: "Record", value: record, sub: `hit rate ${fmt.pct(overall.hit_rate)}`, cls: "flat" },
+    { label: "P&L (flat 1u)", value: fmt.units(overall.profit_units), sub: `ROI ${fmt.spct(overall.roi)}`, cls: signClass(overall.profit_units) },
+    { label: "Avg CLV", value: fmt.pp(clv.mean_clv), sub: `${clv.n ?? 0} priced vs close`, cls: signClass(clv.mean_clv) },
+  ];
+  el("perf-stats").innerHTML = stats
+    .map(
+      (s) => `<div class="stat-card">
+        <div class="stat-label">${esc(s.label)}</div>
+        <div class="stat-value ${s.cls}">${esc(s.value)}</div>
+        <div class="stat-sub">${esc(s.sub)}</div>
+      </div>`
+    )
+    .join("");
+
+  el("clv-n").innerHTML = nBadge(clv.n ?? 0, clv.reliable);
+  const clvPoints = (clv.cumulative || []).map((c) => ({ y: c.cum_avg_clv * 100, label: c.date }));
+  el("clv-chart").innerHTML =
+    clvPoints.length >= 2
+      ? lineChart({ points: clvPoints, yLabel: "Cumulative average CLV", yFormat: (v) => `${v >= 0 ? "+" : ""}${v.toFixed(1)}pp` })
+      : `<div class="empty">CLV accumulates as intraday odds snapshots land — ${clv.n ?? 0} sample(s) so far.</div>`;
+  el("clv-note").textContent = clv.proxy_note || "";
+
+  const daily = metrics.daily || [];
+  el("pnl-n").innerHTML = nBadge(overall.n ?? 0, overall.reliable);
+  const pnlPoints = daily.map((d) => ({ y: d.cum_units, label: d.date }));
+  el("pnl-chart").innerHTML =
+    pnlPoints.length >= 2
+      ? lineChart({ points: pnlPoints, yLabel: "Cumulative units", yFormat: (v) => `${v >= 0 ? "+" : ""}${v.toFixed(1)}u` })
+      : `<div class="empty">Not enough graded days to chart.</div>`;
+
+  renderRecordTable(el("tier-table"), metrics.by_tier || {}, "Tier");
+  renderRecordTable(el("market-table"), metrics.by_market || {}, "Market");
+  renderCalibration(metrics.calibration || {});
+  renderMetaModel(metrics.meta_model || {});
+}
+
+function renderRecordTable(table, groups, label) {
+  const names = Object.keys(groups);
+  if (names.length === 0) {
+    table.innerHTML = `<tbody><tr><td class="empty-cell">No graded entries yet.</td></tr></tbody>`;
+    return;
+  }
+  const rows = names
+    .map((name) => {
+      const g = groups[name];
+      return `<tr>
+        <td class="mono">${esc(name)}</td>
+        <td>${g.wins}–${g.losses}${g.pushes ? `–${g.pushes}` : ""}</td>
+        <td>${fmt.pct(g.hit_rate)}</td>
+        <td class="${signClass(g.profit_units)}">${fmt.units(g.profit_units)}</td>
+        <td class="${signClass(g.roi)}">${fmt.spct(g.roi)}</td>
+        <td>${nBadge(g.n, g.reliable)}</td>
+      </tr>`;
+    })
+    .join("");
+  table.innerHTML = `<thead><tr><th>${esc(label)}</th><th>W–L</th><th>Hit</th><th>P&amp;L</th><th>ROI</th><th>Sample</th></tr></thead><tbody>${rows}</tbody>`;
+}
+
+function renderCalibration(cal) {
+  el("cal-n").innerHTML = nBadge(cal.n ?? 0, cal.reliable);
+  const rows = (cal.rows || [])
+    .map((r) => {
+      if (!r.n) {
+        return `<tr class="dim"><td class="mono">${esc(r.bucket)}</td><td>0</td><td>—</td><td>—</td><td>—</td></tr>`;
+      }
+      return `<tr>
+        <td class="mono">${esc(r.bucket)}</td>
+        <td>${r.n}</td>
+        <td>${fmt.pct(r.avg_predicted)}</td>
+        <td>${fmt.pct(r.win_rate)}</td>
+        <td class="${signClass(r.gap)}">${fmt.pp(r.gap, 1)}</td>
+      </tr>`;
+    })
+    .join("");
+  el("calibration-table").innerHTML =
+    `<thead><tr><th>Model prob</th><th>N</th><th>Predicted</th><th>Realized</th><th>Gap</th></tr></thead><tbody>${rows}</tbody>`;
+}
+
+function renderMetaModel(meta) {
+  const trained = meta.state === "trained";
+  let coefRows = "";
+  if (trained && meta.coefficients) {
+    coefRows = `<div class="table-scroll"><table class="coef-table"><thead><tr><th>Feature</th><th>Coefficient</th></tr></thead><tbody>${Object.entries(
+      meta.coefficients
+    )
+      .map(
+        ([k, v]) =>
+          `<tr><td class="mono">${esc(k)}</td><td class="${signClass(v)} mono">${v >= 0 ? "+" : ""}${(+v).toFixed(4)}</td></tr>`
+      )
+      .join("")}</tbody></table></div>`;
+  }
+  el("meta-model-card").innerHTML = `
+    <div class="meta-status ${trained ? "meta-trained" : "meta-fallback"}">
+      <span class="meta-dot"></span>
+      <span class="meta-state">${trained ? "TRAINED" : "FALLBACK"}</span>
+      <span class="meta-msg">${esc(meta.message || "status unavailable")}</span>
     </div>
-
-    <div class="player-stats">
-      ${player.xwoba != null ? `<div class="player-stat"><div class="ps-label">xwOBA</div><div class="ps-val ${valClass(player.xwoba,true,0.330,0.290)}">${fmt.num(player.xwoba,3)}</div></div>` : ""}
-      ${player.hard_hit_pct != null ? `<div class="player-stat"><div class="ps-label">HH%</div><div class="ps-val ${hhCls}">${fmt.pct(player.hard_hit_pct)}</div></div>` : ""}
-      ${player.k_pct != null ? `<div class="player-stat"><div class="ps-label">K%</div><div class="ps-val ${kCls}">${fmt.pct(player.k_pct)}</div></div>` : ""}
-    </div>
-
-    ${renderPitchVsStarter(player)}
-
-    ${matchupBlurb(player)}
-
-    ${hasSim ? `
-    <div class="sim-row">
-      <div class="sim-divider"></div>
-      <div class="sim-stat sim-featured"><div class="sim-lbl">RBI</div><div class="sim-val">${fmt.num(sim.rbi,2)}</div></div>
-      <div class="sim-stat sim-featured"><div class="sim-lbl">H</div><div class="sim-val">${fmt.num(sim.hits,2)}</div></div>
-      <div class="sim-divider"></div>
-      <div class="sim-stat"><div class="sim-lbl">HR</div><div class="sim-val">${fmt.num(sim.hr,2)}</div></div>
-      <div class="sim-stat"><div class="sim-lbl">TB</div><div class="sim-val">${fmt.num(sim.tb,2)}</div></div>
-      <div class="sim-stat"><div class="sim-lbl">BB</div><div class="sim-val">${fmt.num(sim.bb,2)}</div></div>
-      <div class="sim-stat"><div class="sim-lbl">K</div><div class="sim-val">${fmt.num(sim.k,2)}</div></div>
-      <div class="sim-stat"><div class="sim-lbl">PA</div><div class="sim-val">${fmt.num(sim.pa,2)}</div></div>
-      <div class="sim-divider"></div>
-      <div class="sim-stat"><div class="sim-lbl">H%</div><div class="sim-val">${fmt.pct(sim.hit_prob,0)}</div></div>
-      <div class="sim-stat"><div class="sim-lbl">HR%</div><div class="sim-val">${fmt.pct(sim.hr_prob,0)}</div></div>
-    </div>
-    ` : ""}
-  </article>
+    <p class="panel-note">
+      A logistic regression stacking the raw module signals with the market's no-vig probability.
+      It stays inert until ${esc(String(meta.threshold ?? 150))}+ graded picks with stored signals exist —
+      fitting a meta-model on a couple dozen bets would be curve-fitting noise. Until then the
+      published probabilities are the hand-set config blend, untouched.
+    </p>
+    ${coefRows}
+    ${trained ? `<p class="panel-note">Trained ${esc(meta.trained_at || "")} · in-sample accuracy ${fmt.pct(meta.train_accuracy)}</p>` : ""}
   `;
 }
 
-/* ── History Table ── */
+/* ────────────────────────── today's board ────────────────────────── */
+
+function pickCard(p, kind) {
+  const edgeCls = signClass(p.edge);
+  return `<div class="pick-card">
+    <div class="pick-top">
+      <span class="pick-market mono">${esc(p.market_type)}</span>
+      <span class="pick-tier tier-${esc((p.tier || "").toLowerCase())}">${esc(p.tier || "")}</span>
+    </div>
+    <div class="pick-main">${esc(p.pick)} ${p.market_type === "game_total" ? esc(String(p.line)) : ""} <span class="mono">${fmt.odds(p.american_odds)}</span></div>
+    <div class="pick-matchup">${esc(p.matchup)}${p.start_time ? ` · ${esc(p.start_time)}` : ""}</div>
+    <div class="pick-nums mono">
+      <span>model ${fmt.pct(p.model_probability)}</span>
+      <span>market ${fmt.pct(p.no_vig_probability)}</span>
+      <span class="${edgeCls}">edge ${fmt.spct(p.edge)}</span>
+    </div>
+    ${kind === "lean" ? `<div class="pick-flag">lean — not a bet</div>` : ""}
+  </div>`;
+}
+
+function renderBoard(latest) {
+  el("board-date").textContent = latest?.date
+    ? `${fmt.dateLong(latest.date)} — picks lock at first publication and are graded next morning.`
+    : "No board available.";
+
+  const picks = latest?.daily?.picks || [];
+  const leans = latest?.daily?.leans || [];
+
+  el("board-picks").innerHTML = picks.length
+    ? picks.map((p) => pickCard(p, "pick")).join("")
+    : `<div class="empty">No qualifying edges today — the model passes when the mid-band (3–6% edge) is empty. Passing is a position.</div>`;
+
+  if (leans.length) {
+    el("board-leans-wrap").classList.remove("hidden");
+    el("board-leans").innerHTML = leans.map((p) => pickCard(p, "lean")).join("");
+  }
+
+  renderSlate(latest?.daily?.lineup_cards || []);
+}
+
+function renderSlate(cards) {
+  if (!cards.length) {
+    el("slate-table").innerHTML = `<tbody><tr><td class="empty-cell">No games on the current board.</td></tr></tbody>`;
+    return;
+  }
+  const rows = cards
+    .map((c) => {
+      const marketTotal = (c.top_game_picks || []).find((q) => q.market_type === "game_total");
+      const modelTotal = c.simulated_total ?? c.projected_total;
+      const diff = marketTotal && modelTotal != null ? modelTotal - marketTotal.line : null;
+      return `<tr>
+        <td>
+          <div class="slate-matchup">${esc(c.matchup)}</div>
+          <div class="slate-sub">${esc(c.away_pitcher?.name || "TBD")} vs ${esc(c.home_pitcher?.name || "TBD")}</div>
+        </td>
+        <td class="mono">${c.start_time ? esc(c.start_time) : "—"}</td>
+        <td class="mono">${marketTotal ? fmt.num(marketTotal.line, 1) : "—"}</td>
+        <td class="mono">${fmt.num(modelTotal, 2)}</td>
+        <td class="mono ${signClass(diff)}">${diff == null ? "—" : (diff >= 0 ? "+" : "") + diff.toFixed(2)}</td>
+        <td class="mono">${fmt.pct(c.home_win_prob, 0)}</td>
+        <td><span class="lineup-flag ${c.lineup_status === "confirmed" ? "ok" : ""}">${esc(c.lineup_status || "projected")}</span></td>
+      </tr>`;
+    })
+    .join("");
+  el("slate-table").innerHTML =
+    `<thead><tr><th>Game</th><th>First pitch</th><th>Mkt total</th><th>Model</th><th>Δ</th><th>Home win</th><th>Lineups</th></tr></thead><tbody>${rows}</tbody>`;
+}
+
+/* ────────────────────────── archive ────────────────────────── */
+
+function renderArchiveDates(index) {
+  const dates = index?.dates || [];
+  if (!dates.length) {
+    el("archive-dates").innerHTML = `<div class="empty">No archived days yet.</div>`;
+    return;
+  }
+  el("archive-dates").innerHTML = dates
+    .map(
+      (d) => `<button class="archive-date" data-date="${esc(d.date)}">
+        <span class="mono">${esc(d.date)}</span>
+        <span class="archive-meta">${d.picks} pick${d.picks === 1 ? "" : "s"} · ${d.leans ?? 0} lean${(d.leans ?? 0) === 1 ? "" : "s"} · ${d.games} games</span>
+      </button>`
+    )
+    .join("");
+  el("archive-dates")
+    .querySelectorAll(".archive-date")
+    .forEach((btn) => btn.addEventListener("click", () => loadArchiveDay(btn.dataset.date, btn)));
+}
+
+async function loadArchiveDay(date, btn) {
+  el("archive-dates").querySelectorAll(".archive-date").forEach((b) => b.classList.remove("active"));
+  if (btn) btn.classList.add("active");
+  const detail = el("archive-detail");
+  detail.innerHTML = `<div class="empty">Loading ${esc(date)}…</div>`;
+  try {
+    const day = await fetchJSON(`data/${date}.json`);
+    const picks = day?.daily?.picks || [];
+    const leans = day?.daily?.leans || [];
+    const all = [...picks.map((p) => ({ ...p, _kind: "pick" })), ...leans.map((p) => ({ ...p, _kind: "lean" }))];
+    detail.innerHTML = `
+      <h3 class="subhead">${fmt.dateLong(date)}</h3>
+      ${all.length ? `<div class="cards">${all.map((p) => pickCard(p, p._kind)).join("")}</div>` : `<div class="empty">No picks or leans published that day.</div>`}
+    `;
+  } catch {
+    detail.innerHTML = `<div class="empty">Could not load ${esc(date)}.</div>`;
+  }
+}
+
+/* ────────────────────────── history ────────────────────────── */
+
 function renderHistory(history) {
-  const $summary = document.getElementById("history-summary");
-  if (!history.length) {
-    $historyTbl.innerHTML = `<tr><td colspan="8" class="empty-state">No graded picks yet — check back after games complete.</td></tr>`;
-    if ($summary) $summary.innerHTML = "";
+  const entries = (history || []).filter((e) => e.result);
+  el("history-sub").textContent = entries.length
+    ? `${entries.length} graded entries · flat 1u stakes at archived odds · CLV vs pre-first-pitch snapshot.`
+    : "No graded entries yet.";
+  if (!entries.length) {
+    el("history-table").innerHTML = `<tbody><tr><td class="empty-cell">Nothing graded yet.</td></tr></tbody>`;
     return;
   }
-
-  // Summary strip — picks only for headline stats
-  const picks  = history.filter(p => !p.is_lean);
-  const graded = picks.filter(p => p.result && p.result !== "pending" && p.result !== "no_result");
-  const wins   = graded.filter(p => p.result === "win").length;
-  const losses = graded.filter(p => p.result === "loss").length;
-  const pushes = graded.filter(p => p.result === "push").length;
-  const totalPnl = graded.reduce((s, p) => s + (p.pnl || 0), 0);
-  const roi = graded.length ? totalPnl / (graded.length * 100) : 0;
-  const pnlCls = totalPnl >= 0 ? "val-good" : "val-bad";
-
-  const leanGraded = history.filter(p => p.is_lean && p.result && p.result !== "pending" && p.result !== "no_result");
-  const leanWins   = leanGraded.filter(p => p.result === "win").length;
-  const leanLosses = leanGraded.filter(p => p.result === "loss").length;
-
-  if ($summary) {
-    $summary.innerHTML = `
-      <div class="history-stat"><span class="hs-val">${graded.length}</span><span class="hs-lbl">Graded Picks</span></div>
-      <div class="history-stat"><span class="hs-val val-good">${wins}</span><span class="hs-lbl">Wins</span></div>
-      <div class="history-stat"><span class="hs-val val-bad">${losses}</span><span class="hs-lbl">Losses</span></div>
-      <div class="history-stat"><span class="hs-val">${pushes}</span><span class="hs-lbl">Pushes</span></div>
-      <div class="history-stat"><span class="hs-val ${pnlCls}">${totalPnl>=0?"+":""}$${totalPnl.toFixed(2)}</span><span class="hs-lbl">P&L</span></div>
-      <div class="history-stat"><span class="hs-val ${pnlCls}">${roi>=0?"+":""}${(roi*100).toFixed(1)}%</span><span class="hs-lbl">ROI</span></div>
-      ${leanGraded.length ? `<div class="history-stat history-stat-lean"><span class="hs-val">${leanWins}-${leanLosses}</span><span class="hs-lbl">Leans W-L</span></div>` : ""}
-    `;
-  }
-
-  $historyTbl.innerHTML = history.map(p => {
-    const isLean = p.is_lean;
-    const result = p.result || "pending";
-    const resultCls = result==="win"?"result-win": result==="loss"?"result-loss": result==="push"?"result-push":"result-open";
-    const pnlStr = p.pnl == null ? "—" : `${p.pnl>=0?"+":""}$${(+p.pnl).toFixed(2)}`;
-    const pnlCls2 = p.pnl == null ? "" : p.pnl > 0 ? "val-good" : p.pnl < 0 ? "val-bad" : "";
-    const dateStr = p.date || (p.placed_at||"").slice(0,10);
-    const pickSide = p.pick || p.pick_side || "—";
-    const line = p.line ? ` ${p.line}` : "";
-    return `
-    <tr class="${isLean ? "history-row-lean" : ""}">
-      <td>${dateStr}</td>
-      <td>${p.matchup||"—"}${isLean ? ' <span class="badge badge-neutral" style="font-size:0.65rem">lean</span>' : ""}</td>
-      <td>${fmtMarketType(p.market_type)}</td>
-      <td>${pickSide}${line}</td>
-      <td>${fmt.odds(p.american_odds)}</td>
-      <td>${fmt.pctS(p.edge)}</td>
-      <td class="${resultCls}">${result}</td>
-      <td class="${pnlCls2}">${pnlStr}</td>
-    </tr>
-    `;
-  }).join("");
+  const rows = entries
+    .map((e) => {
+      const resCls = e.result === "win" ? "pos" : e.result === "loss" ? "neg" : "flat";
+      return `<tr>
+        <td class="mono">${esc(e.date)}</td>
+        <td>${esc(e.matchup)}</td>
+        <td class="mono">${esc(e.market_type)}</td>
+        <td>${esc(e.pick)}${e.market_type === "game_total" ? ` ${esc(String(e.line))}` : ""}</td>
+        <td class="mono">${fmt.odds(e.american_odds)}</td>
+        <td class="mono">${fmt.spct(e.edge)}</td>
+        <td class="mono ${e.clv == null ? "dim" : signClass(e.clv)}">${e.clv == null ? "—" : fmt.pp(e.clv)}</td>
+        <td class="${resCls}">${esc(e.result)}</td>
+        <td class="mono ${signClass(e.pnl)}">${e.pnl == null ? "—" : fmt.units(e.pnl / 100)}</td>
+      </tr>`;
+    })
+    .join("");
+  el("history-table").innerHTML =
+    `<thead><tr><th>Date</th><th>Matchup</th><th>Market</th><th>Pick</th><th>Odds</th><th>Edge</th><th>CLV</th><th>Result</th><th>P&amp;L</th></tr></thead><tbody>${rows}</tbody>`;
 }
 
-/* ── Skipped ── */
-function renderSkipped(skipped) {
-  if (!skipped.length) {
-    $skippedList.innerHTML = `<li>No skipped games.</li>`;
-    return;
-  }
-  $skippedList.innerHTML = skipped.map(s=>`<li><strong>${s.matchup}</strong>: ${s.reason}</li>`).join("");
-}
+/* ────────────────────────── nav highlighting ────────────────────────── */
 
-/* ── Main ── */
-/* ── Live Odds Refresh ── */
-function _implied(american) {
-  return american < 0 ? (-american) / (-american + 100) : 100 / (american + 100);
-}
-function _noVig(a, b) {
-  const ra = _implied(a), rb = _implied(b), t = ra + rb;
-  return [ra / t, rb / t];
-}
-function _teamsMatch(pickName, apiName) {
-  const p = (pickName || "").toLowerCase(), a = (apiName || "").toLowerCase();
-  return p === a || p.includes(a) || a.includes(p);
-}
-function _findLiveGame(matchup, liveGames) {
-  if (!matchup || !matchup.includes(" @ ")) return null;
-  const [away, home] = matchup.split(" @ ").map(s => s.trim());
-  return liveGames.find(g => _teamsMatch(away, g.away_team) && _teamsMatch(home, g.home_team)) || null;
-}
-function _liveEdge(pick, game) {
-  if (!game) return null;
-  if (game.commence_time && new Date(game.commence_time).getTime() < Date.now()) return null;
-  const mtype = pick.market_type;
-  if (mtype === "moneyline" || mtype === "h2h") {
-    const { away_odds, home_odds, away_no_vig, home_no_vig } = game.moneyline || {};
-    if (away_odds == null) return null;
-    const isAway = _teamsMatch(pick.pick, game.away_team);
-    const isHome = _teamsMatch(pick.pick, game.home_team);
-    if (!isAway && !isHome) return null;
-    const currentOdds = isHome ? home_odds : away_odds;
-    const noVigProb   = isHome ? home_no_vig : away_no_vig;
-    const newEdge = (pick.model_probability || 0) - noVigProb;
-    return { currentOdds, noVigProb, newEdge };
-  }
-  if (mtype === "game_total" || mtype === "first_five_total") {
-    const totals = game.totals || [];
-    const over  = totals.find(t => t.name === "Over"  && String(t.point) === String(pick.line));
-    const under = totals.find(t => t.name === "Under" && String(t.point) === String(pick.line));
-    if (!over || !under) return null;
-    const [overNV, underNV] = _noVig(over.price, under.price);
-    const isOver = pick.pick === "Over";
-    const currentOdds = isOver ? over.price : under.price;
-    const noVigProb   = isOver ? overNV : underNV;
-    const newEdge = (pick.model_probability || 0) - noVigProb;
-    return { currentOdds, noVigProb, newEdge };
-  }
-  return null;
-}
-function applyLiveOdds(picks, livePayload) {
-  if (!livePayload || !picks) return picks;
-  const games = livePayload.games || [];
-  return picks.map(p => {
-    const game = _findLiveGame(p.matchup, games);
-    const live = _liveEdge(p, game);
-    if (!live) return p;
-    return { ...p, american_odds: live.currentOdds, edge: live.newEdge, _live: true };
-  });
-}
-function _oddsAge(fetchedAt) {
-  if (!fetchedAt) return "";
-  const diffMs = Date.now() - new Date(fetchedAt).getTime();
-  const mins = Math.round(diffMs / 60000);
-  if (mins < 1) return "just now";
-  if (mins === 1) return "1 min ago";
-  return `${mins} mins ago`;
-}
-
-async function loadBoard() {
-  $dailyPicks.innerHTML = `<div class="loading-state"><div class="loading-spinner"></div>Loading picks…</div>`;
-  try {
-    const payload = await fetchPayload();
-    currentCards = payload.daily.lineup_cards || [];
-
-    // Apply live odds: re-calculate edges, then re-sort and re-bucket.
-    // Picks that drop below 6% move to leans; leans that clear 6% become picks;
-    // anything under 2.5% is removed. The stored snapshot is unchanged — this
-    // is display-only so grading still uses model-run values.
-    try {
-      const r = await fetch(`data/live_odds.json?ts=${Date.now()}`);
-      if (r.ok) {
-        const lo = await r.json();
-        if (lo.date === payload.date) {
-          _liveOddsPayload = lo;
-          const seen = new Set();
-          const all = applyLiveOdds([
-            ...(payload.daily.picks || []),
-            ...(payload.daily.leans || []),
-          ], lo).filter(p => {
-            const key = `${p.market_type}|${p.pick}|${p.line}|${p.matchup}`;
-            if (seen.has(key)) return false;
-            seen.add(key);
-            return p.edge >= 0.05;
-          });
-          payload.daily.picks = all.filter(p => p.edge >= 0.10).sort((a,b) => b.edge - a.edge);
-          payload.daily.leans = all.filter(p => p.edge >= 0.05 && p.edge < 0.10).sort((a,b) => b.edge - a.edge);
-        }
-      }
-    } catch (_) { /* live odds optional */ }
-
-    // Replace each game card's top_game_picks with only the entries that
-    // actually appear in the final picks/leans list — guarantees the game
-    // card and leans section always show the same picks with identical edges.
-    const livePickMap = new Map();
-    for (const p of [...(payload.daily.picks || []), ...(payload.daily.leans || [])]) {
-      livePickMap.set(`${p.market_type}|${p.pick}|${p.line}|${p.matchup}`, p);
+function initNav() {
+  const links = Array.from(document.querySelectorAll(".nav-links a"));
+  const sections = links.map((a) => document.querySelector(a.getAttribute("href"))).filter(Boolean);
+  const activate = () => {
+    let current = sections[0];
+    for (const s of sections) {
+      if (s.getBoundingClientRect().top <= 120) current = s;
     }
-    for (const card of currentCards) {
-      card.top_game_picks = [...(payload.daily.picks || []), ...(payload.daily.leans || [])]
-        .filter(p => p.matchup === card.matchup);
-    }
-
-    computeGradeThresholds(currentCards);
-    renderHero(payload);
-    renderSummary(payload.summary || {});
-    renderPicks(payload.daily.picks || []);
-    renderLeans(payload.daily.leans || []);
-    if ($historyTbl) renderHistory(payload.history || []);
-    renderGames(currentCards);
-
-    if (_liveOddsPayload) {
-      const age = _oddsAge(_liveOddsPayload.fetched_at);
-      const badge = `<span style="font-size:0.72rem;color:var(--muted);margin-left:8px">⟳ odds updated ${age}</span>`;
-      if ($dailyMeta) $dailyMeta.insertAdjacentHTML("beforeend", badge);
-    }
-  } catch (err) {
-    console.error("loadBoard failed:", err);
-    $dailyPicks.innerHTML = `<div class="empty-state">Could not load today's board. Check back after 10 AM ET.</div>`;
-  }
+    links.forEach((a) => a.classList.toggle("active", a.getAttribute("href") === `#${current.id}`));
+  };
+  document.addEventListener("scroll", activate, { passive: true });
+  activate();
 }
 
-/* ── Sidebar Navigation ── */
-document.querySelectorAll(".nav-item[data-section]").forEach(link => {
-  link.addEventListener("click", e => {
-    e.preventDefault();
-    const section = link.dataset.section;
-    document.querySelectorAll(".nav-item").forEach(l => l.classList.remove("active"));
-    link.classList.add("active");
-    const titleEl = document.getElementById("page-title");
-    const titles = { dashboard:"Dashboard", gameboard:"Game Board", archive:"Daily Archive", history:"History" };
-    if (titleEl) titleEl.textContent = titles[section] || section;
+/* ────────────────────────── boot ────────────────────────── */
 
-    // Show/hide summary grid
-    const sg = document.getElementById("summary-grid");
-    if (sg) sg.style.display = (section === "dashboard") ? "" : "none";
-
-    // Show/hide sections
-    ["dashboard","gameboard","archive","history"].forEach(id => {
-      const el = document.getElementById(`section-${id}`);
-      if (el) el.classList.toggle("hidden", id !== section);
-    });
-
-    if (section === "archive") loadArchive();
-  });
-});
-
-/* ── Daily Archive ── */
-let archiveLoaded = false;
-
-async function loadArchive() {
-  if (archiveLoaded) return;
-  archiveLoaded = true;
-  const $dates = document.getElementById("archive-dates");
-  const $picks = document.getElementById("archive-picks");
-  if (!$dates) return;
-
-  try {
-    const r = await fetch(`data/archive_index.json?ts=${Date.now()}`);
-    const idx = await r.json();
-    const dates = (idx.dates || []).filter(d => d.picks > 0 || d.leans > 0);
-
-    if (!dates.length) {
-      $dates.innerHTML = `<div class="empty-state">No archived days yet.</div>`;
-      return;
-    }
-
-    $dates.innerHTML = dates.map(d => `
-      <button class="archive-date-btn" data-date="${d.date}">
-        <div class="archive-date-label">${fmt.date(d.date)}</div>
-        <div class="archive-date-meta">
-          ${d.picks ? `<span class="archive-picks-count">${d.picks} pick${d.picks!==1?"s":""}</span>` : ""}
-          ${d.strong ? `<span class="badge badge-strong">${d.strong} strong</span>` : ""}
-          ${d.leans ? `<span class="archive-picks-count" style="opacity:0.6">${d.leans} lean${d.leans!==1?"s":""}</span>` : ""}
-          <span class="archive-games-count">${d.games} games</span>
-        </div>
-      </button>
-    `).join("");
-
-    $dates.querySelectorAll(".archive-date-btn").forEach(btn => {
-      btn.addEventListener("click", () => {
-        $dates.querySelectorAll(".archive-date-btn").forEach(b => b.classList.remove("active"));
-        btn.classList.add("active");
-        loadArchiveDay(btn.dataset.date, $picks);
-      });
-    });
-
-    // Auto-load the most recent day
-    $dates.querySelector(".archive-date-btn")?.click();
-  } catch (err) {
-    $dates.innerHTML = `<div class="empty-state">Could not load archive.</div>`;
-  }
+async function fetchJSON(path) {
+  const resp = await fetch(path, { cache: "no-store" });
+  if (!resp.ok) throw new Error(`${resp.status} for ${path}`);
+  return resp.json();
 }
 
-async function loadArchiveDay(dateStr, $picks) {
-  $picks.innerHTML = `<div class="empty-state">Loading…</div>`;
-  try {
-    const r = await fetch(`data/${dateStr}.json?ts=${Date.now()}`);
-    const payload = await r.json();
-    const picks = payload.daily?.picks || [];
-    if (!picks.length) {
-      $picks.innerHTML = `<div class="empty-state">No picks recorded for ${dateStr}.</div>`;
-      return;
-    }
-    $picks.innerHTML = `
-      <div class="archive-picks-header">
-        <span class="archive-picks-title">Top picks — ${fmt.date(dateStr)}</span>
-        <span class="archive-picks-sub">${picks.length} model pick${picks.length!==1?"s":""} · ${(+(picks[0]?.simulation_trials||0)).toLocaleString()} trials</span>
-      </div>
-      <div class="picks-grid">${picks.map((pick, i) => {
-        const tier = (pick.tier||"").toLowerCase();
-        return `
-        <article class="pick-card tier-${tier}">
-          <div class="pick-header">
-            <div class="pick-rank">#${i+1}</div>
-            <div class="pick-main">
-              <div class="pick-matchup">${pick.matchup}</div>
-              <div class="pick-meta">
-                ${tierBadge(pick.tier)}
-                <span class="pick-market">${fmtMarketType(pick.market_type)} · ${pick.pick}${pick.line ? ` ${pick.line}` : ""} · ${pick.start_time??"TBD"}</span>
-              </div>
-            </div>
-            <div class="pick-right">
-              <div class="edge-value">${fmt.pctS(pick.edge)}</div>
-              <div class="pick-odds-line">${fmt.odds(pick.american_odds)}</div>
-            </div>
-          </div>
-          <div class="pick-body">
-            <div class="pick-stat"><div class="label">Model %</div><div class="val">${fmt.pct(pick.model_probability)}</div></div>
-            <div class="pick-stat"><div class="label">No-vig %</div><div class="val">${fmt.pct(pick.no_vig_probability)}</div></div>
-            <div class="pick-stat"><div class="label">Edge</div><div class="val" style="color:${tier==="strong"?"var(--teal)":tier==="moderate"?"var(--gold)":"var(--blue)"}">${fmt.pctS(pick.edge)}</div></div>
-            <div class="pick-stat"><div class="label">Stake</div><div class="val">${fmt.pct(pick.bankroll_fraction)}</div></div>
-            <div class="pick-stat"><div class="label">Lineup</div><div class="val">${pick.lineup_status??"—"}</div></div>
-          </div>
-          ${pick.reasoning ? `<div class="pick-reasoning">${pick.reasoning}</div>` : ""}
-        </article>`;
-      }).join("")}</div>`;
-  } catch (err) {
-    $picks.innerHTML = `<div class="empty-state">Could not load picks for ${dateStr}.</div>`;
+async function boot() {
+  initNav();
+
+  const [metrics, latest, archive, pickHistory] = await Promise.all([
+    fetchJSON("data/metrics.json").catch(() => null),
+    fetchJSON("data/latest.json").catch(() => null),
+    fetchJSON("data/archive_index.json").catch(() => null),
+    fetchJSON("data/pick_history.json").catch(() => null),
+  ]);
+
+  if (metrics) {
+    renderPerformance(metrics);
+    el("perf-asof").textContent =
+      `Every metric carries its sample size — below n=${metrics.small_sample_threshold} the honest label is "noise". ` +
+      `Updated ${metrics.generated_at ? metrics.generated_at.slice(0, 16).replace("T", " ") + " UTC" : "—"}.`;
+  } else if (latest?.meta_model) {
+    el("perf-asof").textContent = "metrics.json not found — run export_site to generate performance metrics.";
+    renderMetaModel(latest.meta_model);
+  } else {
+    el("perf-asof").textContent = "No data payloads found.";
   }
+
+  if (latest) {
+    renderBoard(latest);
+    el("footer-asof").textContent = latest.as_of ? `Data as of ${latest.as_of.slice(0, 16).replace("T", " ")} UTC` : "";
+  }
+  // pick_history.json is the grading source of truth and updates independently
+  // of board exports; latest.json's embedded history is the fallback.
+  const historyEntries = pickHistory ? [...pickHistory].reverse() : latest?.history || [];
+  renderHistory(historyEntries);
+  if (archive) renderArchiveDates(archive);
 }
 
-loadBoard();
-setInterval(loadBoard, 15 * 60 * 1000);
+boot();
