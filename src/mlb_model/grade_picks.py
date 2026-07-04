@@ -10,7 +10,7 @@ import argparse
 import json
 import ssl
 import urllib.request
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
 from pathlib import Path
 
 from mlb_model.services.odds_engine import (
@@ -21,6 +21,7 @@ from mlb_model.services.odds_engine import (
 DOCS_DATA = Path(__file__).resolve().parents[2] / "docs" / "data"
 PICK_HISTORY_PATH = DOCS_DATA / "pick_history.json"
 LIVE_ODDS_PATH = DOCS_DATA / "live_odds.json"
+SNAPSHOT_DIR = DOCS_DATA / "odds_snapshots"
 
 # Partial-name aliases so "Athletics" matches "Athletics" from the API
 _ALIASES: dict[str, str] = {
@@ -138,18 +139,69 @@ def _grade(pick: dict, game: dict) -> tuple[str, float]:
 # ---------------------------------------------------------------------------
 # Closing-line value (CLV)
 #
-# The refresh workflow rewrites docs/data/live_odds.json several times a day,
-# the last pass at ~6pm ET. grade_picks runs the NEXT morning (11am ET) BEFORE
-# the day's new odds download, so at grading time live_odds.json still holds
-# the final odds snapshot captured for the slate being graded. That snapshot
-# is used as the closing-line proxy. It is a proxy, not the true close: for
-# early games it may have been captured after first pitch, for late games it
-# is ~1-2 hours before it.
+# Preferred source: docs/data/odds_snapshots/<date>.json, written ~4x/day by
+# the snapshot-odds workflow. For each game we take the LAST snapshot captured
+# BEFORE its first pitch — the best available closing-line proxy. When no
+# pre-pitch snapshot exists for a game, the earliest snapshot that quotes it
+# is used (least post-pitch drift).
+#
+# Fallback (when the snapshots file is absent): the refresh workflow rewrites
+# docs/data/live_odds.json several times a day, the last pass at ~6pm ET.
+# grade_picks runs the NEXT morning (11am ET) BEFORE the day's new odds
+# download, so at grading time live_odds.json still holds the final odds
+# snapshot captured for the slate being graded.
+#
+# Either way this is a proxy, not the true close: DraftKings only, and up to
+# a few hours away from first pitch depending on capture timing.
 # ---------------------------------------------------------------------------
 
 
+def _parse_ts(raw: str | None) -> datetime | None:
+    if not raw:
+        return None
+    try:
+        return datetime.fromisoformat(str(raw).replace("Z", "+00:00"))
+    except ValueError:
+        return None
+
+
+def _closing_games_from_snapshots(game_date: date) -> list[dict]:
+    """Best closing proxy per game from the intraday snapshots file.
+
+    Snapshots are walked in chronological order; a later PRE-pitch snapshot
+    always replaces an earlier one, while post-pitch snapshots only fill in
+    games never seen before first pitch (keeping the earliest of them).
+    """
+    path = SNAPSHOT_DIR / f"{game_date.isoformat()}.json"
+    if not path.exists():
+        return []
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+    except Exception:
+        return []
+    snapshots = sorted(data.get("snapshots", []), key=lambda s: s.get("fetched_at", ""))
+    if not snapshots:
+        return []
+
+    chosen: dict[tuple[str, str], tuple[dict, bool]] = {}
+    for snap in snapshots:
+        fetched = _parse_ts(snap.get("fetched_at"))
+        for game in snap.get("games", []):
+            key = (game.get("away_team", ""), game.get("home_team", ""))
+            commence = _parse_ts(game.get("commence_time"))
+            pre_pitch = fetched is not None and commence is not None and fetched <= commence
+            prior = chosen.get(key)
+            if prior is None or pre_pitch:
+                chosen[key] = (game, pre_pitch)
+    return [game for game, _ in chosen.values()]
+
+
 def _load_closing_games(game_date: date) -> list[dict]:
-    """Return live-odds games for game_date, or [] when no snapshot matches."""
+    """Closing-proxy games for game_date: intraday snapshots when available,
+    else the last live_odds.json rewrite; [] when neither matches the date."""
+    snapshot_games = _closing_games_from_snapshots(game_date)
+    if snapshot_games:
+        return snapshot_games
     if not LIVE_ODDS_PATH.exists():
         return []
     try:
@@ -327,6 +379,7 @@ def grade_date(game_date: date) -> int:
             "legacy_edge": pk.get("legacy_edge"),
             "legacy_tier": pk.get("legacy_tier"),
             "legacy_model_probability": pk.get("legacy_model_probability"),
+            "module_signals": pk.get("module_signals"),
             "is_lean": is_lean,
             "result": result,
             "pnl": pnl_val,

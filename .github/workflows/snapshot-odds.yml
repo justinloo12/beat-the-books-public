@@ -1,0 +1,62 @@
+name: Snapshot Odds
+
+# Lightweight intraday odds capture: ONE Odds API call per run, appended to
+# docs/data/odds_snapshots/YYYY-MM-DD.json. grade_picks.py uses the last
+# pre-first-pitch snapshot per game as its closing-line proxy, so the more
+# of these that land near first pitches, the better the CLV measurement.
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Aligned with MLB game windows (times shown for EDT; UTC crons):
+    # 12:45pm ET — before the ~1pm early games
+    - cron: "45 16 * * *"
+    # 3:45pm ET — before the ~4pm afternoon games
+    - cron: "45 19 * * *"
+    # 6:30pm ET — before the ~6:40-7:10pm evening wave
+    - cron: "30 22 * * *"
+    # 9:30pm ET — before the ~9:40-10:10pm west-coast games
+    - cron: "30 1 * * *"
+
+permissions:
+  contents: write
+
+# Same group as the main refresh so two workflows never race a push.
+concurrency:
+  group: site-data-commit
+  cancel-in-progress: false
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    env:
+      TZ: America/New_York
+      MLB_MODEL_ODDS_API_KEY: ${{ secrets.MLB_MODEL_ODDS_API_KEY }}
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      # Stdlib-only script — no pip install needed. Keeps the run under a minute.
+      - name: Capture odds snapshot
+        run: python scripts/snapshot_odds.py
+
+      - name: Commit snapshot
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/data/odds_snapshots/
+          git diff --cached --quiet && { echo "No snapshot changes to commit."; exit 0; }
+          git commit -m "Intraday odds snapshot ($(date +'%F %H:%M %Z'))"
+          # Rebase-and-retry push: another workflow may have pushed meanwhile.
+          for attempt in 1 2 3; do
+            git pull --rebase origin main && git push && exit 0
+            echo "Push attempt ${attempt} failed; retrying…"
+            sleep 5
+          done
+          echo "Failed to push snapshot after 3 attempts."
+          exit 1

@@ -17,6 +17,12 @@ on:
 permissions:
   contents: write
 
+# Shared with snapshot-odds.yml so the two data-committing workflows never
+# race each other's pushes.
+concurrency:
+  group: site-data-commit
+  cancel-in-progress: false
+
 jobs:
   refresh:
     runs-on: ubuntu-latest
@@ -148,6 +154,8 @@ jobs:
           git add docs/data/archive_index.json
           git add docs/data/live_odds.json || true
           git add docs/data/pick_history.json || true
+          git add docs/data/metrics.json || true
+          git add config/meta_model.json || true
           git diff --cached --quiet && exit 0
           git commit -m "Refresh site snapshot for ${{ steps.slate.outputs.slate_date }}"
           # Merge remote changes before pushing; prefer our freshly-generated
