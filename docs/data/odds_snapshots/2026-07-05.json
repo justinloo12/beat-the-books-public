@@ -1006,6 +1006,79 @@
           ]
         }
       ]
+    },
+    {
+      "fetched_at": "2026-07-05T23:35:31Z",
+      "quota": {
+        "requests_remaining": 19013,
+        "requests_used": 987
+      },
+      "games": [
+        {
+          "away_team": "Miami Marlins",
+          "home_team": "Athletics",
+          "commence_time": "2026-07-05T20:31:00Z",
+          "moneyline": {},
+          "totals": [
+            {
+              "name": "Over",
+              "point": 14.5,
+              "price": -111
+            },
+            {
+              "name": "Under",
+              "point": 14.5,
+              "price": -117
+            }
+          ]
+        },
+        {
+          "away_team": "San Diego Padres",
+          "home_team": "Los Angeles Dodgers",
+          "commence_time": "2026-07-05T23:21:00Z",
+          "moneyline": {
+            "away_odds": 188,
+            "home_odds": -254,
+            "away_no_vig": 0.3261,
+            "home_no_vig": 0.6739
+          },
+          "totals": [
+            {
+              "name": "Over",
+              "point": 8.5,
+              "price": -121
+            },
+            {
+              "name": "Under",
+              "point": 8.5,
+              "price": -107
+            }
+          ]
+        },
+        {
+          "away_team": "Boston Red Sox",
+          "home_team": "Los Angeles Angels",
+          "commence_time": "2026-07-06T01:31:00Z",
+          "moneyline": {
+            "away_odds": -163,
+            "home_odds": 135,
+            "away_no_vig": 0.5929,
+            "home_no_vig": 0.4071
+          },
+          "totals": [
+            {
+              "name": "Over",
+              "point": 8.0,
+              "price": -110
+            },
+            {
+              "name": "Under",
+              "point": 8.0,
+              "price": -109
+            }
+          ]
+        }
+      ]
     }
   ]
 }
