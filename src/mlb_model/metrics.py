@@ -26,7 +26,26 @@ DECIDED = {"win", "loss"}
 # payload so the UI and the JSON agree on one number.
 SMALL_SAMPLE_THRESHOLD = 100
 
+# The all-games experiment (every slate game scored, not just picks) uses a
+# stricter floor: below this many graded games the model-vs-market Brier race
+# is labelled noise. Matches docs/protocol.md.
+ALL_GAMES_SAMPLE_THRESHOLD = 200
+
 CALIBRATION_BUCKETS = [(0.0, 0.45), (0.45, 0.50), (0.50, 0.55), (0.55, 0.60), (0.60, 1.01)]
+
+# Home-win probabilities cluster in 0.35-0.65; tails get pooled buckets.
+ALL_GAMES_CAL_BUCKETS = [
+    (0.0, 0.35),
+    (0.35, 0.40),
+    (0.40, 0.45),
+    (0.45, 0.50),
+    (0.50, 0.55),
+    (0.55, 0.60),
+    (0.60, 0.65),
+    (0.65, 1.01),
+]
+
+ROLLING_WINDOW_DAYS = 30
 
 
 def _record(entries: Iterable[dict]) -> dict[str, Any]:
@@ -142,10 +161,123 @@ def _calibration(entries: list[dict]) -> dict[str, Any]:
     }
 
 
+def _brier(pairs: list[tuple[float, int]]) -> float | None:
+    """Mean squared error of (probability, outcome) pairs."""
+    if not pairs:
+        return None
+    return round(sum((p - o) ** 2 for p, o in pairs) / len(pairs), 6)
+
+
+def _all_games_calibration(final_rows: list[dict]) -> dict[str, Any]:
+    scored = [r for r in final_rows if r.get("model_home_prob") is not None]
+    rows = []
+    for low, high in ALL_GAMES_CAL_BUCKETS:
+        members = [r for r in scored if low <= float(r["model_home_prob"]) < high]
+        label = f"{low:.2f}-{min(high, 1.0):.2f}"
+        if members:
+            wins = sum(int(r["home_win"]) for r in members)
+            avg_pred = sum(float(r["model_home_prob"]) for r in members) / len(members)
+            rows.append(
+                {
+                    "bucket": label,
+                    "n": len(members),
+                    "avg_predicted": round(avg_pred, 4),
+                    "realized": round(wins / len(members), 4),
+                    "gap": round(wins / len(members) - avg_pred, 4),
+                }
+            )
+        else:
+            rows.append({"bucket": label, "n": 0, "avg_predicted": None, "realized": None, "gap": None})
+    return {"n": len(scored), "rows": rows}
+
+
+def _rolling_brier(final_rows: list[dict]) -> list[dict]:
+    """Trailing ROLLING_WINDOW_DAYS-day Brier (model vs market), one point per
+    date that has graded games, computed over paired rows only so the two
+    curves always cover the same games."""
+    from datetime import date as _date, timedelta as _timedelta
+
+    paired = [
+        r
+        for r in final_rows
+        if r.get("model_home_prob") is not None and r.get("market_home_prob") is not None
+    ]
+    by_date: dict[str, list[dict]] = {}
+    for r in paired:
+        by_date.setdefault(str(r["date"]), []).append(r)
+    series = []
+    for day in sorted(by_date):
+        try:
+            cutoff = (_date.fromisoformat(day) - _timedelta(days=ROLLING_WINDOW_DAYS - 1)).isoformat()
+        except ValueError:
+            continue
+        window = [r for d, rows in by_date.items() if cutoff <= d <= day for r in rows]
+        series.append(
+            {
+                "date": day,
+                "n": len(window),
+                "model_brier": _brier([(float(r["model_home_prob"]), int(r["home_win"])) for r in window]),
+                "market_brier": _brier([(float(r["market_home_prob"]), int(r["home_win"])) for r in window]),
+            }
+        )
+    return series
+
+
+def _all_games_block(game_rows: list[dict]) -> dict[str, Any]:
+    """The all-games experiment: model vs no-vig market Brier on every game
+    the model priced, graded from final scores. See docs/protocol.md."""
+    final_rows = [r for r in game_rows if r.get("status") == "final" and r.get("home_win") is not None]
+    paired = [
+        r
+        for r in final_rows
+        if r.get("model_home_prob") is not None and r.get("market_home_prob") is not None
+    ]
+    model_pairs = [(float(r["model_home_prob"]), int(r["home_win"])) for r in paired]
+    market_pairs = [(float(r["market_home_prob"]), int(r["home_win"])) for r in paired]
+    model_brier = _brier(model_pairs)
+    market_brier = _brier(market_pairs)
+
+    by_version: dict[str, dict[str, Any]] = {}
+    for version in sorted({str(r.get("model_version") or "unknown") for r in paired}):
+        members = [r for r in paired if str(r.get("model_version") or "unknown") == version]
+        by_version[version] = {
+            "n": len(members),
+            "model_brier": _brier([(float(r["model_home_prob"]), int(r["home_win"])) for r in members]),
+            "market_brier": _brier([(float(r["market_home_prob"]), int(r["home_win"])) for r in members]),
+        }
+
+    return {
+        "n_logged": len(game_rows),
+        "n_final": len(final_rows),
+        "n_scored": len(paired),
+        "n_pending": sum(1 for r in game_rows if r.get("status") == "pending"),
+        "n_no_result": sum(1 for r in game_rows if r.get("status") == "no_result"),
+        "model_brier": model_brier,
+        "market_brier": market_brier,
+        "brier_delta": round(model_brier - market_brier, 6)
+        if model_brier is not None and market_brier is not None
+        else None,
+        "model_ahead": (model_brier < market_brier)
+        if model_brier is not None and market_brier is not None
+        else None,
+        "calibration": _all_games_calibration(final_rows),
+        "rolling": _rolling_brier(final_rows),
+        "by_version": by_version,
+        "threshold": ALL_GAMES_SAMPLE_THRESHOLD,
+        "reliable": len(paired) >= ALL_GAMES_SAMPLE_THRESHOLD,
+        "note": (
+            "Model home-win probability vs the no-vig market probability from the "
+            "same odds download, scored by Brier on every game the model priced. "
+            "Lower is better. Below the threshold this comparison is noise."
+        ),
+    }
+
+
 def build_metrics(
     history: list[dict],
     meta_model_status: dict | None = None,
     generated_at: str | None = None,
+    game_log: list[dict] | None = None,
 ) -> dict[str, Any]:
     graded = [e for e in history if e.get("result") in GRADED]
     picks = [e for e in graded if not e.get("is_lean")]
@@ -162,6 +294,7 @@ def build_metrics(
         "daily": _daily_series(graded),
         "clv": _clv_block(graded),
         "calibration": _calibration(graded),
+        "all_games": _all_games_block(game_log or []),
         "meta_model": meta_model_status
         or {"state": "unknown", "message": "meta-model status not computed"},
     }
@@ -183,14 +316,20 @@ def write_metrics(metrics: dict, path: Path = METRICS_PATH) -> Path:
 
 
 def main() -> None:
+    from mlb_model.game_log import load_game_log
     from mlb_model.services.meta_model import MetaModel
 
     history = load_history()
     meta = MetaModel()
     status = meta.train_from_history(history)
-    path = write_metrics(build_metrics(history, status))
+    game_rows = load_game_log()
+    path = write_metrics(build_metrics(history, status, game_log=game_rows))
     graded = sum(1 for e in history if e.get("result") in GRADED)
-    print(f"Wrote {path} ({graded} graded entries; meta-model: {status['message']})")
+    finals = sum(1 for r in game_rows if r.get("status") == "final")
+    print(
+        f"Wrote {path} ({graded} graded entries; {finals}/{len(game_rows)} "
+        f"all-games rows final; meta-model: {status['message']})"
+    )
 
 
 if __name__ == "__main__":

@@ -1,0 +1,116 @@
+date,game_id,away_team,home_team,model_version,prob_source,model_home_prob,market_home_prob,sim_home_prob,model_total,market_total_line,status,home_score,away_score,home_win,model_brier,market_brier
+2026-04-25,2026-04-25_athletics_at_texas-rangers,Athletics,Texas Rangers,v1-raw-rates,moneyline_quote,0.5329,0.5631,0.505,8.55,8.0,final,4,3,1,0.218182,0.190882
+2026-04-25,2026-04-25_boston-red-sox_at_baltimore-orioles,Boston Red Sox,Baltimore Orioles,v1-raw-rates,moneyline_quote,0.4785,0.5108,0.449,8.28,7.5,final,1,17,0,0.228962,0.260917
+2026-04-25,2026-04-25_chicago-cubs_at_los-angeles-dodgers,Chicago Cubs,Los Angeles Dodgers,v1-raw-rates,moneyline_quote,0.5361,0.5716,0.503,9.17,9.5,final,12,4,1,0.215203,0.183527
+2026-04-25,2026-04-25_cleveland-guardians_at_toronto-blue-jays,Cleveland Guardians,Toronto Blue Jays,v1-raw-rates,moneyline_quote,0.5483,0.5631,0.532,8.59,8.0,final,5,3,1,0.204033,0.190882
+2026-04-25,2026-04-25_colorado-rockies_at_new-york-mets,Colorado Rockies,New York Mets,v1-raw-rates,moneyline_quote,0.5902,0.6446,0.54,8.81,8.0,no_result,,,,,
+2026-04-25,2026-04-25_detroit-tigers_at_cincinnati-reds,Detroit Tigers,Cincinnati Reds,v1-raw-rates,moneyline_quote,0.518,0.5,0.535,8.97,9.5,final,9,2,1,0.232324,0.25
+2026-04-25,2026-04-25_los-angeles-angels_at_kansas-city-royals,Los Angeles Angels,Kansas City Royals,v1-raw-rates,moneyline_quote,0.5716,0.5825,0.561,9.16,8.5,final,12,1,1,0.183527,0.174306
+2026-04-25,2026-04-25_miami-marlins_at_san-francisco-giants,Miami Marlins,San Francisco Giants,v1-raw-rates,moneyline_quote,0.4905,0.5217,0.462,8.13,7.5,final,6,2,1,0.25959,0.228771
+2026-04-25,2026-04-25_minnesota-twins_at_tampa-bay-rays,Minnesota Twins,Tampa Bay Rays,v1-raw-rates,moneyline_quote,0.5158,0.5511,0.476,8.93,8.0,final,6,1,1,0.23445,0.201511
+2026-04-25,2026-04-25_new-york-yankees_at_houston-astros,New York Yankees,Houston Astros,v1-raw-rates,moneyline_quote,0.479,0.4175,0.536,8.99,9.0,final,3,8,0,0.229441,0.174306
+2026-04-25,2026-04-25_philadelphia-phillies_at_atlanta-braves,Philadelphia Phillies,Atlanta Braves,v1-raw-rates,moneyline_quote,0.4686,0.5424,0.401,8.54,8.5,final,5,8,0,0.219586,0.294198
+2026-04-25,2026-04-25_pittsburgh-pirates_at_milwaukee-brewers,Pittsburgh Pirates,Milwaukee Brewers,v1-raw-rates,moneyline_quote,0.5611,0.5631,0.559,8.35,8.0,final,3,6,0,0.314833,0.317082
+2026-04-25,2026-04-25_san-diego-padres_at_arizona-diamondbacks,San Diego Padres,Arizona Diamondbacks,v1-raw-rates,moneyline_quote,0.5126,0.5174,0.501,9.59,15.5,final,4,6,0,0.262759,0.267703
+2026-04-25,2026-04-25_seattle-mariners_at_st-louis-cardinals,Seattle Mariners,St. Louis Cardinals,v1-raw-rates,moneyline_quote,0.4552,0.4284,0.48,8.6,7.5,final,9,11,0,0.207207,0.183527
+2026-04-25,2026-04-25_washington-nationals_at_chicago-white-sox,Washington Nationals,Chicago White Sox,v1-raw-rates,moneyline_quote,0.5195,0.5631,0.47,9.58,8.5,final,3,6,0,0.26988,0.317082
+2026-04-26,2026-04-26_athletics_at_texas-rangers,Athletics,Texas Rangers,v1-raw-rates,moneyline_quote,0.5259,0.5333,0.519,8.42,8.5,final,1,2,0,0.276571,0.284409
+2026-04-26,2026-04-26_boston-red-sox_at_baltimore-orioles,Boston Red Sox,Baltimore Orioles,v1-raw-rates,moneyline_quote,0.5313,0.5511,0.509,8.48,7.5,final,3,5,0,0.28228,0.303711
+2026-04-26,2026-04-26_chicago-cubs_at_los-angeles-dodgers,Chicago Cubs,Los Angeles Dodgers,v1-raw-rates,moneyline_quote,0.5132,0.5321,0.496,8.76,9.0,final,6,0,1,0.236974,0.21893
+2026-04-26,2026-04-26_cleveland-guardians_at_toronto-blue-jays,Cleveland Guardians,Toronto Blue Jays,v1-raw-rates,moneyline_quote,0.5345,0.5424,0.526,8.46,8.5,final,4,2,1,0.21669,0.209398
+2026-04-26,2026-04-26_colorado-rockies_at_new-york-mets,Colorado Rockies,New York Mets,v1-raw-rates,moneyline_quote,0.5753,0.622,0.523,8.22,7.0,final,1,3,0,0.33097,0.386884
+2026-04-26,2026-04-26_detroit-tigers_at_cincinnati-reds,Detroit Tigers,Cincinnati Reds,v1-raw-rates,moneyline_quote,0.4994,0.5,0.499,8.72,9.0,final,3,8,0,0.2494,0.25
+2026-04-26,2026-04-26_los-angeles-angels_at_kansas-city-royals,Los Angeles Angels,Kansas City Royals,v1-raw-rates,moneyline_quote,0.5353,0.5261,0.544,8.3,8.5,final,11,9,1,0.215946,0.224581
+2026-04-26,2026-04-26_miami-marlins_at_san-francisco-giants,Miami Marlins,San Francisco Giants,v1-raw-rates,moneyline_quote,0.4904,0.5321,0.452,7.95,7.5,final,6,3,1,0.259692,0.21893
+2026-04-26,2026-04-26_minnesota-twins_at_tampa-bay-rays,Minnesota Twins,Tampa Bay Rays,v1-raw-rates,moneyline_quote,0.519,0.5716,0.46,8.42,8.5,final,4,2,1,0.231361,0.183527
+2026-04-26,2026-04-26_new-york-yankees_at_houston-astros,New York Yankees,Houston Astros,v1-raw-rates,moneyline_quote,0.4943,0.4489,0.536,8.8,9.5,final,7,4,1,0.255732,0.303711
+2026-04-26,2026-04-26_philadelphia-phillies_at_atlanta-braves,Philadelphia Phillies,Atlanta Braves,v1-raw-rates,moneyline_quote,0.5888,0.657,0.526,8.37,8.0,final,6,2,1,0.169085,0.117649
+2026-04-26,2026-04-26_pittsburgh-pirates_at_milwaukee-brewers,Pittsburgh Pirates,Milwaukee Brewers,v1-raw-rates,moneyline_quote,0.5245,0.5261,0.523,8.38,7.5,final,5,0,1,0.2261,0.224581
+2026-04-26,2026-04-26_san-diego-padres_at_arizona-diamondbacks,San Diego Padres,Arizona Diamondbacks,v1-raw-rates,moneyline_quote,0.4524,0.4489,0.461,8.54,15.0,final,12,7,1,0.299866,0.303711
+2026-04-26,2026-04-26_seattle-mariners_at_st-louis-cardinals,Seattle Mariners,St. Louis Cardinals,v1-raw-rates,moneyline_quote,0.4602,0.4596,0.461,8.63,8.5,final,2,3,0,0.211784,0.211232
+2026-04-26,2026-04-26_washington-nationals_at_chicago-white-sox,Washington Nationals,Chicago White Sox,v1-raw-rates,moneyline_quote,0.5111,0.5261,0.497,8.54,7.5,final,1,2,0,0.261223,0.276781
+2026-04-27,2026-04-27_boston-red-sox_at_toronto-blue-jays,Boston Red Sox,Toronto Blue Jays,v1-raw-rates,moneyline_quote,0.5778,0.5631,0.594,8.57,7.0,final,0,5,0,0.333853,0.317082
+2026-04-27,2026-04-27_chicago-cubs_at_san-diego-padres,Chicago Cubs,San Diego Padres,v1-raw-rates,moneyline_quote,0.5116,0.5174,0.506,9.01,7.5,final,9,7,1,0.238535,0.232903
+2026-04-27,2026-04-27_los-angeles-angels_at_chicago-white-sox,Los Angeles Angels,Chicago White Sox,v1-raw-rates,moneyline_quote,0.4628,0.4826,0.445,9.71,9.0,final,8,7,1,0.288584,0.267703
+2026-04-27,2026-04-27_miami-marlins_at_los-angeles-dodgers,Miami Marlins,Los Angeles Dodgers,v1-raw-rates,moneyline_quote,0.6479,0.7252,0.577,9.34,8.5,final,5,4,1,0.123974,0.075515
+2026-04-27,2026-04-27_new-york-yankees_at_texas-rangers,New York Yankees,Texas Rangers,v1-raw-rates,moneyline_quote,0.3709,0.4003,0.344,8.35,8.0,final,2,4,0,0.137567,0.16024
+2026-04-27,2026-04-27_seattle-mariners_at_minnesota-twins,Seattle Mariners,Minnesota Twins,v1-raw-rates,moneyline_quote,0.4467,0.4576,0.437,9.66,9.0,final,11,4,1,0.306141,0.294198
+2026-04-27,2026-04-27_st-louis-cardinals_at_pittsburgh-pirates,St. Louis Cardinals,Pittsburgh Pirates,v1-raw-rates,moneyline_quote,0.5709,0.5511,0.589,8.75,8.0,final,2,4,0,0.325927,0.303711
+2026-04-27,2026-04-27_tampa-bay-rays_at_cleveland-guardians,Tampa Bay Rays,Cleveland Guardians,v1-raw-rates,moneyline_quote,0.542,0.5511,0.534,8.48,8.0,final,2,3,0,0.293764,0.303711
+2026-04-28,2026-04-28_arizona-diamondbacks_at_milwaukee-brewers,Arizona Diamondbacks,Milwaukee Brewers,v1-raw-rates,moneyline_quote,0.566,0.5174,0.621,10.43,8.0,final,13,2,1,0.188356,0.232903
+2026-04-28,2026-04-28_chicago-cubs_at_san-diego-padres,Chicago Cubs,San Diego Padres,v1-raw-rates,moneyline_quote,0.4767,0.4783,0.475,9.36,8.5,final,3,8,0,0.227243,0.228771
+2026-04-28,2026-04-28_detroit-tigers_at_atlanta-braves,Detroit Tigers,Atlanta Braves,v1-raw-rates,moneyline_quote,0.4913,0.5217,0.457,9.5,8.5,final,5,2,1,0.258776,0.228771
+2026-04-28,2026-04-28_houston-astros_at_baltimore-orioles,Houston Astros,Baltimore Orioles,v1-raw-rates,moneyline_quote,0.4524,0.5511,0.361,9.25,9.0,final,5,3,1,0.299866,0.201511
+2026-04-28,2026-04-28_los-angeles-angels_at_chicago-white-sox,Los Angeles Angels,Chicago White Sox,v1-raw-rates,moneyline_quote,0.4277,0.4576,0.4,8.28,7.5,final,5,2,1,0.327527,0.294198
+2026-04-28,2026-04-28_miami-marlins_at_los-angeles-dodgers,Miami Marlins,Los Angeles Dodgers,v1-raw-rates,moneyline_quote,0.6417,0.7091,0.58,8.77,7.5,final,1,2,0,0.411779,0.502823
+2026-04-28,2026-04-28_new-york-yankees_at_texas-rangers,New York Yankees,Texas Rangers,v1-raw-rates,moneyline_quote,0.4649,0.4739,0.457,8.47,7.5,final,2,3,0,0.216132,0.224581
+2026-04-28,2026-04-28_san-francisco-giants_at_philadelphia-phillies,San Francisco Giants,Philadelphia Phillies,v1-raw-rates,moneyline_quote,0.5825,0.5929,0.571,8.66,8.0,final,7,0,1,0.174306,0.16573
+2026-04-28,2026-04-28_seattle-mariners_at_minnesota-twins,Seattle Mariners,Minnesota Twins,v1-raw-rates,moneyline_quote,0.5108,0.4739,0.545,8.75,7.5,final,1,7,0,0.260917,0.224581
+2026-04-28,2026-04-28_tampa-bay-rays_at_cleveland-guardians,Tampa Bay Rays,Cleveland Guardians,v1-raw-rates,moneyline_quote,0.51,0.5321,0.489,8.91,7.5,final,0,1,0,0.2601,0.28313
+2026-04-28,2026-04-28_washington-nationals_at_new-york-mets,Washington Nationals,New York Mets,v1-raw-rates,moneyline_quote,0.5746,0.6305,0.523,9.35,8.0,final,8,0,1,0.180965,0.13653
+2026-04-29,2026-04-29_arizona-diamondbacks_at_milwaukee-brewers,Arizona Diamondbacks,Milwaukee Brewers,v1-raw-rates,simulation,0.546,,0.546,6.78,,final,2,6,0,0.298116,
+2026-04-29,2026-04-29_boston-red-sox_at_toronto-blue-jays,Boston Red Sox,Toronto Blue Jays,v1-raw-rates,simulation,0.47,,0.47,7.08,,final,8,1,1,0.2809,
+2026-04-29,2026-04-29_chicago-cubs_at_san-diego-padres,Chicago Cubs,San Diego Padres,v1-raw-rates,simulation,0.467,,0.467,6.66,,final,4,5,0,0.218089,
+2026-04-29,2026-04-29_colorado-rockies_at_cincinnati-reds,Colorado Rockies,Cincinnati Reds,v1-raw-rates,simulation,0.529,,0.529,7.35,,final,2,13,0,0.279841,
+2026-04-29,2026-04-29_detroit-tigers_at_atlanta-braves,Detroit Tigers,Atlanta Braves,v1-raw-rates,simulation,0.442,,0.442,6.9,,final,4,3,1,0.311364,
+2026-04-29,2026-04-29_houston-astros_at_baltimore-orioles,Houston Astros,Baltimore Orioles,v1-raw-rates,simulation,0.44,,0.44,6.82,,no_result,,,,,
+2026-04-29,2026-04-29_kansas-city-royals_at_athletics,Kansas City Royals,Athletics,v1-raw-rates,simulation,0.474,,0.474,6.98,,final,5,2,1,0.276676,
+2026-04-29,2026-04-29_los-angeles-angels_at_chicago-white-sox,Los Angeles Angels,Chicago White Sox,v1-raw-rates,simulation,0.554,,0.554,6.72,,final,3,2,1,0.198916,
+2026-04-29,2026-04-29_miami-marlins_at_los-angeles-dodgers,Miami Marlins,Los Angeles Dodgers,v1-raw-rates,simulation,0.567,,0.567,6.7,,final,2,3,0,0.321489,
+2026-04-29,2026-04-29_new-york-yankees_at_texas-rangers,New York Yankees,Texas Rangers,v1-raw-rates,simulation,0.538,,0.538,6.96,,final,3,0,1,0.213444,
+2026-04-29,2026-04-29_san-francisco-giants_at_philadelphia-phillies,San Francisco Giants,Philadelphia Phillies,v1-raw-rates,simulation,0.55,,0.55,6.78,,no_result,,,,,
+2026-04-29,2026-04-29_seattle-mariners_at_minnesota-twins,Seattle Mariners,Minnesota Twins,v1-raw-rates,simulation,0.531,,0.531,6.65,,final,3,5,0,0.281961,
+2026-04-29,2026-04-29_st-louis-cardinals_at_pittsburgh-pirates,St. Louis Cardinals,Pittsburgh Pirates,v1-raw-rates,simulation,0.536,,0.536,7.05,,final,4,5,0,0.287296,
+2026-04-29,2026-04-29_tampa-bay-rays_at_cleveland-guardians,Tampa Bay Rays,Cleveland Guardians,v1-raw-rates,simulation,0.451,,0.451,6.31,,final,3,1,1,0.301401,
+2026-04-29,2026-04-29_washington-nationals_at_new-york-mets,Washington Nationals,New York Mets,v1-raw-rates,simulation,0.432,,0.432,6.39,,final,2,14,0,0.186624,
+2026-06-14,2026-06-14_arizona-diamondbacks_at_cincinnati-reds,Arizona Diamondbacks,Cincinnati Reds,v1-raw-rates,moneyline_quote,0.5806,0.4978,0.668,10.62,10.0,final,3,5,0,0.337096,0.247805
+2026-06-14,2026-06-14_atlanta-braves_at_new-york-mets,Atlanta Braves,New York Mets,v1-raw-rates,moneyline_quote,0.4433,0.5333,0.351,8.23,8.5,final,8,1,1,0.309915,0.217809
+2026-06-14,2026-06-14_chicago-cubs_at_san-francisco-giants,Chicago Cubs,San Francisco Giants,v1-raw-rates,moneyline_quote,0.4827,0.5511,0.31,8.42,8.0,final,5,1,1,0.267599,0.201511
+2026-06-14,2026-06-14_colorado-rockies_at_athletics,Colorado Rockies,Athletics,v1-raw-rates,moneyline_quote,0.568,0.6364,0.507,14.0,14.0,final,9,23,0,0.322624,0.405005
+2026-06-14,2026-06-14_detroit-tigers_at_cleveland-guardians,Detroit Tigers,Cleveland Guardians,v1-raw-rates,moneyline_quote,0.5527,0.5,0.592,6.74,7.0,no_result,,,,,
+2026-06-14,2026-06-14_houston-astros_at_kansas-city-royals,Houston Astros,Kansas City Royals,v1-raw-rates,moneyline_quote,0.5829,0.5217,0.675,8.34,8.5,final,4,0,1,0.173972,0.228771
+2026-06-14,2026-06-14_los-angeles-dodgers_at_chicago-white-sox,Los Angeles Dodgers,Chicago White Sox,v1-raw-rates,moneyline_quote,0.4254,0.357,0.617,9.94,9.5,final,6,4,1,0.330165,0.413449
+2026-06-14,2026-06-14_new-york-yankees_at_toronto-blue-jays,New York Yankees,Toronto Blue Jays,v1-raw-rates,moneyline_quote,0.5424,0.4596,0.588,8.58,8.5,final,3,8,0,0.294198,0.211232
+2026-06-14,2026-06-14_philadelphia-phillies_at_milwaukee-brewers,Philadelphia Phillies,Milwaukee Brewers,v1-raw-rates,moneyline_quote,0.5476,0.4576,0.602,6.62,6.5,final,4,0,1,0.204666,0.294198
+2026-06-14,2026-06-14_san-diego-padres_at_baltimore-orioles,San Diego Padres,Baltimore Orioles,v1-raw-rates,moneyline_quote,0.4702,0.553,0.359,11.13,10.5,final,2,5,0,0.221088,0.305809
+2026-06-14,2026-06-14_seattle-mariners_at_washington-nationals,Seattle Mariners,Washington Nationals,v1-raw-rates,moneyline_quote,0.5173,0.4489,0.634,10.76,10.5,final,10,1,1,0.232999,0.303711
+2026-06-14,2026-06-14_st-louis-cardinals_at_minnesota-twins,St. Louis Cardinals,Minnesota Twins,v1-raw-rates,moneyline_quote,0.6052,0.5152,0.649,10.28,9.5,final,5,4,1,0.155867,0.235031
+2026-06-14,2026-06-14_tampa-bay-rays_at_los-angeles-angels,Tampa Bay Rays,Los Angeles Angels,v1-raw-rates,moneyline_quote,0.5316,0.4752,0.66,9.4,9.0,final,3,8,0,0.282599,0.225815
+2026-06-14,2026-06-14_texas-rangers_at_boston-red-sox,Texas Rangers,Boston Red Sox,v1-raw-rates,moneyline_quote,0.5662,0.5098,0.702,8.78,9.0,final,4,6,0,0.320582,0.259896
+2026-06-15,2026-06-15_colorado-rockies_at_chicago-cubs,Colorado Rockies,Chicago Cubs,v1-raw-rates,moneyline_quote,0.6214,0.6562,0.447,10.17,9.5,final,5,4,1,0.143338,0.118198
+2026-06-15,2026-06-15_detroit-tigers_at_houston-astros,Detroit Tigers,Houston Astros,v1-raw-rates,moneyline_quote,0.4706,0.527,0.362,9.11,9.0,final,3,9,0,0.221464,0.277729
+2026-06-15,2026-06-15_kansas-city-royals_at_washington-nationals,Kansas City Royals,Washington Nationals,v1-raw-rates,moneyline_quote,0.5156,0.5432,0.332,9.53,9.0,final,7,3,1,0.234643,0.208666
+2026-06-15,2026-06-15_los-angeles-angels_at_arizona-diamondbacks,Los Angeles Angels,Arizona Diamondbacks,v1-raw-rates,moneyline_quote,0.5084,0.5432,0.237,9.05,9.0,final,4,3,1,0.241671,0.208666
+2026-06-15,2026-06-15_miami-marlins_at_philadelphia-phillies,Miami Marlins,Philadelphia Phillies,v1-raw-rates,moneyline_quote,0.5817,0.6309,0.344,7.87,8.0,final,7,0,1,0.174975,0.136235
+2026-06-15,2026-06-15_new-york-mets_at_cincinnati-reds,New York Mets,Cincinnati Reds,v1-raw-rates,moneyline_quote,0.5139,0.5631,0.35,8.39,8.5,final,12,0,1,0.236293,0.190882
+2026-06-15,2026-06-15_pittsburgh-pirates_at_athletics,Pittsburgh Pirates,Athletics,v1-raw-rates,moneyline_quote,0.4706,0.527,0.374,10.66,10.5,final,11,2,1,0.280264,0.223729
+2026-06-15,2026-06-15_tampa-bay-rays_at_los-angeles-dodgers,Tampa Bay Rays,Los Angeles Dodgers,v1-raw-rates,moneyline_quote,0.5944,0.622,0.36,10.25,9.5,final,4,3,1,0.164511,0.142884
+2026-06-16,2026-06-16_baltimore-orioles_at_seattle-mariners,Baltimore Orioles,Seattle Mariners,v1-raw-rates,moneyline_quote,0.5278,0.5842,0.277,8.0,7.5,final,3,1,1,0.222973,0.17289
+2026-06-16,2026-06-16_chicago-white-sox_at_new-york-yankees,Chicago White Sox,New York Yankees,v1-raw-rates,moneyline_quote,0.5074,0.5638,0.342,8.01,8.0,final,12,2,1,0.242655,0.19027
+2026-06-16,2026-06-16_cleveland-guardians_at_milwaukee-brewers,Cleveland Guardians,Milwaukee Brewers,v1-raw-rates,moneyline_quote,0.5566,0.5842,0.359,8.0,8.0,final,2,1,1,0.196604,0.17289
+2026-06-16,2026-06-16_colorado-rockies_at_chicago-cubs,Colorado Rockies,Chicago Cubs,v1-raw-rates,moneyline_quote,0.6003,0.6351,0.373,10.48,9.5,final,2,5,0,0.36036,0.403352
+2026-06-16,2026-06-16_detroit-tigers_at_houston-astros,Detroit Tigers,Houston Astros,v1-raw-rates,moneyline_quote,0.5854,0.6202,0.425,8.21,8.5,final,4,2,1,0.171893,0.144248
+2026-06-16,2026-06-16_kansas-city-royals_at_washington-nationals,Kansas City Royals,Washington Nationals,v1-raw-rates,moneyline_quote,0.529,0.5638,0.314,8.96,8.5,final,6,4,1,0.221841,0.19027
+2026-06-16,2026-06-16_los-angeles-angels_at_arizona-diamondbacks,Los Angeles Angels,Arizona Diamondbacks,v1-raw-rates,moneyline_quote,0.5292,0.5055,0.556,9.15,8.5,final,0,7,0,0.280053,0.25553
+2026-06-16,2026-06-16_miami-marlins_at_philadelphia-phillies,Miami Marlins,Philadelphia Phillies,v1-raw-rates,moneyline_quote,0.5653,0.6145,0.359,7.32,8.0,final,8,2,1,0.188964,0.14861
+2026-06-16,2026-06-16_minnesota-twins_at_texas-rangers,Minnesota Twins,Texas Rangers,v1-raw-rates,moneyline_quote,0.4868,0.5432,0.323,8.87,8.5,final,2,12,0,0.236974,0.295066
+2026-06-16,2026-06-16_new-york-mets_at_cincinnati-reds,New York Mets,Cincinnati Reds,v1-raw-rates,moneyline_quote,0.4991,0.4752,0.579,10.64,10.0,final,5,3,1,0.250901,0.275415
+2026-06-16,2026-06-16_pittsburgh-pirates_at_athletics,Pittsburgh Pirates,Athletics,v1-raw-rates,moneyline_quote,0.5283,0.5631,0.38,11.12,10.5,final,5,6,0,0.279101,0.317082
+2026-06-16,2026-06-16_san-diego-padres_at_st-louis-cardinals,San Diego Padres,St. Louis Cardinals,v1-raw-rates,moneyline_quote,0.5769,0.5205,0.708,8.34,8.0,final,3,2,1,0.179014,0.22992
+2026-06-16,2026-06-16_san-francisco-giants_at_atlanta-braves,San Francisco Giants,Atlanta Braves,v1-raw-rates,moneyline_quote,0.5591,0.6083,0.348,9.59,9.0,final,2,7,0,0.312593,0.370029
+2026-06-16,2026-06-16_tampa-bay-rays_at_los-angeles-dodgers,Tampa Bay Rays,Los Angeles Dodgers,v1-raw-rates,moneyline_quote,0.5566,0.5842,0.268,8.15,8.0,final,1,0,1,0.196604,0.17289
+2026-06-16,2026-06-16_toronto-blue-jays_at_boston-red-sox,Toronto Blue Jays,Boston Red Sox,v1-raw-rates,moneyline_quote,0.5309,0.4817,0.643,6.49,7.5,final,1,6,0,0.281855,0.232035
+2026-06-17,2026-06-17_baltimore-orioles_at_seattle-mariners,Baltimore Orioles,Seattle Mariners,v1-raw-rates,moneyline_quote,0.5076,0.5424,0.251,7.52,7.5,final,3,5,0,0.257658,0.294198
+2026-06-17,2026-06-17_chicago-white-sox_at_new-york-yankees,Chicago White Sox,New York Yankees,v1-raw-rates,moneyline_quote,0.5944,0.622,0.409,8.41,8.5,final,10,5,1,0.164511,0.142884
+2026-06-17,2026-06-17_cleveland-guardians_at_milwaukee-brewers,Cleveland Guardians,Milwaukee Brewers,v1-raw-rates,moneyline_quote,0.4829,0.5321,0.31,7.87,7.5,final,9,4,1,0.267392,0.21893
+2026-06-17,2026-06-17_colorado-rockies_at_chicago-cubs,Colorado Rockies,Chicago Cubs,v1-raw-rates,moneyline_quote,0.5726,0.6296,0.284,9.93,10.0,final,8,6,1,0.182671,0.137196
+2026-06-17,2026-06-17_detroit-tigers_at_houston-astros,Detroit Tigers,Houston Astros,v1-raw-rates,moneyline_quote,0.5857,0.4957,0.681,8.09,8.5,final,4,2,1,0.171644,0.254318
+2026-06-17,2026-06-17_kansas-city-royals_at_washington-nationals,Kansas City Royals,Washington Nationals,v1-raw-rates,moneyline_quote,0.4827,0.5511,0.281,11.5,10.5,final,2,6,0,0.232999,0.303711
+2026-06-17,2026-06-17_los-angeles-angels_at_arizona-diamondbacks,Los Angeles Angels,Arizona Diamondbacks,v1-raw-rates,moneyline_quote,0.57,0.6048,0.313,9.24,9.0,final,8,1,1,0.1849,0.156183
+2026-06-17,2026-06-17_miami-marlins_at_philadelphia-phillies,Miami Marlins,Philadelphia Phillies,v1-raw-rates,moneyline_quote,0.6119,0.5291,0.663,9.54,9.5,final,4,12,0,0.374422,0.279947
+2026-06-17,2026-06-17_new-york-mets_at_cincinnati-reds,New York Mets,Cincinnati Reds,v1-raw-rates,moneyline_quote,0.5389,0.4489,0.595,8.9,9.0,final,1,9,0,0.290413,0.201511
+2026-06-17,2026-06-17_pittsburgh-pirates_at_athletics,Pittsburgh Pirates,Athletics,v1-raw-rates,moneyline_quote,0.502,0.4687,0.584,10.8,10.0,final,4,12,0,0.252004,0.21968
+2026-06-17,2026-06-17_san-diego-padres_at_st-louis-cardinals,San Diego Padres,St. Louis Cardinals,v1-raw-rates,moneyline_quote,0.4721,0.5333,0.331,10.93,10.0,final,1,6,0,0.222878,0.284409
+2026-06-17,2026-06-17_san-francisco-giants_at_atlanta-braves,San Francisco Giants,Atlanta Braves,v1-raw-rates,moneyline_quote,0.5098,0.571,0.366,9.62,9.0,final,2,7,0,0.259896,0.326041
+2026-06-17,2026-06-17_tampa-bay-rays_at_los-angeles-dodgers,Tampa Bay Rays,Los Angeles Dodgers,v1-raw-rates,moneyline_quote,0.5437,0.5929,0.399,6.74,7.0,final,5,4,1,0.20821,0.16573
+2026-06-17,2026-06-17_toronto-blue-jays_at_boston-red-sox,Toronto Blue Jays,Boston Red Sox,v1-raw-rates,moneyline_quote,0.4848,0.5412,0.35,10.22,9.5,final,0,3,0,0.235031,0.292897

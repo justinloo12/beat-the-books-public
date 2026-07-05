@@ -6,6 +6,7 @@ import json
 from datetime import date
 from pathlib import Path
 
+from mlb_model.game_log import append_board, load_game_log
 from mlb_model.metrics import build_metrics, write_metrics
 from mlb_model.services.meta_model import MetaModel
 from mlb_model.services.site_service import SiteService
@@ -139,8 +140,16 @@ async def main() -> None:
     meta_status = meta.train_from_history(graded_history)
     payload["meta_model"] = meta_status
 
-    # Performance metrics for the dashboard's Model Performance section.
-    write_metrics(build_metrics(graded_history, meta_status))
+    # Every-game prediction log: append one frozen row per slate game (model
+    # home-win prob vs no-vig market prob from the SAME odds download — zero
+    # extra API calls). First write of the day wins; re-exports never revise.
+    appended = append_board(payload)
+    if appended:
+        print(f"game_log: appended {appended} game prediction(s)")
+
+    # Performance metrics for the dashboard's Model Performance section,
+    # including the all-games model-vs-market report card.
+    write_metrics(build_metrics(graded_history, meta_status, game_log=load_game_log()))
 
     dated_path.write_text(json.dumps(payload, indent=2), encoding="utf-8")
     latest_path.write_text(json.dumps(payload, indent=2), encoding="utf-8")

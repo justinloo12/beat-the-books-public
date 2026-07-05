@@ -412,6 +412,16 @@ def main() -> None:
     args = parser.parse_args()
     grade_date(date.fromisoformat(args.date))
 
+    # Also grade the every-game prediction log (all pending dates, one free
+    # MLB Stats API call per date). Idempotent; failures never block pick
+    # grading because picks were graded above first.
+    try:
+        from mlb_model.game_log import grade_pending
+
+        grade_pending()
+    except Exception as exc:
+        print(f"game_log grading failed (picks were still graded): {exc}")
+
 
 if __name__ == "__main__":
     main()

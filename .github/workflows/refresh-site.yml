@@ -163,6 +163,7 @@ jobs:
           git add docs/data/live_odds.json || true
           git add docs/data/pick_history.json || true
           git add docs/data/metrics.json || true
+          git add docs/data/game_predictions.csv || true
           git add config/meta_model.json || true
           git diff --cached --quiet && exit 0
           git commit -m "Refresh site snapshot for ${{ steps.slate.outputs.slate_date }}"

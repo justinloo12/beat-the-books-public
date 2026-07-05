@@ -21,6 +21,7 @@
         </a>
         <nav class="nav-links" id="nav-links">
           <a href="#performance" class="active">Performance</a>
+          <a href="#experiment">The Experiment</a>
           <a href="#board">Today</a>
           <a href="#archive">Archive</a>
           <a href="#history">History</a>
@@ -84,6 +85,46 @@
           <div class="panel">
             <div class="panel-head"><h2>Stacked meta-model</h2></div>
             <div id="meta-model-card"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================ THE EXPERIMENT (all games) ============================ -->
+      <section id="experiment" class="section">
+        <div class="section-head">
+          <h1>The Experiment — every game, model vs market</h1>
+          <p class="section-sub">
+            Picks accumulate too slowly to prove anything, so the model is scored on <strong>all</strong> games it prices:
+            its home-win probability against the market's no-vig probability, graded nightly by Brier score.
+            <a href="experiment.html">Read the experiment</a> ·
+            <a href="https://github.com/justinloo12/beat-the-books-public/blob/main/docs/protocol.md">pre-registered protocol</a> ·
+            <a href="data/game_predictions.csv">raw log (CSV)</a>
+          </p>
+        </div>
+
+        <div id="ag-warning" class="callout callout-warn hidden"></div>
+
+        <div class="stat-grid" id="ag-stats"></div>
+
+        <div class="panel-grid">
+          <div class="panel">
+            <div class="panel-head">
+              <h2>30-day rolling Brier</h2>
+              <span class="panel-n" id="ag-rolling-n"></span>
+            </div>
+            <div class="chart-wrap" id="ag-rolling-chart"></div>
+            <p class="panel-note">
+              Trailing 30-day Brier over the same games for both lines. Lower is better.
+              <span class="legend-model">model</span> · <span class="legend-market">market (no-vig)</span>
+            </p>
+          </div>
+          <div class="panel">
+            <div class="panel-head">
+              <h2>Calibration — all games</h2>
+              <span class="panel-n" id="ag-cal-n"></span>
+            </div>
+            <div class="table-scroll"><table id="ag-calibration-table"></table></div>
+            <p class="panel-note" id="ag-note"></p>
           </div>
         </div>
       </section>

@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-04T02:10:47Z",
+  "generated_at": "2026-07-05T03:41:08Z",
   "small_sample_threshold": 100,
   "overall": {
     "n": 50,
@@ -244,6 +244,138 @@
       }
     ],
     "reliable": false
+  },
+  "all_games": {
+    "n_logged": 115,
+    "n_final": 111,
+    "n_scored": 98,
+    "n_pending": 0,
+    "n_no_result": 4,
+    "model_brier": 0.24424,
+    "market_brier": 0.240168,
+    "brier_delta": 0.004072,
+    "model_ahead": false,
+    "calibration": {
+      "n": 111,
+      "rows": [
+        {
+          "bucket": "0.00-0.35",
+          "n": 0,
+          "avg_predicted": null,
+          "realized": null,
+          "gap": null
+        },
+        {
+          "bucket": "0.35-0.40",
+          "n": 1,
+          "avg_predicted": 0.3709,
+          "realized": 0.0,
+          "gap": -0.3709
+        },
+        {
+          "bucket": "0.40-0.45",
+          "n": 6,
+          "avg_predicted": 0.4362,
+          "realized": 0.8333,
+          "gap": 0.3972
+        },
+        {
+          "bucket": "0.45-0.50",
+          "n": 29,
+          "avg_predicted": 0.4752,
+          "realized": 0.4828,
+          "gap": 0.0075
+        },
+        {
+          "bucket": "0.50-0.55",
+          "n": 42,
+          "avg_predicted": 0.5253,
+          "realized": 0.5,
+          "gap": -0.0253
+        },
+        {
+          "bucket": "0.55-0.60",
+          "n": 27,
+          "avg_predicted": 0.5736,
+          "realized": 0.6667,
+          "gap": 0.0931
+        },
+        {
+          "bucket": "0.60-0.65",
+          "n": 6,
+          "avg_predicted": 0.6214,
+          "realized": 0.5,
+          "gap": -0.1214
+        },
+        {
+          "bucket": "0.65-1.00",
+          "n": 0,
+          "avg_predicted": null,
+          "realized": null,
+          "gap": null
+        }
+      ]
+    },
+    "rolling": [
+      {
+        "date": "2026-04-25",
+        "n": 14,
+        "model_brier": 0.234284,
+        "market_brier": 0.231049
+      },
+      {
+        "date": "2026-04-26",
+        "n": 29,
+        "model_brier": 0.241505,
+        "market_brier": 0.239749
+      },
+      {
+        "date": "2026-04-27",
+        "n": 37,
+        "model_brier": 0.244649,
+        "market_brier": 0.240751
+      },
+      {
+        "date": "2026-04-28",
+        "n": 48,
+        "model_brier": 0.247041,
+        "market_brier": 0.242319
+      },
+      {
+        "date": "2026-06-14",
+        "n": 13,
+        "model_brier": 0.265644,
+        "market_brier": 0.27308
+      },
+      {
+        "date": "2026-06-15",
+        "n": 21,
+        "model_brier": 0.245263,
+        "market_brier": 0.240811
+      },
+      {
+        "date": "2026-06-16",
+        "n": 36,
+        "model_brier": 0.243692,
+        "market_brier": 0.239654
+      },
+      {
+        "date": "2026-06-17",
+        "n": 50,
+        "model_brier": 0.241551,
+        "market_brier": 0.238103
+      }
+    ],
+    "by_version": {
+      "v1-raw-rates": {
+        "n": 98,
+        "model_brier": 0.24424,
+        "market_brier": 0.240168
+      }
+    },
+    "threshold": 200,
+    "reliable": false,
+    "note": "Model home-win probability vs the no-vig market probability from the same odds download, scored by Brier on every game the model priced. Lower is better. Below the threshold this comparison is noise."
   },
   "meta_model": {
     "state": "fallback",

@@ -1,0 +1,51 @@
+{
+  "protocol_version": 1,
+  "frozen_at": "2026-07-04",
+  "title": "Pre-registered evaluation protocol: MLB model vs the market",
+  "human_readable": "docs/protocol.md",
+  "hypotheses": {
+    "primary": "Model home-win probability beats the no-vig market probability on Brier score across all priced games.",
+    "secondary": "Official picks show positive closing line value against the last pre-first-pitch snapshot."
+  },
+  "data": {
+    "log": "docs/data/game_predictions.csv",
+    "append_only": true,
+    "freeze_rule": "First prediction exported per game per day is frozen; intraday re-exports never revise a logged row.",
+    "market_baseline": "No-vig DraftKings home probability from the day's single odds download; zero additional odds API calls.",
+    "grading": "Nightly, automated, final scores from the free MLB Stats API; idempotent; no_result after 3 days without a final.",
+    "backfill": "Boards archived before 2026-07-04 extracted and graded under identical rules, tagged model_version=v1-raw-rates."
+  },
+  "metrics": [
+    "Cumulative Brier score, model vs market, over paired graded games",
+    "Calibration table: predicted home-win buckets vs realized rate with counts",
+    "30-day rolling Brier, model vs market, paired games only",
+    "Mean CLV on graded picks vs pre-first-pitch closing proxy"
+  ],
+  "success_criteria": {
+    "evidence_of_skill": {
+      "brier": "model Brier < market Brier over >= 1000 graded games",
+      "clv": "mean CLV > 0 over >= 300 graded picks",
+      "both_required": true
+    },
+    "evidence_of_no_skill": "model Brier >= market Brier over >= 1000 graded games",
+    "noise_floor_games": 200,
+    "noise_floor_statement": "Below 200 graded games the all-games comparison is labelled noise and no conclusion is drawn."
+  },
+  "no_peeking": {
+    "automated_publication": "Metrics regenerate and publish on every refresh with no manual step.",
+    "amendments": "Protocol changes only via dated, append-only amendments in docs/protocol.md; never retroactive.",
+    "windows": "Headline numbers are cumulative from the first logged game; the 30-day rolling Brier is the only windowed view."
+  },
+  "model_versions": {
+    "v1-raw-rates": "Raw Statcast aggregate event rates (boards through 2026-07-03).",
+    "v2-eb-2026-07-04": "Simulation event rates: EB-shrunk, park-adjusted (method-of-moments beta-binomial priors, handedness-split HR park factors) - unified with weight-room-hero-sim methodology, 2026-07-04."
+  },
+  "verdict_at_freeze": {
+    "date": "2026-07-04",
+    "games_scored": 98,
+    "model_brier": 0.2442,
+    "market_brier": 0.2402,
+    "statement": "Market ahead; sample below the noise floor. No evidence of edge."
+  },
+  "amendments": []
+}

@@ -112,6 +112,141 @@ function lineChart({ points, yLabel, yFormat = (v) => v.toFixed(2), zeroLine = t
   </svg>`;
 }
 
+/* ────────────────────────── dual-line SVG chart ────────────────────────── */
+
+function dualLineChart({ series, yFormat = (v) => v.toFixed(3), width = 640, height = 240 }) {
+  // series: [{points: [{y, label}], cls}] — both series share the same x labels.
+  const base = series[0]?.points || [];
+  if (base.length === 0) return `<div class="empty">No data yet.</div>`;
+  const pad = { top: 14, right: 14, bottom: 26, left: 56 };
+  const w = width - pad.left - pad.right;
+  const h = height - pad.top - pad.bottom;
+
+  const ys = series.flatMap((s) => s.points.map((p) => p.y)).filter((v) => v != null);
+  let yMin = Math.min(...ys);
+  let yMax = Math.max(...ys);
+  if (yMin === yMax) { yMin -= 0.01; yMax += 0.01; }
+  const spanPad = (yMax - yMin) * 0.15;
+  yMin -= spanPad;
+  yMax += spanPad;
+
+  const x = (i, n) => pad.left + (n === 1 ? w / 2 : (i / (n - 1)) * w);
+  const y = (v) => pad.top + h - ((v - yMin) / (yMax - yMin)) * h;
+
+  let grid = "";
+  for (let t = 0; t <= 4; t++) {
+    const v = yMin + ((yMax - yMin) * t) / 4;
+    grid += `<line x1="${pad.left}" y1="${y(v)}" x2="${pad.left + w}" y2="${y(v)}" class="grid-line"/>`;
+    grid += `<text x="${pad.left - 8}" y="${y(v) + 4}" class="tick-label" text-anchor="end">${yFormat(v)}</text>`;
+  }
+
+  const paths = series
+    .map((s) => {
+      const pts = s.points.filter((p) => p.y != null);
+      const path = pts.map((p, i) => `${i === 0 ? "M" : "L"}${x(i, pts.length).toFixed(1)},${y(p.y).toFixed(1)}`).join(" ");
+      const dots =
+        pts.length <= 60
+          ? pts
+              .map(
+                (p, i) =>
+                  `<circle cx="${x(i, pts.length).toFixed(1)}" cy="${y(p.y).toFixed(1)}" r="2.4" class="dot"><title>${esc(
+                    p.label
+                  )}: ${yFormat(p.y)}</title></circle>`
+              )
+              .join("")
+          : "";
+      return `<path d="${path}" class="line ${s.cls}"/>${dots}`;
+    })
+    .join("");
+
+  const xFirst = base[0].label || "";
+  const xLast = base[base.length - 1].label || "";
+  return `<svg viewBox="0 0 ${width} ${height}" role="img" aria-label="Rolling Brier: model vs market" preserveAspectRatio="xMidYMid meet">
+    ${grid}${paths}
+    <text x="${pad.left}" y="${height - 6}" class="tick-label">${esc(xFirst)}</text>
+    <text x="${pad.left + w}" y="${height - 6}" class="tick-label" text-anchor="end">${esc(xLast)}</text>
+  </svg>`;
+}
+
+/* ────────────────────────── the experiment (all games) ────────────────────────── */
+
+function renderAllGames(ag) {
+  if (!ag) return;
+  const threshold = ag.threshold ?? 200;
+
+  const warn = el("ag-warning");
+  if (!ag.reliable) {
+    warn.classList.remove("hidden");
+    warn.innerHTML =
+      `<strong>Small-sample warning:</strong> ${ag.n_scored ?? 0} graded games so far — the pre-registered ` +
+      `noise floor is ${threshold}. Until then the Brier race below is statistically meaningless, ` +
+      `and the protocol forbids drawing a conclusion from it.`;
+  } else {
+    warn.classList.add("hidden");
+  }
+
+  const delta = ag.brier_delta;
+  const verdict =
+    ag.model_ahead == null ? "—" : ag.model_ahead ? "model ahead" : "market ahead";
+  const stats = [
+    {
+      label: "Games scored vs market",
+      value: String(ag.n_scored ?? 0),
+      sub: `${ag.n_logged ?? 0} logged · ${ag.n_pending ?? 0} pending · ${ag.n_no_result ?? 0} void`,
+      cls: "flat",
+    },
+    { label: "Model Brier", value: fmt.num(ag.model_brier, 4), sub: "lower is better", cls: "flat" },
+    { label: "Market Brier (no-vig)", value: fmt.num(ag.market_brier, 4), sub: "the baseline to beat", cls: "flat" },
+    {
+      label: "Gap (model − market)",
+      value: delta == null ? "—" : `${delta >= 0 ? "+" : ""}${delta.toFixed(4)}`,
+      sub: `${verdict}${ag.reliable ? "" : " — noise at this n"}`,
+      cls: delta == null ? "flat" : delta < 0 ? "pos" : "neg",
+    },
+  ];
+  el("ag-stats").innerHTML = stats
+    .map(
+      (s) => `<div class="stat-card">
+        <div class="stat-label">${esc(s.label)}</div>
+        <div class="stat-value ${s.cls}">${esc(s.value)}</div>
+        <div class="stat-sub">${esc(s.sub)}</div>
+      </div>`
+    )
+    .join("");
+
+  const rolling = ag.rolling || [];
+  el("ag-rolling-n").innerHTML = nBadge(ag.n_scored ?? 0, ag.reliable);
+  el("ag-rolling-chart").innerHTML =
+    rolling.length >= 2
+      ? dualLineChart({
+          series: [
+            { points: rolling.map((r) => ({ y: r.model_brier, label: `${r.date} (n=${r.n})` })), cls: "line-model" },
+            { points: rolling.map((r) => ({ y: r.market_brier, label: `${r.date} (n=${r.n})` })), cls: "line-market" },
+          ],
+        })
+      : `<div class="empty">The rolling comparison needs a few graded days — ${rolling.length} so far.</div>`;
+
+  const cal = ag.calibration || {};
+  el("ag-cal-n").innerHTML = nBadge(cal.n ?? 0, ag.reliable);
+  const rows = (cal.rows || [])
+    .map((r) => {
+      if (!r.n) {
+        return `<tr class="dim"><td class="mono">${esc(r.bucket)}</td><td>0</td><td>—</td><td>—</td><td>—</td></tr>`;
+      }
+      return `<tr>
+        <td class="mono">${esc(r.bucket)}</td>
+        <td>${r.n}</td>
+        <td>${fmt.pct(r.avg_predicted)}</td>
+        <td>${fmt.pct(r.realized)}</td>
+        <td class="${signClass(r.gap)}">${fmt.pp(r.gap, 1)}</td>
+      </tr>`;
+    })
+    .join("");
+  el("ag-calibration-table").innerHTML =
+    `<thead><tr><th>Home-win prob</th><th>N</th><th>Predicted</th><th>Realized</th><th>Gap</th></tr></thead><tbody>${rows}</tbody>`;
+  el("ag-note").textContent = ag.note || "";
+}
+
 /* ────────────────────────── performance section ────────────────────────── */
 
 function renderPerformance(metrics) {
@@ -414,6 +549,7 @@ async function boot() {
 
   if (metrics) {
     renderPerformance(metrics);
+    renderAllGames(metrics.all_games);
     el("perf-asof").textContent =
       `Every metric carries its sample size — below n=${metrics.small_sample_threshold} the honest label is "noise". ` +
       `Updated ${metrics.generated_at ? metrics.generated_at.slice(0, 16).replace("T", " ") + " UTC" : "—"}.`;
