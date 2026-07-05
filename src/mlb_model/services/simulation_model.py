@@ -7,7 +7,9 @@ from dataclasses import dataclass
 from typing import Any
 
 from mlb_model.config import get_settings
+from mlb_model.park_factors import park_hit_factors
 from mlb_model.services.odds_engine import american_to_decimal, classify_edge, implied_probability_from_american, no_vig_two_sided
+from mlb_model.services.rate_shrinkage import park_factor_shrunk
 from mlb_model.services.run_distribution import RunDistributionService
 from mlb_model.utils import clamp
 
@@ -104,6 +106,14 @@ class SimulationModelService:
         home_starter_outs = int(round(home_starter_ip * 3))
         away_starter_outs = int(round(away_starter_ip * 3))
         park_factor = PARK_FACTORS.get(venue or "", 1.0)
+        # Handedness-split HR park factor, shrunk toward 1.0 (WRH methodology,
+        # see rate_shrinkage.park_factor_shrunk): the scalar PARK_FACTORS table
+        # carries the overall run environment; this multiplier carries only the
+        # L/R HR asymmetry (short porches, the Monster) on the HR component.
+        hr_park_by_hand = {
+            hand: park_factor_shrunk(park_hit_factors(venue, hand).get("HR", 1.0))
+            for hand in ("R", "L")
+        }
 
         for _ in range(self.trials):
             away_score, away_player_stats = self._simulate_team_game(
@@ -113,6 +123,7 @@ class SimulationModelService:
                 target_runs=away_target_runs,
                 starter_outs=home_starter_outs,
                 park_factor=park_factor,
+                hr_park_by_hand=hr_park_by_hand,
             )
             home_score, home_player_stats = self._simulate_team_game(
                 lineup=home_lineup,
@@ -121,6 +132,7 @@ class SimulationModelService:
                 target_runs=home_target_runs,
                 starter_outs=away_starter_outs,
                 park_factor=park_factor,
+                hr_park_by_hand=hr_park_by_hand,
             )
             self._accumulate_player_stats(player_accumulators["away"], away_player_stats)
             self._accumulate_player_stats(player_accumulators["home"], home_player_stats)
@@ -177,7 +189,28 @@ class SimulationModelService:
             if len(outcomes) != 2:
                 continue
             if market["market_key"] == "h2h":
-                pass  # moneyline disabled — ROI was −12% and gates can't fix noise
+                # Moneyline as QUOTES ONLY — betting it stays disabled (ROI was
+                # −12% and gates can't fix noise; the daily-pick loop below only
+                # admits totals, so these candidates can never become bets).
+                # The quotes are kept because the every-game prediction log
+                # (game_log.py) scores the model's calibrated home-win price
+                # against the market's no-vig price on ALL games, and the
+                # game-card blurbs display the same calibrated probabilities.
+                home_outcome = next((o for o in outcomes if o["name"] == context["home_team"]), outcomes[0])
+                away_outcome = next((o for o in outcomes if o["name"] == context["away_team"]), outcomes[1])
+                candidates.extend(
+                    self._two_sided_candidates(
+                        context,
+                        market_type="moneyline",
+                        line=0.0,
+                        left_name=context["home_team"],
+                        left_odds=int(home_outcome["price"]),
+                        left_prob=simulation.home_win_prob,
+                        right_name=context["away_team"],
+                        right_odds=int(away_outcome["price"]),
+                        right_prob=simulation.away_win_prob,
+                    )
+                )
             elif market["market_key"] == "totals":
                 first = outcomes[0]
                 second = outcomes[1]
@@ -339,6 +372,7 @@ class SimulationModelService:
         target_runs: float,
         starter_outs: int,
         park_factor: float,
+        hr_park_by_hand: dict[str, float] | None = None,
     ) -> tuple[int, dict[int, dict[str, float]]]:
         if not lineup:
             return 0, {}
@@ -359,6 +393,7 @@ class SimulationModelService:
                 bullpen_score=bullpen_score,
                 phase=phase,
                 park_factor=park_factor,
+                hr_park_by_hand=hr_park_by_hand,
             )
             outcome = self._sample_outcome(probs)
             player_stats[batter_id]["pa"] += 1
@@ -389,6 +424,7 @@ class SimulationModelService:
         bullpen_score: float,
         phase: str,
         park_factor: float,
+        hr_park_by_hand: dict[str, float] | None = None,
     ) -> dict[str, float]:
         profile = batter.get("profile", {})
         matchup = batter.get("matchup", {})
@@ -456,9 +492,15 @@ class SimulationModelService:
             k_factor *= clamp(1 - ((50 - bullpen_score) / 220), 0.90, 1.08)
             bb_factor *= clamp(1 + ((50 - bullpen_score) / 240), 0.92, 1.12)
 
+        # Handedness-split HR park multiplier (shrunk toward 1.0 upstream in
+        # simulate_game). Applied outside the hr_factor clamp: park geometry
+        # is a physical property of the venue, not model confidence.
+        hand = str(profile.get("handedness") or "R")
+        hr_park = float((hr_park_by_hand or {}).get(hand if hand in ("R", "L") else "R", 1.0))
+
         bb_rate = BASE_EVENT_RATES["bb"] * bb_factor
         k_rate = BASE_EVENT_RATES["k"] * k_factor
-        hr_rate = BASE_EVENT_RATES["hr"] * hr_factor
+        hr_rate = BASE_EVENT_RATES["hr"] * hr_factor * hr_park
         single_rate = BASE_EVENT_RATES["1b"] * contact_factor
         double_rate = BASE_EVENT_RATES["2b"] * contact_factor
         triple_rate = BASE_EVENT_RATES["3b"] * contact_factor * 0.95

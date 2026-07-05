@@ -12,6 +12,7 @@ from pandas.errors import EmptyDataError
 from pybaseball import pitching_stats
 
 from mlb_model.config import get_settings
+from mlb_model.services.rate_shrinkage import EventPriors
 
 
 STATCAST_BATTED_BALL_DESCRIPTIONS = {"hit_into_play", "hit_into_play_no_out", "hit_into_play_score"}
@@ -148,6 +149,55 @@ class BaseballSavantProvider:
                 pd.DataFrame() if frame.empty else frame[frame["_pitcher_id"] == pitcher_id]
             )
         return self._pitcher_index[pitcher_id]
+
+    # ── Empirical-Bayes league priors (vendored WRH methodology) ─────────
+    # Raw small-sample Statcast rates lose to beta-binomial shrinkage toward
+    # the league mean (proven on a strict time-based holdout in the sibling
+    # Weight Room Hero repo — see services/rate_shrinkage.py). Priors are fit
+    # ONCE per process from the league-wide distribution of per-player rates
+    # in the prepared Statcast frame, by method of moments, separately for
+    # batters and for pitchers-allowed.
+
+    _EVENT_FLAGS: dict[str, set[str]] = {
+        "k": {"strikeout", "strikeout_double_play"},
+        "bb": {"walk", "intent_walk"},
+        "1b": {"single"},
+        "2b": {"double"},
+        "3b": {"triple"},
+        "hr": {"home_run"},
+    }
+
+    def _event_priors(self, role: str) -> EventPriors:
+        """League Beta priors per event type for 'batter' or 'pitcher'.
+
+        With no Statcast data on disk this returns an empty EventPriors whose
+        shrink() passes raw rates through unchanged — the provider degrades to
+        its previous (unshrunk) behavior instead of failing.
+        """
+        if not hasattr(self, "_event_priors_cache"):
+            self._event_priors_cache: dict[str, EventPriors] = {}
+        if role in self._event_priors_cache:
+            return self._event_priors_cache[role]
+
+        priors = EventPriors()
+        frame = self._prepared_statcast()
+        id_col = "_batter_id" if role == "batter" else "_pitcher_id"
+        if not frame.empty and "events" in frame.columns and id_col in frame.columns:
+            terminal = frame[frame["events"].fillna("").isin(PLATE_ENDING_EVENTS)]
+            if not terminal.empty:
+                events = terminal["events"].fillna("")
+                pids = terminal[id_col]
+                grouped_n = pids.groupby(pids).size()
+                samples: dict[str, list[tuple[float, float]]] = {}
+                for event, names in self._EVENT_FLAGS.items():
+                    hits = events.isin(names).groupby(pids).sum()
+                    samples[event] = [
+                        (float(hits.get(pid, 0.0)), float(n))
+                        for pid, n in grouped_n.items()
+                    ]
+                priors = EventPriors.fit(samples)
+        self._event_priors_cache[role] = priors
+        return priors
 
     @lru_cache(maxsize=6)
     def _load_batter_expected_stats(self, season: int) -> pd.DataFrame:
@@ -521,8 +571,25 @@ class BaseballSavantProvider:
         arsenal.sort(key=lambda item: item["usage_pct"], reverse=True)
         pitcher_overall_bbe = pitcher_frame[pitcher_frame["description"].isin(STATCAST_BATTED_BALL_DESCRIPTIONS)]
         weighted_run_value = sum(p["run_value"] * p["usage_pct"] for p in arsenal)
-        weighted_k_pct = sum(p["k_pct"] * p["usage_pct"] for p in arsenal)
-        weighted_bb_pct = sum(p["bb_pct"] * p["usage_pct"] for p in arsenal)
+        # Pitcher-allowed K/BB rates get the same empirical-Bayes shrinkage as
+        # batter rates (beta-binomial posterior toward the league-allowed mean,
+        # MoM priors fit over all pitchers — see rate_shrinkage.py). The
+        # usage-weighted arsenal mix and the overall terminal-event rates are
+        # both shrunk with the pitcher's completed-PA sample as trials.
+        priors_p = self._event_priors("pitcher")
+        n_pa_faced = float(len(terminal_frame))
+        n_recent_pa_faced = float(len(recent_terminal_frame))
+
+        def _shrunk_p(event: str, rate: float | None, n: float) -> float:
+            v = priors_p.shrink(event, rate, n)
+            return round(float(v), 4) if v is not None else 0.0
+
+        weighted_k_pct = _shrunk_p(
+            "k", sum(p["k_pct"] * p["usage_pct"] for p in arsenal), n_pa_faced
+        )
+        weighted_bb_pct = _shrunk_p(
+            "bb", sum(p["bb_pct"] * p["usage_pct"] for p in arsenal), n_pa_faced
+        )
         weighted_movement = sum((abs(p["vertical_movement"]) + abs(p["horizontal_movement"])) * p["usage_pct"] for p in arsenal)
         # Weighted average pitch quality across arsenal (None-safe)
         quality_pitches = [(p["pitch_quality"], p["usage_pct"]) for p in arsenal if p["pitch_quality"] is not None]
@@ -544,14 +611,14 @@ class BaseballSavantProvider:
             "weighted_bb_pct": round(weighted_bb_pct, 4),
             "movement_score": round(weighted_movement, 4),
             "stuff_plus": stuff_plus,
-            "k_pct": round(self._nan_to_zero(terminal_frame["events"].fillna("").isin({"strikeout", "strikeout_double_play"}).mean()), 4),
-            "bb_pct": round(self._nan_to_zero(terminal_frame["events"].fillna("").isin({"walk", "intent_walk"}).mean()), 4),
+            "k_pct": _shrunk_p("k", self._nan_to_zero(terminal_frame["events"].fillna("").isin({"strikeout", "strikeout_double_play"}).mean()), n_pa_faced),
+            "bb_pct": _shrunk_p("bb", self._nan_to_zero(terminal_frame["events"].fillna("").isin({"walk", "intent_walk"}).mean()), n_pa_faced),
             "recent_xba": round(self._nan_to_zero(pd.to_numeric(recent_batter_frame.get("estimated_ba_using_speedangle"), errors="coerce").mean()), 4),
             "recent_hard_hit_pct": round(self._nan_to_zero((pd.to_numeric(recent_batter_frame.get("launch_speed"), errors="coerce") >= 95).mean()), 4),
             "recent_barrel_pct": round(self._barrel_pct(recent_batter_frame), 4),
             "recent_ev50": round(self._ev50(recent_batter_frame), 3),
-            "recent_k_pct": round(self._nan_to_zero(recent_terminal_frame["events"].fillna("").isin({"strikeout", "strikeout_double_play"}).mean()), 4),
-            "recent_bb_pct": round(self._nan_to_zero(recent_terminal_frame["events"].fillna("").isin({"walk", "intent_walk"}).mean()), 4),
+            "recent_k_pct": _shrunk_p("k", self._nan_to_zero(recent_terminal_frame["events"].fillna("").isin({"strikeout", "strikeout_double_play"}).mean()), n_recent_pa_faced),
+            "recent_bb_pct": _shrunk_p("bb", self._nan_to_zero(recent_terminal_frame["events"].fillna("").isin({"walk", "intent_walk"}).mean()), n_recent_pa_faced),
             "pitch_arsenal": arsenal,
         }
 
@@ -634,6 +701,23 @@ class BaseballSavantProvider:
             v = frame["events"].fillna("").isin(events).mean()
             return None if pd.isna(v) else round(float(v), 4)
 
+        # Empirical-Bayes shrinkage of per-PA event rates toward the league
+        # mean (beta-binomial posterior, MoM priors — see rate_shrinkage.py).
+        # Raw rates over a few dozen PA are mostly noise; the posterior lies
+        # between the raw rate and the league mean, weighted by sample size.
+        priors_b = self._event_priors("batter")
+        n_pa = float(len(terminal_frame))
+        n_recent_pa = float(len(recent_terminal_frame))
+
+        def _shrunk(event: str, rate: float | None, n: float) -> float | None:
+            v = priors_b.shrink(event, rate, n)
+            return None if v is None else round(float(v), 4)
+
+        raw_hit_rates = self._hit_type_rates(terminal_frame)
+        shrunk_hit_rates = {
+            ht: _shrunk(ht.lower(), rate, n_pa) for ht, rate in raw_hit_rates.items()
+        }
+
         return {
             "batter_id": batter_id,
             "sample_pa": int(len(terminal_frame)),
@@ -642,21 +726,21 @@ class BaseballSavantProvider:
             "xwoba": _bbe_stat(overall_bbe, "estimated_woba_using_speedangle"),
             "ev50": round(self._ev50(overall_bbe), 3) if len(overall_bbe) >= MIN_BBE else None,
             "hard_hit_pct": _hh(overall_bbe),
-            "bb_pct": _pa_rate(terminal_frame, {"walk", "intent_walk"}),
-            "k_pct": _pa_rate(terminal_frame, {"strikeout", "strikeout_double_play"}),
+            "bb_pct": _shrunk("bb", _pa_rate(terminal_frame, {"walk", "intent_walk"}), n_pa),
+            "k_pct": _shrunk("k", _pa_rate(terminal_frame, {"strikeout", "strikeout_double_play"}), n_pa),
             "quality_of_contact": round(self._quality_of_contact(overall_bbe), 4),
             "recent_xwoba": _bbe_stat(recent_bbe_frame, "estimated_woba_using_speedangle"),
             "recent_ev50": round(self._ev50(recent_bbe_frame), 3) if len(recent_bbe_frame) >= MIN_BBE else None,
             "recent_hard_hit_pct": _hh(recent_bbe_frame),
-            "recent_bb_pct": _pa_rate(recent_terminal_frame, {"walk", "intent_walk"}),
-            "recent_k_pct": _pa_rate(recent_terminal_frame, {"strikeout", "strikeout_double_play"}),
+            "recent_bb_pct": _shrunk("bb", _pa_rate(recent_terminal_frame, {"walk", "intent_walk"}), n_recent_pa),
+            "recent_k_pct": _shrunk("k", _pa_rate(recent_terminal_frame, {"strikeout", "strikeout_double_play"}), n_recent_pa),
             "recent_quality_of_contact": round(self._quality_of_contact(recent_bbe_frame), 4),
             "swing_path_score": round(self._swing_path_score(batter_frame), 3),
             "swing_path_tilt": round(self._nan_to_zero(pd.to_numeric(batter_frame.get("swing_path_tilt"), errors="coerce").mean()), 3),
             "attack_angle": round(self._nan_to_zero(pd.to_numeric(batter_frame.get("attack_angle"), errors="coerce").mean()), 3),
             "swing_length": round(self._nan_to_zero(pd.to_numeric(batter_frame.get("swing_length"), errors="coerce").mean()), 3),
             "pull_pct": self._pull_pct(batter_frame, self._player_handedness(batter_frame, "stand")),
-            "bb_rates": self._hit_type_rates(terminal_frame),
+            "bb_rates": shrunk_hit_rates,
             "pitch_profiles": profiles,
         }
 
