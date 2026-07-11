@@ -708,6 +708,360 @@
           ]
         }
       ]
+    },
+    {
+      "fetched_at": "2026-07-11T20:28:46Z",
+      "quota": {
+        "requests_remaining": 18967,
+        "requests_used": 1033
+      },
+      "games": [
+        {
+          "away_team": "Athletics",
+          "home_team": "Chicago White Sox",
+          "commence_time": "2026-07-11T18:11:00Z",
+          "moneyline": {
+            "away_odds": 1340,
+            "home_odds": -10000,
+            "away_no_vig": 0.0655,
+            "home_no_vig": 0.9345
+          },
+          "totals": [
+            {
+              "name": "Over",
+              "point": 1.5,
+              "price": 940
+            },
+            {
+              "name": "Under",
+              "point": 1.5,
+              "price": -3100
+            }
+          ]
+        },
+        {
+          "away_team": "Los Angeles Angels",
+          "home_team": "Minnesota Twins",
+          "commence_time": "2026-07-11T18:37:00Z",
+          "moneyline": {
+            "away_odds": 105,
+            "home_odds": -136,
+            "away_no_vig": 0.4584,
+            "home_no_vig": 0.5416
+          },
+          "totals": [
+            {
+              "name": "Over",
+              "point": 8.5,
+              "price": -161
+            },
+            {
+              "name": "Under",
+              "point": 8.5,
+              "price": 123
+            }
+          ]
+        },
+        {
+          "away_team": "New York Yankees",
+          "home_team": "Washington Nationals",
+          "commence_time": "2026-07-11T20:05:50Z",
+          "moneyline": {
+            "away_odds": 106,
+            "home_odds": -137,
+            "away_no_vig": 0.4565,
+            "home_no_vig": 0.5435
+          },
+          "totals": [
+            {
+              "name": "Over",
+              "point": 10.5,
+              "price": -109
+            },
+            {
+              "name": "Under",
+              "point": 10.5,
+              "price": -119
+            }
+          ]
+        },
+        {
+          "away_team": "Colorado Rockies",
+          "home_team": "San Francisco Giants",
+          "commence_time": "2026-07-11T20:06:00Z",
+          "moneyline": {
+            "away_odds": 121,
+            "home_odds": -158,
+            "away_no_vig": 0.4249,
+            "home_no_vig": 0.5751
+          },
+          "totals": [
+            {
+              "name": "Over",
+              "point": 6.5,
+              "price": -129
+            },
+            {
+              "name": "Under",
+              "point": 6.5,
+              "price": 100
+            }
+          ]
+        },
+        {
+          "away_team": "Boston Red Sox",
+          "home_team": "New York Mets",
+          "commence_time": "2026-07-11T20:11:00Z",
+          "moneyline": {
+            "away_odds": -131,
+            "home_odds": 101,
+            "away_no_vig": 0.5327,
+            "home_no_vig": 0.4673
+          },
+          "totals": [
+            {
+              "name": "Over",
+              "point": 7.5,
+              "price": -120
+            },
+            {
+              "name": "Under",
+              "point": 7.5,
+              "price": -108
+            }
+          ]
+        },
+        {
+          "away_team": "Cleveland Guardians",
+          "home_team": "Miami Marlins",
+          "commence_time": "2026-07-11T20:11:00Z",
+          "moneyline": {
+            "away_odds": 142,
+            "home_odds": -187,
+            "away_no_vig": 0.3881,
+            "home_no_vig": 0.6119
+          },
+          "totals": [
+            {
+              "name": "Over",
+              "point": 7.5,
+              "price": -101
+            },
+            {
+              "name": "Under",
+              "point": 7.5,
+              "price": -128
+            }
+          ]
+        },
+        {
+          "away_team": "Milwaukee Brewers",
+          "home_team": "Pittsburgh Pirates",
+          "commence_time": "2026-07-11T20:16:00Z",
+          "moneyline": {
+            "away_odds": -129,
+            "home_odds": -101,
+            "away_no_vig": 0.5285,
+            "home_no_vig": 0.4715
+          },
+          "totals": [
+            {
+              "name": "Over",
+              "point": 8.5,
+              "price": -120
+            },
+            {
+              "name": "Under",
+              "point": 8.5,
+              "price": -108
+            }
+          ]
+        },
+        {
+          "away_team": "Seattle Mariners",
+          "home_team": "Tampa Bay Rays",
+          "commence_time": "2026-07-11T20:36:00Z",
+          "moneyline": {
+            "away_odds": -108,
+            "home_odds": -112,
+            "away_no_vig": 0.4957,
+            "home_no_vig": 0.5043
+          },
+          "totals": [
+            {
+              "name": "Over",
+              "point": 7.0,
+              "price": -119
+            },
+            {
+              "name": "Under",
+              "point": 7.0,
+              "price": -102
+            }
+          ]
+        },
+        {
+          "away_team": "Philadelphia Phillies",
+          "home_team": "Detroit Tigers",
+          "commence_time": "2026-07-11T22:11:00Z",
+          "moneyline": {
+            "away_odds": -148,
+            "home_odds": 123,
+            "away_no_vig": 0.571,
+            "home_no_vig": 0.429
+          },
+          "totals": [
+            {
+              "name": "Over",
+              "point": 7.5,
+              "price": -113
+            },
+            {
+              "name": "Under",
+              "point": 7.5,
+              "price": -107
+            }
+          ]
+        },
+        {
+          "away_team": "Kansas City Royals",
+          "home_team": "Baltimore Orioles",
+          "commence_time": "2026-07-11T23:06:00Z",
+          "moneyline": {
+            "away_odds": 130,
+            "home_odds": -157,
+            "away_no_vig": 0.4158,
+            "home_no_vig": 0.5842
+          },
+          "totals": [
+            {
+              "name": "Over",
+              "point": 9.0,
+              "price": -105
+            },
+            {
+              "name": "Under",
+              "point": 9.0,
+              "price": -114
+            }
+          ]
+        },
+        {
+          "away_team": "Houston Astros",
+          "home_team": "Texas Rangers",
+          "commence_time": "2026-07-11T23:06:00Z",
+          "moneyline": {
+            "away_odds": -103,
+            "home_odds": -117,
+            "away_no_vig": 0.4848,
+            "home_no_vig": 0.5152
+          },
+          "totals": [
+            {
+              "name": "Over",
+              "point": 9.0,
+              "price": -101
+            },
+            {
+              "name": "Under",
+              "point": 9.0,
+              "price": -119
+            }
+          ]
+        },
+        {
+          "away_team": "Chicago Cubs",
+          "home_team": "Cincinnati Reds",
+          "commence_time": "2026-07-11T23:11:00Z",
+          "moneyline": {
+            "away_odds": -106,
+            "home_odds": -114,
+            "away_no_vig": 0.4913,
+            "home_no_vig": 0.5087
+          },
+          "totals": [
+            {
+              "name": "Over",
+              "point": 10.0,
+              "price": -116
+            },
+            {
+              "name": "Under",
+              "point": 10.0,
+              "price": -104
+            }
+          ]
+        },
+        {
+          "away_team": "Atlanta Braves",
+          "home_team": "St. Louis Cardinals",
+          "commence_time": "2026-07-11T23:15:00Z",
+          "moneyline": {
+            "away_odds": -108,
+            "home_odds": -112,
+            "away_no_vig": 0.4957,
+            "home_no_vig": 0.5043
+          },
+          "totals": [
+            {
+              "name": "Over",
+              "point": 8.0,
+              "price": -117
+            },
+            {
+              "name": "Under",
+              "point": 8.0,
+              "price": -103
+            }
+          ]
+        },
+        {
+          "away_team": "Toronto Blue Jays",
+          "home_team": "San Diego Padres",
+          "commence_time": "2026-07-12T00:41:00Z",
+          "moneyline": {
+            "away_odds": -107,
+            "home_odds": -112,
+            "away_no_vig": 0.4945,
+            "home_no_vig": 0.5055
+          },
+          "totals": [
+            {
+              "name": "Over",
+              "point": 8.0,
+              "price": -107
+            },
+            {
+              "name": "Under",
+              "point": 8.0,
+              "price": -112
+            }
+          ]
+        },
+        {
+          "away_team": "Arizona Diamondbacks",
+          "home_team": "Los Angeles Dodgers",
+          "commence_time": "2026-07-12T01:10:00Z",
+          "moneyline": {
+            "away_odds": 226,
+            "home_odds": -283,
+            "away_no_vig": 0.2934,
+            "home_no_vig": 0.7066
+          },
+          "totals": [
+            {
+              "name": "Over",
+              "point": 9.0,
+              "price": 100
+            },
+            {
+              "name": "Under",
+              "point": 9.0,
+              "price": -120
+            }
+          ]
+        }
+      ]
     }
   ]
 }
