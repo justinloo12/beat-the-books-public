@@ -32,6 +32,38 @@
           ]
         }
       ]
+    },
+    {
+      "fetched_at": "2026-07-16T17:53:59Z",
+      "quota": {
+        "requests_remaining": 18947,
+        "requests_used": 1053
+      },
+      "games": [
+        {
+          "away_team": "New York Mets",
+          "home_team": "Philadelphia Phillies",
+          "commence_time": "2026-07-16T23:11:00Z",
+          "moneyline": {
+            "away_odds": 109,
+            "home_odds": -131,
+            "away_no_vig": 0.4576,
+            "home_no_vig": 0.5424
+          },
+          "totals": [
+            {
+              "name": "Over",
+              "point": 9.5,
+              "price": -110
+            },
+            {
+              "name": "Under",
+              "point": 9.5,
+              "price": -110
+            }
+          ]
+        }
+      ]
     }
   ]
 }
