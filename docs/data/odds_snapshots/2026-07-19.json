@@ -1009,6 +1009,61 @@
           ]
         }
       ]
+    },
+    {
+      "fetched_at": "2026-07-19T23:29:51Z",
+      "quota": {
+        "requests_remaining": 18919,
+        "requests_used": 1081
+      },
+      "games": [
+        {
+          "away_team": "St. Louis Cardinals",
+          "home_team": "Arizona Diamondbacks",
+          "commence_time": "2026-07-19T20:11:00Z",
+          "moneyline": {
+            "away_odds": 204,
+            "home_odds": -278,
+            "away_no_vig": 0.309,
+            "home_no_vig": 0.691
+          },
+          "totals": [
+            {
+              "name": "Over",
+              "point": 15.5,
+              "price": 134
+            },
+            {
+              "name": "Under",
+              "point": 15.5,
+              "price": -176
+            }
+          ]
+        },
+        {
+          "away_team": "Los Angeles Dodgers",
+          "home_team": "New York Yankees",
+          "commence_time": "2026-07-19T23:21:00Z",
+          "moneyline": {
+            "away_odds": -146,
+            "home_odds": 112,
+            "away_no_vig": 0.5572,
+            "home_no_vig": 0.4428
+          },
+          "totals": [
+            {
+              "name": "Over",
+              "point": 8.5,
+              "price": -104
+            },
+            {
+              "name": "Under",
+              "point": 8.5,
+              "price": -124
+            }
+          ]
+        }
+      ]
     }
   ]
 }
